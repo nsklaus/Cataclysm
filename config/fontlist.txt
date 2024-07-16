@@ -1,0 +1,1245 @@
+Square Smallcaps
+data/font//Square-Smallcaps.ttf
+0
+FixedsysTTF Monospaced
+data/font//fixedsys.ttf
+0
+Square Modern
+data/font//square.ttf
+0
+Terminus
+data/font//terminus.fon
+0
+Unifont Medium
+data/font//unifont.ttf
+0
+Comfortaa Bold
+/usr/share/fonts/aajohan-comfortaa-fonts/Comfortaa-Bold.otf
+0
+Comfortaa Light
+/usr/share/fonts/aajohan-comfortaa-fonts/Comfortaa-Light.otf
+0
+Comfortaa Medium
+/usr/share/fonts/aajohan-comfortaa-fonts/Comfortaa-Medium.otf
+0
+Comfortaa
+/usr/share/fonts/aajohan-comfortaa-fonts/Comfortaa-Regular.otf
+0
+Comfortaa SemiBold
+/usr/share/fonts/aajohan-comfortaa-fonts/Comfortaa-SemiBold.otf
+0
+Cantarell Bold
+/usr/share/fonts/abattis-cantarell-fonts/Cantarell-Bold.otf
+0
+Cantarell Extra Bold
+/usr/share/fonts/abattis-cantarell-fonts/Cantarell-ExtraBold.otf
+0
+Cantarell Light
+/usr/share/fonts/abattis-cantarell-fonts/Cantarell-Light.otf
+0
+Cantarell
+/usr/share/fonts/abattis-cantarell-fonts/Cantarell-Regular.otf
+0
+Cantarell Thin
+/usr/share/fonts/abattis-cantarell-fonts/Cantarell-Thin.otf
+0
+Cantarell
+/usr/share/fonts/abattis-cantarell-vf-fonts/Cantarell-VF.otf
+0
+Source Code Pro Black
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Black.otf
+0
+Source Code Pro Black Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-BlackIt.otf
+0
+Source Code Pro Bold
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Bold.otf
+0
+Source Code Pro Bold Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-BoldIt.otf
+0
+Source Code Pro ExtraLight
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-ExtraLight.otf
+0
+Source Code Pro ExtraLight Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-ExtraLightIt.otf
+0
+Source Code Pro Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-It.otf
+0
+Source Code Pro Light
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Light.otf
+0
+Source Code Pro Light Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-LightIt.otf
+0
+Source Code Pro Medium
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Medium.otf
+0
+Source Code Pro Medium Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-MediumIt.otf
+0
+Source Code Pro
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Regular.otf
+0
+Source Code Pro Semibold
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-Semibold.otf
+0
+Source Code Pro Semibold Italic
+/usr/share/fonts/adobe-source-code-pro-fonts/SourceCodePro-SemiboldIt.otf
+0
+Symbola
+/usr/share/fonts/gdouros-symbola/Symbola.ttf
+0
+Carlito Bold
+/usr/share/fonts/google-carlito-fonts/Carlito-Bold.ttf
+0
+Carlito Bold Italic
+/usr/share/fonts/google-carlito-fonts/Carlito-BoldItalic.ttf
+0
+Carlito Italic
+/usr/share/fonts/google-carlito-fonts/Carlito-Italic.ttf
+0
+Carlito
+/usr/share/fonts/google-carlito-fonts/Carlito-Regular.ttf
+0
+Caladea Bold
+/usr/share/fonts/google-crosextra-caladea-fonts/Caladea-Bold.ttf
+0
+Caladea Bold Italic
+/usr/share/fonts/google-crosextra-caladea-fonts/Caladea-BoldItalic.ttf
+0
+Caladea Italic
+/usr/share/fonts/google-crosextra-caladea-fonts/Caladea-Italic.ttf
+0
+Caladea
+/usr/share/fonts/google-crosextra-caladea-fonts/Caladea-Regular.ttf
+0
+Droid Arabic Kufi Bold
+/usr/share/fonts/google-droid-sans-fonts/DroidKufi-Bold.ttf
+0
+Droid Arabic Kufi
+/usr/share/fonts/google-droid-sans-fonts/DroidKufi-Regular.ttf
+0
+Droid Sans Bold
+/usr/share/fonts/google-droid-sans-fonts/DroidSans-Bold.ttf
+0
+Droid Sans
+/usr/share/fonts/google-droid-sans-fonts/DroidSans.ttf
+0
+Droid Sans Armenian
+/usr/share/fonts/google-droid-sans-fonts/DroidSansArmenian.ttf
+0
+Droid Sans Devanagari
+/usr/share/fonts/google-droid-sans-fonts/DroidSansDevanagari-Regular.ttf
+0
+Droid Sans Ethiopic Bold
+/usr/share/fonts/google-droid-sans-fonts/DroidSansEthiopic-Bold.ttf
+0
+Droid Sans Ethiopic
+/usr/share/fonts/google-droid-sans-fonts/DroidSansEthiopic-Regular.ttf
+0
+Droid Sans Fallback
+/usr/share/fonts/google-droid-sans-fonts/DroidSansFallbackFull.ttf
+0
+Droid Sans Georgian
+/usr/share/fonts/google-droid-sans-fonts/DroidSansGeorgian.ttf
+0
+Droid Sans Hebrew Bold
+/usr/share/fonts/google-droid-sans-fonts/DroidSansHebrew-Bold.ttf
+0
+Droid Sans Hebrew
+/usr/share/fonts/google-droid-sans-fonts/DroidSansHebrew-Regular.ttf
+0
+Droid Sans Japanese
+/usr/share/fonts/google-droid-sans-fonts/DroidSansJapanese.ttf
+0
+Droid Sans Tamil Bold
+/usr/share/fonts/google-droid-sans-fonts/DroidSansTamil-Bold.ttf
+0
+Droid Sans Tamil
+/usr/share/fonts/google-droid-sans-fonts/DroidSansTamil-Regular.ttf
+0
+Droid Sans Thai
+/usr/share/fonts/google-droid-sans-fonts/DroidSansThai.ttf
+0
+Noto Sans Black
+/usr/share/fonts/google-noto/NotoSans-Black.ttf
+0
+Noto Sans Black Italic
+/usr/share/fonts/google-noto/NotoSans-BlackItalic.ttf
+0
+Noto Sans Bold
+/usr/share/fonts/google-noto/NotoSans-Bold.ttf
+0
+Noto Sans Bold Italic
+/usr/share/fonts/google-noto/NotoSans-BoldItalic.ttf
+0
+Noto Sans Condensed
+/usr/share/fonts/google-noto/NotoSans-Condensed.ttf
+0
+Noto Sans Condensed Black
+/usr/share/fonts/google-noto/NotoSans-CondensedBlack.ttf
+0
+Noto Sans Condensed Black Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedBlackItalic.ttf
+0
+Noto Sans Condensed Bold
+/usr/share/fonts/google-noto/NotoSans-CondensedBold.ttf
+0
+Noto Sans Condensed Bold Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedBoldItalic.ttf
+0
+Noto Sans Condensed ExtraBold
+/usr/share/fonts/google-noto/NotoSans-CondensedExtraBold.ttf
+0
+Noto Sans Condensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedExtraBoldItalic.ttf
+0
+Noto Sans Condensed ExtraLight
+/usr/share/fonts/google-noto/NotoSans-CondensedExtraLight.ttf
+0
+Noto Sans Condensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedExtraLightItalic.ttf
+0
+Noto Sans Condensed Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedItalic.ttf
+0
+Noto Sans Condensed Light
+/usr/share/fonts/google-noto/NotoSans-CondensedLight.ttf
+0
+Noto Sans Condensed Light Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedLightItalic.ttf
+0
+Noto Sans Condensed Medium
+/usr/share/fonts/google-noto/NotoSans-CondensedMedium.ttf
+0
+Noto Sans Condensed Medium Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedMediumItalic.ttf
+0
+Noto Sans Condensed SemiBold
+/usr/share/fonts/google-noto/NotoSans-CondensedSemiBold.ttf
+0
+Noto Sans Condensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedSemiBoldItalic.ttf
+0
+Noto Sans Condensed Thin
+/usr/share/fonts/google-noto/NotoSans-CondensedThin.ttf
+0
+Noto Sans Condensed Thin Italic
+/usr/share/fonts/google-noto/NotoSans-CondensedThinItalic.ttf
+0
+Noto Sans ExtraBold
+/usr/share/fonts/google-noto/NotoSans-ExtraBold.ttf
+0
+Noto Sans ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraBoldItalic.ttf
+0
+Noto Sans ExtraCondensed
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensed.ttf
+0
+Noto Sans ExtraCondensed Black
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedBlack.ttf
+0
+Noto Sans ExtraCondensed Black Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedBlackItalic.ttf
+0
+Noto Sans ExtraCondensed Bold
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedBold.ttf
+0
+Noto Sans ExtraCondensed Bold Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedBoldItalic.ttf
+0
+Noto Sans ExtraCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedExtraBold.ttf
+0
+Noto Sans ExtraCondensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedExtraBoldItalic.ttf
+0
+Noto Sans ExtraCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedExtraLight.ttf
+0
+Noto Sans ExtraCondensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedExtraLightItalic.ttf
+0
+Noto Sans ExtraCondensed Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedItalic.ttf
+0
+Noto Sans ExtraCondensed Light
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedLight.ttf
+0
+Noto Sans ExtraCondensed Light Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedLightItalic.ttf
+0
+Noto Sans ExtraCondensed Medium
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedMedium.ttf
+0
+Noto Sans ExtraCondensed Medium Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedMediumItalic.ttf
+0
+Noto Sans ExtraCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedSemiBold.ttf
+0
+Noto Sans ExtraCondensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedSemiBoldItalic.ttf
+0
+Noto Sans ExtraCondensed Thin
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedThin.ttf
+0
+Noto Sans ExtraCondensed Thin Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraCondensedThinItalic.ttf
+0
+Noto Sans ExtraLight
+/usr/share/fonts/google-noto/NotoSans-ExtraLight.ttf
+0
+Noto Sans ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSans-ExtraLightItalic.ttf
+0
+Noto Sans Italic
+/usr/share/fonts/google-noto/NotoSans-Italic.ttf
+0
+Noto Sans Light
+/usr/share/fonts/google-noto/NotoSans-Light.ttf
+0
+Noto Sans Light Italic
+/usr/share/fonts/google-noto/NotoSans-LightItalic.ttf
+0
+Noto Sans Medium
+/usr/share/fonts/google-noto/NotoSans-Medium.ttf
+0
+Noto Sans Medium Italic
+/usr/share/fonts/google-noto/NotoSans-MediumItalic.ttf
+0
+Noto Sans
+/usr/share/fonts/google-noto/NotoSans-Regular.ttf
+0
+Noto Sans SemiBold
+/usr/share/fonts/google-noto/NotoSans-SemiBold.ttf
+0
+Noto Sans SemiBold Italic
+/usr/share/fonts/google-noto/NotoSans-SemiBoldItalic.ttf
+0
+Noto Sans SemiCondensed
+/usr/share/fonts/google-noto/NotoSans-SemiCondensed.ttf
+0
+Noto Sans SemiCondensed Black
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedBlack.ttf
+0
+Noto Sans SemiCondensed Black Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedBlackItalic.ttf
+0
+Noto Sans SemiCondensed Bold
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedBold.ttf
+0
+Noto Sans SemiCondensed Bold Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedBoldItalic.ttf
+0
+Noto Sans SemiCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedExtraBold.ttf
+0
+Noto Sans SemiCondensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedExtraBoldItalic.ttf
+0
+Noto Sans SemiCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedExtraLight.ttf
+0
+Noto Sans SemiCondensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedExtraLightItalic.ttf
+0
+Noto Sans SemiCondensed Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedItalic.ttf
+0
+Noto Sans SemiCondensed Light
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedLight.ttf
+0
+Noto Sans SemiCondensed Light Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedLightItalic.ttf
+0
+Noto Sans SemiCondensed Medium
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedMedium.ttf
+0
+Noto Sans SemiCondensed Medium Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedMediumItalic.ttf
+0
+Noto Sans SemiCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedSemiBold.ttf
+0
+Noto Sans SemiCondensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedSemiBoldItalic.ttf
+0
+Noto Sans SemiCondensed Thin
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedThin.ttf
+0
+Noto Sans SemiCondensed Thin Italic
+/usr/share/fonts/google-noto/NotoSans-SemiCondensedThinItalic.ttf
+0
+Noto Sans Thin
+/usr/share/fonts/google-noto/NotoSans-Thin.ttf
+0
+Noto Sans Thin Italic
+/usr/share/fonts/google-noto/NotoSans-ThinItalic.ttf
+0
+Noto Sans Math
+/usr/share/fonts/google-noto/NotoSansMath-Regular.ttf
+0
+Noto Sans Mono Black
+/usr/share/fonts/google-noto/NotoSansMono-Black.ttf
+0
+Noto Sans Mono Bold
+/usr/share/fonts/google-noto/NotoSansMono-Bold.ttf
+0
+Noto Sans Mono Condensed
+/usr/share/fonts/google-noto/NotoSansMono-Condensed.ttf
+0
+Noto Sans Mono Condensed Black
+/usr/share/fonts/google-noto/NotoSansMono-CondensedBlack.ttf
+0
+Noto Sans Mono Condensed Bold
+/usr/share/fonts/google-noto/NotoSansMono-CondensedBold.ttf
+0
+Noto Sans Mono Condensed ExtraBold
+/usr/share/fonts/google-noto/NotoSansMono-CondensedExtraBold.ttf
+0
+Noto Sans Mono Condensed ExtraLight
+/usr/share/fonts/google-noto/NotoSansMono-CondensedExtraLight.ttf
+0
+Noto Sans Mono Condensed Light
+/usr/share/fonts/google-noto/NotoSansMono-CondensedLight.ttf
+0
+Noto Sans Mono Condensed Medium
+/usr/share/fonts/google-noto/NotoSansMono-CondensedMedium.ttf
+0
+Noto Sans Mono Condensed SemiBold
+/usr/share/fonts/google-noto/NotoSansMono-CondensedSemiBold.ttf
+0
+Noto Sans Mono Condensed Thin
+/usr/share/fonts/google-noto/NotoSansMono-CondensedThin.ttf
+0
+Noto Sans Mono ExtraBold
+/usr/share/fonts/google-noto/NotoSansMono-ExtraBold.ttf
+0
+Noto Sans Mono ExtraCondensed
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensed.ttf
+0
+Noto Sans Mono ExtraCondensed Black
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedBlack.ttf
+0
+Noto Sans Mono ExtraCondensed Bold
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedBold.ttf
+0
+Noto Sans Mono ExtraCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedExtraBold.ttf
+0
+Noto Sans Mono ExtraCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedExtraLight.ttf
+0
+Noto Sans Mono ExtraCondensed Light
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedLight.ttf
+0
+Noto Sans Mono ExtraCondensed Medium
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedMedium.ttf
+0
+Noto Sans Mono ExtraCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedSemiBold.ttf
+0
+Noto Sans Mono ExtraCondensed Thin
+/usr/share/fonts/google-noto/NotoSansMono-ExtraCondensedThin.ttf
+0
+Noto Sans Mono ExtraLight
+/usr/share/fonts/google-noto/NotoSansMono-ExtraLight.ttf
+0
+Noto Sans Mono Light
+/usr/share/fonts/google-noto/NotoSansMono-Light.ttf
+0
+Noto Sans Mono Medium
+/usr/share/fonts/google-noto/NotoSansMono-Medium.ttf
+0
+Noto Sans Mono
+/usr/share/fonts/google-noto/NotoSansMono-Regular.ttf
+0
+Noto Sans Mono SemiBold
+/usr/share/fonts/google-noto/NotoSansMono-SemiBold.ttf
+0
+Noto Sans Mono SemiCondensed
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensed.ttf
+0
+Noto Sans Mono SemiCondensed Black
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedBlack.ttf
+0
+Noto Sans Mono SemiCondensed Bold
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedBold.ttf
+0
+Noto Sans Mono SemiCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedExtraBold.ttf
+0
+Noto Sans Mono SemiCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedExtraLight.ttf
+0
+Noto Sans Mono SemiCondensed Light
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedLight.ttf
+0
+Noto Sans Mono SemiCondensed Medium
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedMedium.ttf
+0
+Noto Sans Mono SemiCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedSemiBold.ttf
+0
+Noto Sans Mono SemiCondensed Thin
+/usr/share/fonts/google-noto/NotoSansMono-SemiCondensedThin.ttf
+0
+Noto Sans Mono Thin
+/usr/share/fonts/google-noto/NotoSansMono-Thin.ttf
+0
+Noto Sans Symbols 2
+/usr/share/fonts/google-noto/NotoSansSymbols2-Regular.ttf
+0
+Noto Serif Black
+/usr/share/fonts/google-noto/NotoSerif-Black.ttf
+0
+Noto Serif Black Italic
+/usr/share/fonts/google-noto/NotoSerif-BlackItalic.ttf
+0
+Noto Serif Bold
+/usr/share/fonts/google-noto/NotoSerif-Bold.ttf
+0
+Noto Serif Bold Italic
+/usr/share/fonts/google-noto/NotoSerif-BoldItalic.ttf
+0
+Noto Serif Condensed
+/usr/share/fonts/google-noto/NotoSerif-Condensed.ttf
+0
+Noto Serif Condensed Black
+/usr/share/fonts/google-noto/NotoSerif-CondensedBlack.ttf
+0
+Noto Serif Condensed Black Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedBlackItalic.ttf
+0
+Noto Serif Condensed Bold
+/usr/share/fonts/google-noto/NotoSerif-CondensedBold.ttf
+0
+Noto Serif Condensed Bold Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedBoldItalic.ttf
+0
+Noto Serif Condensed ExtraBold
+/usr/share/fonts/google-noto/NotoSerif-CondensedExtraBold.ttf
+0
+Noto Serif Condensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedExtraBoldItalic.ttf
+0
+Noto Serif Condensed ExtraLight
+/usr/share/fonts/google-noto/NotoSerif-CondensedExtraLight.ttf
+0
+Noto Serif Condensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedExtraLightItalic.ttf
+0
+Noto Serif Condensed Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedItalic.ttf
+0
+Noto Serif Condensed Light
+/usr/share/fonts/google-noto/NotoSerif-CondensedLight.ttf
+0
+Noto Serif Condensed Light Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedLightItalic.ttf
+0
+Noto Serif Condensed Medium
+/usr/share/fonts/google-noto/NotoSerif-CondensedMedium.ttf
+0
+Noto Serif Condensed Medium Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedMediumItalic.ttf
+0
+Noto Serif Condensed SemiBold
+/usr/share/fonts/google-noto/NotoSerif-CondensedSemiBold.ttf
+0
+Noto Serif Condensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedSemiBoldItalic.ttf
+0
+Noto Serif Condensed Thin
+/usr/share/fonts/google-noto/NotoSerif-CondensedThin.ttf
+0
+Noto Serif Condensed Thin Italic
+/usr/share/fonts/google-noto/NotoSerif-CondensedThinItalic.ttf
+0
+Noto Serif ExtraBold
+/usr/share/fonts/google-noto/NotoSerif-ExtraBold.ttf
+0
+Noto Serif ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraBoldItalic.ttf
+0
+Noto Serif ExtraCondensed
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensed.ttf
+0
+Noto Serif ExtraCondensed Black
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedBlack.ttf
+0
+Noto Serif ExtraCondensed Black Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedBlackItalic.ttf
+0
+Noto Serif ExtraCondensed Bold
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedBold.ttf
+0
+Noto Serif ExtraCondensed Bold Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedBoldItalic.ttf
+0
+Noto Serif ExtraCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedExtraBold.ttf
+0
+Noto Serif ExtraCondensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedExtraBoldItalic.ttf
+0
+Noto Serif ExtraCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedExtraLight.ttf
+0
+Noto Serif ExtraCondensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedExtraLightItalic.ttf
+0
+Noto Serif ExtraCondensed Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedItalic.ttf
+0
+Noto Serif ExtraCondensed Light
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedLight.ttf
+0
+Noto Serif ExtraCondensed Light Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedLightItalic.ttf
+0
+Noto Serif ExtraCondensed Medium
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedMedium.ttf
+0
+Noto Serif ExtraCondensed Medium Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedMediumItalic.ttf
+0
+Noto Serif ExtraCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedSemiBold.ttf
+0
+Noto Serif ExtraCondensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedSemiBoldItalic.ttf
+0
+Noto Serif ExtraCondensed Thin
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedThin.ttf
+0
+Noto Serif ExtraCondensed Thin Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraCondensedThinItalic.ttf
+0
+Noto Serif ExtraLight
+/usr/share/fonts/google-noto/NotoSerif-ExtraLight.ttf
+0
+Noto Serif ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSerif-ExtraLightItalic.ttf
+0
+Noto Serif Italic
+/usr/share/fonts/google-noto/NotoSerif-Italic.ttf
+0
+Noto Serif Light
+/usr/share/fonts/google-noto/NotoSerif-Light.ttf
+0
+Noto Serif Light Italic
+/usr/share/fonts/google-noto/NotoSerif-LightItalic.ttf
+0
+Noto Serif Medium
+/usr/share/fonts/google-noto/NotoSerif-Medium.ttf
+0
+Noto Serif Medium Italic
+/usr/share/fonts/google-noto/NotoSerif-MediumItalic.ttf
+0
+Noto Serif
+/usr/share/fonts/google-noto/NotoSerif-Regular.ttf
+0
+Noto Serif SemiBold
+/usr/share/fonts/google-noto/NotoSerif-SemiBold.ttf
+0
+Noto Serif SemiBold Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiBoldItalic.ttf
+0
+Noto Serif SemiCondensed
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensed.ttf
+0
+Noto Serif SemiCondensed Black
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedBlack.ttf
+0
+Noto Serif SemiCondensed Black Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedBlackItalic.ttf
+0
+Noto Serif SemiCondensed Bold
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedBold.ttf
+0
+Noto Serif SemiCondensed Bold Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedBoldItalic.ttf
+0
+Noto Serif SemiCondensed ExtraBold
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedExtraBold.ttf
+0
+Noto Serif SemiCondensed ExtraBold Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedExtraBoldItalic.ttf
+0
+Noto Serif SemiCondensed ExtraLight
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedExtraLight.ttf
+0
+Noto Serif SemiCondensed ExtraLight Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedExtraLightItalic.ttf
+0
+Noto Serif SemiCondensed Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedItalic.ttf
+0
+Noto Serif SemiCondensed Light
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedLight.ttf
+0
+Noto Serif SemiCondensed Light Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedLightItalic.ttf
+0
+Noto Serif SemiCondensed Medium
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedMedium.ttf
+0
+Noto Serif SemiCondensed Medium Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedMediumItalic.ttf
+0
+Noto Serif SemiCondensed SemiBold
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedSemiBold.ttf
+0
+Noto Serif SemiCondensed SemiBold Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedSemiBoldItalic.ttf
+0
+Noto Serif SemiCondensed Thin
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedThin.ttf
+0
+Noto Serif SemiCondensed Thin Italic
+/usr/share/fonts/google-noto/NotoSerif-SemiCondensedThinItalic.ttf
+0
+Noto Serif Thin
+/usr/share/fonts/google-noto/NotoSerif-Thin.ttf
+0
+Noto Serif Thin Italic
+/usr/share/fonts/google-noto/NotoSerif-ThinItalic.ttf
+0
+Noto Color Emoji
+/usr/share/fonts/google-noto-color-emoji-fonts/NotoColorEmoji.ttf
+0
+Noto Emoji
+/usr/share/fonts/google-noto-emoji-fonts/NotoEmoji-Regular.ttf
+0
+Noto Sans CJK JP Thin
+/usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+0
+Noto Sans CJK KR Thin
+/usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+1
+Noto Sans CJK SC Thin
+/usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+2
+Noto Sans CJK TC Thin
+/usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+3
+Noto Sans CJK HK Thin
+/usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+4
+Noto Sans Mono CJK JP
+/usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+0
+Noto Sans Mono CJK KR
+/usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+1
+Noto Sans Mono CJK SC
+/usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+2
+Noto Sans Mono CJK TC
+/usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+3
+Noto Sans Mono CJK HK
+/usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+4
+Noto Serif CJK JP ExtraLight
+/usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+0
+Noto Serif CJK KR ExtraLight
+/usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+1
+Noto Serif CJK SC ExtraLight
+/usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+2
+Noto Serif CJK TC ExtraLight
+/usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+3
+Noto Serif CJK HK ExtraLight
+/usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+4
+Noto Naskh Arabic
+/usr/share/fonts/google-noto-vf/NotoNaskhArabic[wght].ttf
+0
+Noto Sans Italic
+/usr/share/fonts/google-noto-vf/NotoSans-Italic[wght].ttf
+0
+Noto Sans Arabic
+/usr/share/fonts/google-noto-vf/NotoSansArabic[wght].ttf
+0
+Noto Sans Armenian
+/usr/share/fonts/google-noto-vf/NotoSansArmenian[wght].ttf
+0
+Noto Sans Bengali
+/usr/share/fonts/google-noto-vf/NotoSansBengali[wght].ttf
+0
+Noto Sans Canadian Aboriginal
+/usr/share/fonts/google-noto-vf/NotoSansCanadianAboriginal[wght].ttf
+0
+Noto Sans Cherokee
+/usr/share/fonts/google-noto-vf/NotoSansCherokee[wght].ttf
+0
+Noto Sans Devanagari
+/usr/share/fonts/google-noto-vf/NotoSansDevanagari[wght].ttf
+0
+Noto Sans Ethiopic
+/usr/share/fonts/google-noto-vf/NotoSansEthiopic[wght].ttf
+0
+Noto Sans Georgian
+/usr/share/fonts/google-noto-vf/NotoSansGeorgian[wght].ttf
+0
+Noto Sans Gujarati
+/usr/share/fonts/google-noto-vf/NotoSansGujarati[wght].ttf
+0
+Noto Sans Gurmukhi
+/usr/share/fonts/google-noto-vf/NotoSansGurmukhi[wght].ttf
+0
+Noto Sans Hebrew
+/usr/share/fonts/google-noto-vf/NotoSansHebrew[wght].ttf
+0
+Noto Sans Kannada
+/usr/share/fonts/google-noto-vf/NotoSansKannada[wght].ttf
+0
+Noto Sans Khmer
+/usr/share/fonts/google-noto-vf/NotoSansKhmer[wght].ttf
+0
+Noto Sans Lao
+/usr/share/fonts/google-noto-vf/NotoSansLao[wght].ttf
+0
+Noto Sans Meetei Mayek
+/usr/share/fonts/google-noto-vf/NotoSansMeeteiMayek[wght].ttf
+0
+Noto Sans Mono
+/usr/share/fonts/google-noto-vf/NotoSansMono[wght].ttf
+0
+Noto Sans Ol Chiki
+/usr/share/fonts/google-noto-vf/NotoSansOlChiki[wght].ttf
+0
+Noto Sans Oriya
+/usr/share/fonts/google-noto-vf/NotoSansOriya[wght].ttf
+0
+Noto Sans Sinhala
+/usr/share/fonts/google-noto-vf/NotoSansSinhala[wght].ttf
+0
+Noto Sans Symbols
+/usr/share/fonts/google-noto-vf/NotoSansSymbols[wght].ttf
+0
+Noto Sans Tamil
+/usr/share/fonts/google-noto-vf/NotoSansTamil[wght].ttf
+0
+Noto Sans Telugu
+/usr/share/fonts/google-noto-vf/NotoSansTelugu[wght].ttf
+0
+Noto Sans Thaana
+/usr/share/fonts/google-noto-vf/NotoSansThaana[wght].ttf
+0
+Noto Sans Thai
+/usr/share/fonts/google-noto-vf/NotoSansThai[wght].ttf
+0
+Noto Sans
+/usr/share/fonts/google-noto-vf/NotoSans[wght].ttf
+0
+Noto Serif Italic
+/usr/share/fonts/google-noto-vf/NotoSerif-Italic[wght].ttf
+0
+Noto Serif Armenian
+/usr/share/fonts/google-noto-vf/NotoSerifArmenian[wght].ttf
+0
+Noto Serif Bengali
+/usr/share/fonts/google-noto-vf/NotoSerifBengali[wght].ttf
+0
+Noto Serif Devanagari
+/usr/share/fonts/google-noto-vf/NotoSerifDevanagari[wght].ttf
+0
+Noto Serif Ethiopic
+/usr/share/fonts/google-noto-vf/NotoSerifEthiopic[wght].ttf
+0
+Noto Serif Georgian
+/usr/share/fonts/google-noto-vf/NotoSerifGeorgian[wght].ttf
+0
+Noto Serif Gujarati
+/usr/share/fonts/google-noto-vf/NotoSerifGujarati[wght].ttf
+0
+Noto Serif Gurmukhi
+/usr/share/fonts/google-noto-vf/NotoSerifGurmukhi[wght].ttf
+0
+Noto Serif Hebrew
+/usr/share/fonts/google-noto-vf/NotoSerifHebrew[wght].ttf
+0
+Noto Serif Kannada
+/usr/share/fonts/google-noto-vf/NotoSerifKannada[wght].ttf
+0
+Noto Serif Khmer
+/usr/share/fonts/google-noto-vf/NotoSerifKhmer[wght].ttf
+0
+Noto Serif Lao
+/usr/share/fonts/google-noto-vf/NotoSerifLao[wght].ttf
+0
+Noto Serif Oriya
+/usr/share/fonts/google-noto-vf/NotoSerifOriya[wght].ttf
+0
+Noto Serif Sinhala
+/usr/share/fonts/google-noto-vf/NotoSerifSinhala[wght].ttf
+0
+Noto Serif Tamil Italic
+/usr/share/fonts/google-noto-vf/NotoSerifTamil-Italic[wght].ttf
+0
+Noto Serif Tamil
+/usr/share/fonts/google-noto-vf/NotoSerifTamil[wght].ttf
+0
+Noto Serif Telugu
+/usr/share/fonts/google-noto-vf/NotoSerifTelugu[wght].ttf
+0
+Noto Serif Thai
+/usr/share/fonts/google-noto-vf/NotoSerifThai[wght].ttf
+0
+Noto Serif
+/usr/share/fonts/google-noto-vf/NotoSerif[wght].ttf
+0
+Jomolhari
+/usr/share/fonts/jomolhari-fonts/Jomolhari-alpha3c-0605331.ttf
+0
+Liberation Mono Bold
+/usr/share/fonts/liberation-mono/LiberationMono-Bold.ttf
+0
+Liberation Mono Bold Italic
+/usr/share/fonts/liberation-mono/LiberationMono-BoldItalic.ttf
+0
+Liberation Mono Italic
+/usr/share/fonts/liberation-mono/LiberationMono-Italic.ttf
+0
+Liberation Mono
+/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf
+0
+Liberation Sans Bold
+/usr/share/fonts/liberation-sans/LiberationSans-Bold.ttf
+0
+Liberation Sans Bold Italic
+/usr/share/fonts/liberation-sans/LiberationSans-BoldItalic.ttf
+0
+Liberation Sans Italic
+/usr/share/fonts/liberation-sans/LiberationSans-Italic.ttf
+0
+Liberation Sans
+/usr/share/fonts/liberation-sans/LiberationSans-Regular.ttf
+0
+Liberation Serif Bold
+/usr/share/fonts/liberation-serif/LiberationSerif-Bold.ttf
+0
+Liberation Serif Bold Italic
+/usr/share/fonts/liberation-serif/LiberationSerif-BoldItalic.ttf
+0
+Liberation Serif Italic
+/usr/share/fonts/liberation-serif/LiberationSerif-Italic.ttf
+0
+Liberation Serif
+/usr/share/fonts/liberation-serif/LiberationSerif-Regular.ttf
+0
+Madan2
+/usr/share/fonts/madan-fonts/madan.ttf
+0
+Open Sans Bold
+/usr/share/fonts/open-sans/OpenSans-Bold.ttf
+0
+Open Sans Bold Italic
+/usr/share/fonts/open-sans/OpenSans-BoldItalic.ttf
+0
+Open Sans Extrabold
+/usr/share/fonts/open-sans/OpenSans-ExtraBold.ttf
+0
+Open Sans Extrabold Italic
+/usr/share/fonts/open-sans/OpenSans-ExtraBoldItalic.ttf
+0
+Open Sans Italic
+/usr/share/fonts/open-sans/OpenSans-Italic.ttf
+0
+Open Sans Light
+/usr/share/fonts/open-sans/OpenSans-Light.ttf
+0
+Open Sans Light Italic
+/usr/share/fonts/open-sans/OpenSans-LightItalic.ttf
+0
+Open Sans
+/usr/share/fonts/open-sans/OpenSans-Regular.ttf
+0
+Open Sans Semibold
+/usr/share/fonts/open-sans/OpenSans-Semibold.ttf
+0
+Open Sans Semibold Italic
+/usr/share/fonts/open-sans/OpenSans-SemiboldItalic.ttf
+0
+OpenSymbol
+/usr/share/fonts/opensymbol/opens___.ttf
+0
+PakType Naskh Basic
+/usr/share/fonts/paktype-naskh-basic-fonts/PakTypeNaskhBasic.ttf
+0
+RIT Meera New
+/usr/share/fonts/rit-meera-new-fonts/RIT-MeeraNew.otf
+0
+RIT Rachana Bold
+/usr/share/fonts/rit-rachana-fonts/RIT-Rachana-Bold.otf
+0
+RIT Rachana Bold Italic
+/usr/share/fonts/rit-rachana-fonts/RIT-Rachana-BoldItalic.otf
+0
+RIT Rachana Italic
+/usr/share/fonts/rit-rachana-fonts/RIT-Rachana-Italic.otf
+0
+RIT Rachana
+/usr/share/fonts/rit-rachana-fonts/RIT-Rachana-Regular.otf
+0
+Mingzat
+/usr/share/fonts/sil-mingzat-fonts/Mingzat-Regular.ttf
+0
+Nuosu SIL
+/usr/share/fonts/sil-nuosu-fonts/NuosuSIL-Regular.ttf
+0
+Padauk Bold
+/usr/share/fonts/sil-padauk-fonts/Padauk-Bold.ttf
+0
+Padauk
+/usr/share/fonts/sil-padauk-fonts/Padauk-Regular.ttf
+0
+STIX Two Math
+/usr/share/fonts/stix-fonts/STIXTwoMath-Regular.otf
+0
+STIX Two Text Bold
+/usr/share/fonts/stix-fonts/STIXTwoText-Bold.otf
+0
+STIX Two Text Bold Italic
+/usr/share/fonts/stix-fonts/STIXTwoText-BoldItalic.otf
+0
+STIX Two Text Italic
+/usr/share/fonts/stix-fonts/STIXTwoText-Italic.otf
+0
+STIX Two Text Medium
+/usr/share/fonts/stix-fonts/STIXTwoText-Medium.otf
+0
+STIX Two Text Medium Italic
+/usr/share/fonts/stix-fonts/STIXTwoText-MediumItalic.otf
+0
+STIX Two Text
+/usr/share/fonts/stix-fonts/STIXTwoText-Regular.otf
+0
+STIX Two Text SemiBold
+/usr/share/fonts/stix-fonts/STIXTwoText-SemiBold.otf
+0
+STIX Two Text SemiBold Italic
+/usr/share/fonts/stix-fonts/STIXTwoText-SemiBoldItalic.otf
+0
+C059 Bold Italic
+/usr/share/fonts/urw-base35/C059-BdIta.otf
+0
+C059 Bold Italic
+/usr/share/fonts/urw-base35/C059-BdIta.t1
+0
+C059 Bold
+/usr/share/fonts/urw-base35/C059-Bold.otf
+0
+C059 Bold
+/usr/share/fonts/urw-base35/C059-Bold.t1
+0
+C059 Italic
+/usr/share/fonts/urw-base35/C059-Italic.otf
+0
+C059 Italic
+/usr/share/fonts/urw-base35/C059-Italic.t1
+0
+C059 Roman
+/usr/share/fonts/urw-base35/C059-Roman.otf
+0
+C059 Roman
+/usr/share/fonts/urw-base35/C059-Roman.t1
+0
+D050000L
+/usr/share/fonts/urw-base35/D050000L.otf
+0
+D050000L
+/usr/share/fonts/urw-base35/D050000L.t1
+0
+Nimbus Mono PS Bold
+/usr/share/fonts/urw-base35/NimbusMonoPS-Bold.otf
+0
+Nimbus Mono PS Bold
+/usr/share/fonts/urw-base35/NimbusMonoPS-Bold.t1
+0
+Nimbus Mono PS Bold Italic
+/usr/share/fonts/urw-base35/NimbusMonoPS-BoldItalic.otf
+0
+Nimbus Mono PS Bold Italic
+/usr/share/fonts/urw-base35/NimbusMonoPS-BoldItalic.t1
+0
+Nimbus Mono PS Italic
+/usr/share/fonts/urw-base35/NimbusMonoPS-Italic.otf
+0
+Nimbus Mono PS Italic
+/usr/share/fonts/urw-base35/NimbusMonoPS-Italic.t1
+0
+Nimbus Mono PS
+/usr/share/fonts/urw-base35/NimbusMonoPS-Regular.otf
+0
+Nimbus Mono PS
+/usr/share/fonts/urw-base35/NimbusMonoPS-Regular.t1
+0
+Nimbus Roman Bold
+/usr/share/fonts/urw-base35/NimbusRoman-Bold.otf
+0
+Nimbus Roman Bold
+/usr/share/fonts/urw-base35/NimbusRoman-Bold.t1
+0
+Nimbus Roman Bold Italic
+/usr/share/fonts/urw-base35/NimbusRoman-BoldItalic.otf
+0
+Nimbus Roman Bold Italic
+/usr/share/fonts/urw-base35/NimbusRoman-BoldItalic.t1
+0
+Nimbus Roman Italic
+/usr/share/fonts/urw-base35/NimbusRoman-Italic.otf
+0
+Nimbus Roman Italic
+/usr/share/fonts/urw-base35/NimbusRoman-Italic.t1
+0
+Nimbus Roman
+/usr/share/fonts/urw-base35/NimbusRoman-Regular.otf
+0
+Nimbus Roman
+/usr/share/fonts/urw-base35/NimbusRoman-Regular.t1
+0
+Nimbus Sans Bold
+/usr/share/fonts/urw-base35/NimbusSans-Bold.otf
+0
+Nimbus Sans Bold
+/usr/share/fonts/urw-base35/NimbusSans-Bold.t1
+0
+Nimbus Sans Bold Italic
+/usr/share/fonts/urw-base35/NimbusSans-BoldItalic.otf
+0
+Nimbus Sans Bold Italic
+/usr/share/fonts/urw-base35/NimbusSans-BoldItalic.t1
+0
+Nimbus Sans Italic
+/usr/share/fonts/urw-base35/NimbusSans-Italic.otf
+0
+Nimbus Sans Italic
+/usr/share/fonts/urw-base35/NimbusSans-Italic.t1
+0
+Nimbus Sans
+/usr/share/fonts/urw-base35/NimbusSans-Regular.otf
+0
+Nimbus Sans
+/usr/share/fonts/urw-base35/NimbusSans-Regular.t1
+0
+Nimbus Sans Narrow Bold
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Bold.otf
+0
+Nimbus Sans Narrow Bold
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Bold.t1
+0
+Nimbus Sans Narrow Bold Oblique
+/usr/share/fonts/urw-base35/NimbusSansNarrow-BoldOblique.otf
+0
+Nimbus Sans Narrow Bold Oblique
+/usr/share/fonts/urw-base35/NimbusSansNarrow-BoldOblique.t1
+0
+Nimbus Sans Narrow Oblique
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Oblique.otf
+0
+Nimbus Sans Narrow Oblique
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Oblique.t1
+0
+Nimbus Sans Narrow
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Regular.otf
+0
+Nimbus Sans Narrow
+/usr/share/fonts/urw-base35/NimbusSansNarrow-Regular.t1
+0
+P052 Bold
+/usr/share/fonts/urw-base35/P052-Bold.otf
+0
+P052 Bold
+/usr/share/fonts/urw-base35/P052-Bold.t1
+0
+P052 Bold Italic
+/usr/share/fonts/urw-base35/P052-BoldItalic.otf
+0
+P052 Bold Italic
+/usr/share/fonts/urw-base35/P052-BoldItalic.t1
+0
+P052 Italic
+/usr/share/fonts/urw-base35/P052-Italic.otf
+0
+P052 Italic
+/usr/share/fonts/urw-base35/P052-Italic.t1
+0
+P052 Roman
+/usr/share/fonts/urw-base35/P052-Roman.otf
+0
+P052 Roman
+/usr/share/fonts/urw-base35/P052-Roman.t1
+0
+Standard Symbols PS
+/usr/share/fonts/urw-base35/StandardSymbolsPS.otf
+0
+Standard Symbols PS
+/usr/share/fonts/urw-base35/StandardSymbolsPS.t1
+0
+URW Bookman Demi
+/usr/share/fonts/urw-base35/URWBookman-Demi.otf
+0
+URW Bookman Demi
+/usr/share/fonts/urw-base35/URWBookman-Demi.t1
+0
+URW Bookman Demi Italic
+/usr/share/fonts/urw-base35/URWBookman-DemiItalic.otf
+0
+URW Bookman Demi Italic
+/usr/share/fonts/urw-base35/URWBookman-DemiItalic.t1
+0
+URW Bookman Light
+/usr/share/fonts/urw-base35/URWBookman-Light.otf
+0
+URW Bookman Light
+/usr/share/fonts/urw-base35/URWBookman-Light.t1
+0
+URW Bookman Light Italic
+/usr/share/fonts/urw-base35/URWBookman-LightItalic.otf
+0
+URW Bookman Light Italic
+/usr/share/fonts/urw-base35/URWBookman-LightItalic.t1
+0
+URW Gothic Book
+/usr/share/fonts/urw-base35/URWGothic-Book.otf
+0
+URW Gothic Book
+/usr/share/fonts/urw-base35/URWGothic-Book.t1
+0
+URW Gothic Book Oblique
+/usr/share/fonts/urw-base35/URWGothic-BookOblique.otf
+0
+URW Gothic Book Oblique
+/usr/share/fonts/urw-base35/URWGothic-BookOblique.t1
+0
+URW Gothic Demi
+/usr/share/fonts/urw-base35/URWGothic-Demi.otf
+0
+URW Gothic Demi
+/usr/share/fonts/urw-base35/URWGothic-Demi.t1
+0
+URW Gothic Demi Oblique
+/usr/share/fonts/urw-base35/URWGothic-DemiOblique.otf
+0
+URW Gothic Demi Oblique
+/usr/share/fonts/urw-base35/URWGothic-DemiOblique.t1
+0
+Z003 Medium Italic
+/usr/share/fonts/urw-base35/Z003-MediumItalic.otf
+0
+Z003 Medium Italic
+/usr/share/fonts/urw-base35/Z003-MediumItalic.t1
+0
+Vazirmatn
+/usr/share/fonts/vazirmatn-vf-fonts/Vazirmatn[wght].ttf
+0
