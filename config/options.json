@@ -49,17 +49,17 @@
   },
   { "info": "If true, automatically sets notes on places that have stairs that go up or down", "default": "Default: True", "name": "AUTO_NOTES", "value": "true"
   },
-  { "info": "Always: Always start deathcam.  Ask: Query upon death.  Never: Never show deathcam.", "default": "Default: ask - Values: always, ask, never", "name": "DEATHCAM", "value": "ask"
+  { "info": "Always: Always start deathcam.  Ask: Query upon death.  Never: Never show deathcam.", "default": "Default: ask - Values: always, ask, never", "name": "DEATHCAM", "value": "never"
   },
   { "info": "If true, music and sound are enabled.", "default": "Default: True", "name": "SOUND_ENABLED", "value": "true"
   },
-  { "info": "Choose the soundpack you want to use.", "default": "Default: basic - Values: basic", "name": "SOUNDPACKS", "value": "basic"
+  { "info": "Choose the soundpack you want to use.", "default": "Default: basic - Values: basic, CC-Sounds", "name": "SOUNDPACKS", "value": "CC-Sounds"
   },
   { "info": "Adjust the volume of the music being played in the background.", "default": "Default: 100 - Min: 0, Max: 200", "name": "MUSIC_VOLUME", "value": "100"
   },
-  { "info": "Adjust the volume of sound effects being played by the game.", "default": "Default: 100 - Min: 0, Max: 200", "name": "SOUND_EFFECT_VOLUME", "value": "100"
+  { "info": "Adjust the volume of sound effects being played by the game.", "default": "Default: 100 - Min: 0, Max: 200", "name": "SOUND_EFFECT_VOLUME", "value": "40"
   },
-  { "info": "Switch Language.", "default": "Default:  - Values: en, de, es_AR, es_ES, fr, hu, ja, ko, pl, ru, zh_CN, zh_TW", "name": "USE_LANG", "value": ""
+  { "info": "Switch Language.", "default": "Default:  - Values: en, fr", "name": "USE_LANG", "value": ""
   },
   { "info": "Switch between Celsius, Fahrenheit and Kelvin.", "default": "Default: fahrenheit - Values: fahrenheit, celsius, kelvin", "name": "USE_CELSIUS", "value": "fahrenheit"
   },
@@ -135,13 +135,13 @@
   },
   { "info": "If true, forces the game to redraw at least once per turn.", "default": "Default: True", "name": "FORCE_REDRAW", "value": "true"
   },
-  { "info": "Set the size of the terminal along the X axis.  Requires restart.", "default": "Default: 80 - Min: 80, Max: 960", "name": "TERMINAL_X", "value": "128"
+  { "info": "Set the size of the terminal along the X axis.  Requires restart.", "default": "Default: 80 - Min: 80, Max: 960", "name": "TERMINAL_X", "value": "145"
   },
-  { "info": "Set the size of the terminal along the Y axis.  Requires restart.", "default": "Default: 24 - Min: 24, Max: 270", "name": "TERMINAL_Y", "value": "48"
+  { "info": "Set the size of the terminal along the Y axis.  Requires restart.", "default": "Default: 24 - Min: 24, Max: 270", "name": "TERMINAL_Y", "value": "60"
   },
   { "info": "If true, replaces some TTF rendered text with tiles.", "default": "Default: True", "name": "USE_TILES", "value": "true"
   },
-  { "info": "Choose the tileset you want to use.", "default": "Default: MSX++DEAD_PEOPLE - Values: blockhead, ChestHole16, ChestHole32, ChestHole_iso, ChestHole, deon, HitButton_iso, hoder, MSX++DEAD_PEOPLE, MShock24Modded, MShock32Modded, MshockXottoplus, retroascii, retrodays, Boardgame-Style@, tsu", "name": "TILES", "value": "MSX++DEAD_PEOPLE"
+  { "info": "Choose the tileset you want to use.", "default": "Default: MSX++DEAD_PEOPLE - Values: ChestHole32, HitButton_iso, MSX++DEAD_PEOPLE, MShock32Modded, MshockXottoplus, retroascii, retrodays", "name": "TILES", "value": "MSX++DEAD_PEOPLE"
   },
   { "info": "If true, shows the pixel-detail minimap in game after the save is loaded.  Use the 'Toggle Pixel Minimap' action key to change its visibility during gameplay.", "default": "Default: True", "name": "PIXEL_MINIMAP", "value": "true"
   },

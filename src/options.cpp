@@ -1208,21 +1208,8 @@ void options_manager::add_options_interface()
     add( "USE_LANG", "interface", translate_marker( "Language" ),
     translate_marker( "Switch Language." ), {
         { "", translate_marker( "System language" ) },
-        // Note: language names are in their own language and are *not* translated at all.
-        // Note: Somewhere in Github PR was better link to msdn.microsoft.com with language names.
-        // http://en.wikipedia.org/wiki/List_of_language_names
         { "en", no_translation( R"(English)" ) },
-        { "de", no_translation( R"(Deutsch)" ) },
-        { "es_AR", no_translation( R"(Español (Argentina))" ) },
-        { "es_ES", no_translation( R"(Español (España))" ) },
         { "fr", no_translation( R"(Français)" ) },
-        { "hu", no_translation( R"(Magyar)" ) },
-        { "ja", no_translation( R"(日本語)" ) },
-        { "ko", no_translation( R"(한국어)" ) },
-        { "pl", no_translation( R"(Polski)" ) },
-        { "ru", no_translation( R"(Русский)" ) },
-        { "zh_CN", no_translation( R"(中文 (天朝))" ) },
-        { "zh_TW", no_translation( R"(中文 (台灣))" ) },
     }, "" );
 
     mOptionsSort["interface"]++;
@@ -2168,16 +2155,18 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
     const int iWorldOffset = ( world_options_only ? 2 : 0 );
 
     const int iTooltipHeight = 4;
-    const int iContentHeight = FULL_SCREEN_HEIGHT - 3 - iTooltipHeight - iWorldOffset;
+    // use full screen height for options screen
+    const int iContentHeight = TERMY - 3 - iTooltipHeight ;
 
-    const int iOffsetX = TERMX > FULL_SCREEN_WIDTH ? ( TERMX - FULL_SCREEN_WIDTH ) / 2 : 0;
-    const int iOffsetY = ( TERMY > FULL_SCREEN_HEIGHT ? ( TERMY - FULL_SCREEN_HEIGHT ) / 2 : 0 ) +
-                         iWorldOffset;
+    // const int iOffsetX = TERMX > FULL_SCREEN_WIDTH ? ( TERMX - FULL_SCREEN_WIDTH ) / 2 : 0;
+    // const int iOffsetY = ( TERMY > FULL_SCREEN_HEIGHT ? ( TERMY - FULL_SCREEN_HEIGHT ) / 2 : 0 ) +
+    //                      iWorldOffset;
 
     std::map<int, bool> mapLines;
     mapLines[4] = true;
     mapLines[60] = true;
 
+    /*
     catacurses::window w_options_border = catacurses::newwin( FULL_SCREEN_HEIGHT, FULL_SCREEN_WIDTH,
                                           iOffsetY - iWorldOffset, iOffsetX );
     catacurses::window w_options_tooltip = catacurses::newwin( iTooltipHeight, FULL_SCREEN_WIDTH - 2,
@@ -2186,13 +2175,19 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
                                           1 + iTooltipHeight + iOffsetY, 1 + iOffsetX );
     catacurses::window w_options = catacurses::newwin( iContentHeight, FULL_SCREEN_WIDTH - 2,
                                    iTooltipHeight + 2 + iOffsetY, 1 + iOffsetX );
+     */
+
+
+    catacurses::window w_options_border = catacurses::newwin( TERMY, TERMX, 0, 0 );
+    catacurses::window w_options_tooltip = catacurses::newwin( iTooltipHeight, TERMX - 5, 1, 4 );
+    catacurses::window w_options_header = catacurses::newwin( 1, TERMX-2, 2 + iTooltipHeight , 1  );
+    catacurses::window w_options = catacurses::newwin( TERMY - iTooltipHeight -4 , TERMX - 2, iTooltipHeight + 3 , 1 );
 
     if( world_options_only ) {
         worldfactory::draw_worldgen_tabs( w_options_border, 1 );
     }
 
-    draw_borders_external( w_options_border, iTooltipHeight + 1 + iWorldOffset, mapLines,
-                           world_options_only );
+    draw_borders_external( w_options_border, iTooltipHeight + 2 + iWorldOffset, mapLines, world_options_only );
     draw_borders_internal( w_options_header, mapLines );
 
     int iCurrentPage = world_options_only ? iWorldOptPage : 0;
@@ -2240,6 +2235,7 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
         const size_t value_width = getmaxx( w_options ) - value_col;
         //Draw options
         size_t iBlankOffset = 0; // Offset when blank line is printed.
+
         for( int i = iStartPos;
              i < iStartPos + ( ( iContentHeight > static_cast<int>( mPageItems[iCurrentPage].size() ) ) ?
                                static_cast<int>( mPageItems[iCurrentPage].size() ) : iContentHeight ); i++ ) {
@@ -2253,16 +2249,16 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
 
             sTemp.str( "" );
             sTemp << i + 1 - iBlankOffset;
-            mvwprintz( w_options, line_pos, 1, c_white, sTemp.str().c_str() );
+            mvwprintz( w_options, line_pos+1, 1, c_white, sTemp.str().c_str() );
 
             if( iCurrentLine == i ) {
-                mvwprintz( w_options, line_pos, name_col, c_yellow, ">> " );
+                mvwprintz( w_options, line_pos+1, name_col, c_yellow, ">> " );
             } else {
-                mvwprintz( w_options, line_pos, name_col, c_yellow, "   " );
+                mvwprintz( w_options, line_pos+1, name_col, c_yellow, "   " );
             }
 
             const std::string name = utf8_truncate( current_opt.getMenuText(), name_width );
-            mvwprintz( w_options, line_pos, name_col + 3, !hasPrerequisite ||
+            mvwprintz( w_options, line_pos+1, name_col + 3, !hasPrerequisite ||
                        hasPrerequisiteFulfilled ? c_white : c_light_gray, name );
 
             if( hasPrerequisite && !hasPrerequisiteFulfilled ) {
@@ -2273,7 +2269,7 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
             }
 
             const std::string value = utf8_truncate( current_opt.getValueName(), value_width );
-            mvwprintz( w_options, line_pos, value_col, ( iCurrentLine == i ) ? hilite( cLineColor ) :
+            mvwprintz( w_options, line_pos+1, value_col, ( iCurrentLine == i ) ? hilite( cLineColor ) :
                        cLineColor, value );
         }
 
@@ -2283,7 +2279,8 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
 
         //Draw Tabs
         if( !world_options_only ) {
-            mvwprintz( w_options_header, 0, 7, c_white, "" );
+            // draw header centered (termx/4 lazy calculation)
+            mvwprintz( w_options_header, 0, TERMX/4, c_white, "" );
             for( int i = 0; i < static_cast<int>( vPages.size() ); i++ ) {
                 if( mPageItems[i].empty() ) {
                     continue;
@@ -2339,7 +2336,10 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
         } else
 #endif
         {
-            fold_and_print( w_options_tooltip, 0, 0, 78, c_white, "%s #%s",
+            // clean tooltip area each time before printing something new
+            werase(w_options_tooltip);
+            // use available screen width (minus window borders) to print tooltips
+            fold_and_print( w_options_tooltip, 0, 0, TERMX -7, c_white, "%s #%s",
                             OPTIONS[mPageItems[iCurrentPage][iCurrentLine]].getTooltip().c_str(),
                             OPTIONS[mPageItems[iCurrentPage][iCurrentLine]].getDefaultText().c_str() );
         }
@@ -2542,6 +2542,9 @@ std::string options_manager::show( bool ingame, const bool world_options_only )
 
     refresh_tiles( used_tiles_changed, pixel_minimap_changed, ingame );
 
+    // clean screen when exiting options
+    werase( w_options_border );
+    wrefresh( w_options_border );
     return "";
 }
 

@@ -410,7 +410,7 @@ bool main_menu::opening_screen()
 
     // Make [Load Game] the default cursor position if there's game save available
     if( !world_generator->all_worldnames().empty() ) {
-        sel1 = 2;
+        sel1 = 1;
     }
 
     while( !start ) {

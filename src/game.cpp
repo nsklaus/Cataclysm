@@ -10623,21 +10623,21 @@ bool game::walk_move( const tripoint &dest_loc )
                         !( u.has_trait( trait_M_IMMUNE ) && fungus );
     if( slowed ) {
         // Unless u.pos() has a higher movecost than dest_loc, state that dest_loc is the cause
-        if( mcost_to >= mcost_from ) {
+        /*
+	if( mcost_to >= mcost_from ) {
             if( auto displayed_part = vp_there.part_displayed() ) {
-                add_msg( m_warning, _( "Moving onto this %s is slow!" ),
-                         displayed_part->part().name() );
+                // add_msg( m_warning, _( "Moving onto this %s is slow!" ), displayed_part->part().name() );
             } else {
-                add_msg( m_warning, _( "Moving onto this %s is slow!" ), m.name( dest_loc ).c_str() );
+                // add_msg( m_warning, _( "Moving onto this %s is slow!" ), m.name( dest_loc ).c_str() );
             }
         } else {
             if( auto displayed_part = vp_here.part_displayed() ) {
-                add_msg( m_warning, _( "Moving off of this %s is slow!" ),
-                         displayed_part->part().name() );
+                // add_msg( m_warning, _( "Moving off of this %s is slow!" ), displayed_part->part().name() );
             } else {
-                add_msg( m_warning, _( "Moving off of this %s is slow!" ), m.name( u.pos() ).c_str() );
+                // add_msg( m_warning, _( "Moving off of this %s is slow!" ), m.name( u.pos() ).c_str() );
             }
         }
+	*/
         sfx::play_variant_sound( "plmove", "clear_obstacle", sfx::get_heard_volume( u.pos() ) );
     }
 

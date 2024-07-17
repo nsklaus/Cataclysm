@@ -42,6 +42,10 @@ chkjson*
 debug.log
 logg.txt
 
+# kdevelop files
+.kdev4/
+Cataclysm.kdev4
+
 # Visual Studio files
 *.code-workspace
 *.ilk
