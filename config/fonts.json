@@ -1,15 +1,5 @@
 {
-  "fontblending": true,
-  "fontwidth": 11,
-  "fontheight": 20,
-  "fontsize": 19,
-  "typeface": "Source Code Pro Bold",
-  "map_fontwidth": 11,
-  "map_fontheight": 20,
-  "map_fontsize": 19,
-  "map_typeface": "Source Code Pro Bold",
-  "overmap_fontwidth": 11,
-  "overmap_fontheight": 20,
-  "overmap_fontsize": 19,
-  "overmap_typeface": "Source Code Pro Bold"
+  "typeface": [ "Terminus", "unifont" ],
+  "map_typeface": [ "Terminus", "unifont" ],
+  "overmap_typeface": [ "Terminus", "unifont" ]
 }

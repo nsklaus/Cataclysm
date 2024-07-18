@@ -1,12 +1,3 @@
-Square Smallcaps
-data/font//Square-Smallcaps.ttf
-0
-FixedsysTTF Monospaced
-data/font//fixedsys.ttf
-0
-Square Modern
-data/font//square.ttf
-0
 Terminus
 data/font//terminus.fon
 0
