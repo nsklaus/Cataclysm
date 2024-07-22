@@ -1,5 +1,5 @@
 {
-  "typeface": [ "Terminus", "unifont" ],
-  "map_typeface": [ "Terminus", "unifont" ],
-  "overmap_typeface": [ "Terminus", "unifont" ]
+  "typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ],
+  "map_typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ],
+  "overmap_typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ]
 }

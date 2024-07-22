@@ -40,6 +40,7 @@ cataclysm-vcpkg
 cataclysmdda-*
 chkjson*
 debug.log
+crash.log
 logg.txt
 
 # kdevelop files

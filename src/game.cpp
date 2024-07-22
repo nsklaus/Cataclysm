@@ -2349,6 +2349,7 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "player_data" );
     ctxt.register_action( "map" );
     ctxt.register_action( "sky" );
+	ctxt.register_action( "items_browser" );
     ctxt.register_action( "missions" );
     ctxt.register_action( "factions" );
     ctxt.register_action( "scores" );
@@ -8920,6 +8921,7 @@ bool game::walk_move( const tripoint &dest_loc )
     // Max out recoil
     u.recoil = MAX_RECOIL;
 
+    /*
     // Print a message if movement is slow
     const int mcost_to = m.move_cost( dest_loc ); //calculate this _after_ calling grabbed_move
     const bool fungus = m.has_flag_ter_or_furn( "FUNGUS", u.pos() ) ||
@@ -8932,24 +8934,23 @@ bool game::walk_move( const tripoint &dest_loc )
         // Unless u.pos() has a higher movecost than dest_loc, state that dest_loc is the cause
         if( mcost_to >= mcost_from ) {
             if( auto displayed_part = vp_there.part_displayed() ) {
-                add_msg( m_warning, _( "Moving onto this %s is slow!" ),
-                         displayed_part->part().name() );
+                // add_msg( m_warning, _( "Moving onto this %s is slow!" ), displayed_part->part().name() );
                 sfx::do_obstacle( displayed_part->part().info().get_id().str() );
             } else {
-                add_msg( m_warning, _( "Moving onto this %s is slow!" ), m.name( dest_loc ) );
+                // add_msg( m_warning, _( "Moving onto this %s is slow!" ), m.name( dest_loc ) );
                 sfx::do_obstacle( m.ter( dest_loc ).id().str() );
             }
         } else {
             if( auto displayed_part = vp_here.part_displayed() ) {
-                add_msg( m_warning, _( "Moving off of this %s is slow!" ),
-                         displayed_part->part().name() );
+                // add_msg( m_warning, _( "Moving off of this %s is slow!" ), displayed_part->part().name() );
                 sfx::do_obstacle( displayed_part->part().info().get_id().str() );
             } else {
-                add_msg( m_warning, _( "Moving off of this %s is slow!" ), m.name( u.pos() ) );
+                // add_msg( m_warning, _( "Moving off of this %s is slow!" ), m.name( u.pos() ) );
                 sfx::do_obstacle( m.ter( u.pos() ).id().str() );
             }
         }
     }
+    */
     if( !u.is_mounted() && u.has_trait( trait_id( "LEG_TENT_BRACE" ) ) &&
         ( !u.footwear_factor() ||
           ( u.footwear_factor() == .5 && one_in( 2 ) ) ) ) {

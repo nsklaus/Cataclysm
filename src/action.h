@@ -237,6 +237,8 @@ enum action_id : int {
     ACTION_MAP,
     /** Show sky state for trying to predict weather */
     ACTION_SKY,
+	/** Open the items browser UI */
+    ACTION_ITEMS_BROWSER,
     /** Display missions screen */
     ACTION_MISSIONS,
     /** Display scores screen */

@@ -878,6 +878,7 @@ class game
         void disp_NPCs();        // Currently for debug use.  Lists global NPCs.
 
         void list_missions();       // Listed current, completed and failed missions (mission_ui.cpp)
+        void items_browser();		// open items browser
     private:
         void quickload();        // Loads the previously saved game if it exists
 

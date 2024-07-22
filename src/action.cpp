@@ -306,6 +306,8 @@ std::string action_ident( action_id act )
             return "map";
         case ACTION_SKY:
             return "sky";
+        case ACTION_ITEMS_BROWSER:
+            return "items_browser";
         case ACTION_MISSIONS:
             return "missions";
         case ACTION_FACTIONS:
@@ -420,6 +422,7 @@ bool can_action_change_worldstate( const action_id act )
         case ACTION_PL_INFO:
         case ACTION_MAP:
         case ACTION_SKY:
+		case ACTION_ITEMS_BROWSER:
         case ACTION_MISSIONS:
         case ACTION_SCORES:
         case ACTION_FACTIONS:
@@ -911,6 +914,7 @@ action_id handle_action_menu()
             REGISTER_ACTION( ACTION_DISASSEMBLE );
         } else if( category == _( "Info" ) ) {
             REGISTER_ACTION( ACTION_PL_INFO );
+			REGISTER_ACTION( ACTION_ITEMS_BROWSER );
             REGISTER_ACTION( ACTION_MISSIONS );
             REGISTER_ACTION( ACTION_SCORES );
             REGISTER_ACTION( ACTION_FACTIONS );

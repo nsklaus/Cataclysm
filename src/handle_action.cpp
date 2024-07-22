@@ -2239,6 +2239,10 @@ bool game::handle_action()
                 list_missions();
                 break;
 
+			case ACTION_ITEMS_BROWSER:
+				items_browser();
+				break;
+
             case ACTION_SCORES:
                 show_scores_ui( stats(), get_kill_tracker() );
                 break;
