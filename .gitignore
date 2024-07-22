@@ -41,6 +41,8 @@ cataclysmdda-*
 chkjson*
 debug.log
 crash.log
+errors.log
+items_browser.log
 logg.txt
 
 # kdevelop files
