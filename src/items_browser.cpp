@@ -16,6 +16,7 @@
 #include <fstream>
 #include <dirent.h>
 #include <sstream>
+#include <curses.h>
 
 // Function to strip color tags and `|| ` tags
 std::string strip_tags(const std::string &str) {
@@ -53,8 +54,20 @@ std::string volume_to_string(const units::volume &volume) {
 	return string_format("%d ml", to_milliliter(volume));
 }
 
-std::vector<std::pair<itype_id, std::string>> load_item_ids_from_directory(const std::string &directory_path, std::ofstream &log_file) {
-	std::vector<std::pair<itype_id, std::string>> item_ids;
+std::string extract_disassembly_info(const std::string &info) {
+	std::istringstream stream(info);
+	std::string line;
+	std::string result;
+	while (std::getline(stream, line)) {
+		if (line.find("- ") != std::string::npos) {
+			result += line + "\n";
+		}
+	}
+	return result;
+}
+
+std::vector<itype_id> load_item_ids_from_directory(const std::string &directory_path, std::ofstream &log_file) {
+	std::vector<itype_id> item_ids;
 	DIR *dir = opendir(directory_path.c_str());
 	if (dir == nullptr) {
 		log_file << "Failed to open directory: " << directory_path << std::endl;
@@ -76,7 +89,7 @@ std::vector<std::pair<itype_id, std::string>> load_item_ids_from_directory(const
 					JsonArray items = jsin.get_array();
 					for (JsonObject item : items) {
 						if (item.has_string("id")) {
-							item_ids.emplace_back(item.get_string("id"), full_path);
+							item_ids.push_back(item.get_string("id"));
 						}
 					}
 				} else if (jsin.test_object()) {
@@ -85,7 +98,7 @@ std::vector<std::pair<itype_id, std::string>> load_item_ids_from_directory(const
 						JsonArray items = json.get_array("items");
 						for (JsonObject item : items) {
 							if (item.has_string("id")) {
-								item_ids.emplace_back(item.get_string("id"), full_path);
+								item_ids.push_back(item.get_string("id"));
 							}
 						}
 					}
@@ -115,23 +128,27 @@ void game::items_browser() {
 
 	std::vector<item> all_items;
 
-	log_file << "Loading items from data/json/items/tool/..." << std::endl;
-	std::vector<std::pair<itype_id, std::string>> item_ids = load_item_ids_from_directory("data/json/items/tool", log_file);
+	log_file << "Loading items..." << std::endl;
 
-	for (const auto &id_file_pair : item_ids) {
-		const itype_id &id = id_file_pair.first;
-		const std::string &file_path = id_file_pair.second;
+	std::vector<itype_id> item_ids;
+	std::vector<std::string> directories = {"data/json/items/tool", "data/json/items/resources"};
+	for (const auto &directory : directories) {
+		std::vector<itype_id> ids_from_directory = load_item_ids_from_directory(directory, log_file);
+		item_ids.insert(item_ids.end(), ids_from_directory.begin(), ids_from_directory.end());
+	}
+
+	for (const auto &id : item_ids) {
 		const itype *e = item_controller->find_template(id);
 		if (!e) {
-			log_file << "Missing item definition: " << id << ", in file: " << file_path << std::endl;
+			log_file << "Missing item definition: " << id << std::endl;
 			continue;
 		}
-		if (e->phase == phase_id::PNULL || id == "NULL") {
-			log_file << "Ignoring item with NULL definition: " << id << ", in file: " << file_path << std::endl;
+		if (e->phase == phase_id::PNULL) {
 			continue;
 		}
-		if (e->gun || e->magazine || e->ammo || e->tool || e->armor || e->book || e->bionic || e->container) {
+		if (e->gun || e->magazine || e->ammo || e->tool || e->armor || e->book || e->bionic || e->container || e->artifact || e->comestible || e->brewable) {
 			all_items.emplace_back(e->get_id());
+			// log_file << "Added item: " << e->get_id().c_str() << std::endl;
 		}
 	}
 
@@ -167,6 +184,43 @@ void game::items_browser() {
 			mvwprintz(w, point(40, 3), c_light_gray, "Weight: %s", weight_to_string(selected_item.weight()).c_str());
 			mvwprintz(w, point(40, 4), c_light_gray, "Volume: %s", volume_to_string(selected_item.volume()).c_str());
 			mvwprintz(w, point(40, 5), c_light_gray, "Material: %s", strip_tags(selected_item.get_base_material().name().c_str()).c_str());
+
+
+
+			const auto &uncraft_components = selected_item.get_uncraft_components();
+			if (!uncraft_components.empty()) {
+				mvwprintz(w, point(40, 7), c_white, "Disassembling info:");
+				int line = 8;  // Start from the next line
+				for (const auto &component : uncraft_components) {
+					const itype *comp_itype = item::find_type(component.type);
+					if (comp_itype) {
+						mvwprintz(w, point(40, line), c_light_gray, "- %s x%d", strip_tags(comp_itype->nname(1)).c_str(), component.count);
+					}
+					line++;
+				}
+			}
+			/*
+			std::string description = selected_item.info(true);
+			std::string disassembly_info = extract_disassembly_info(description);
+			if (!disassembly_info.empty()) {
+				line++;
+				mvwprintz(w, point(40, 7), c_light_gray, "Disassembling info:");
+				line++;
+				line++;
+				std::istringstream stream(disassembly_info);
+				std::string word;
+				int x = 40;
+
+				while (stream >> word) {
+					if (x + word.length() > static_cast<std::string::size_type>(TERMX - 1)) {
+						x = 40;
+						line++;
+					}
+					mvwprintz(w, point(x, line), c_light_gray, "%s ", word.c_str());
+					x += word.length() + 1;
+				}
+				line++;
+			}*/
 		}
 		wrefresh(w);
 		const std::string action = ctxt.handle_input();
