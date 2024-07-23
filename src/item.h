@@ -326,7 +326,10 @@ class item : public visitable<item>
          * the extent of damage and burning (was created to sort by name without prefix
          * in additional inventory)
          */
-        std::string tname( unsigned int quantity = 1, bool with_prefix = true,
+		// nskl
+		// leaking <color> tag and health bars || into the name string at times
+		// so i put bool with_prefix to false for now.
+        std::string tname( unsigned int quantity = 1, bool with_prefix = false,
                            unsigned int truncate = 0 ) const;
         std::string display_money( unsigned int quantity, unsigned int total,
                                    const cata::optional<unsigned int> &selected = cata::nullopt ) const;
