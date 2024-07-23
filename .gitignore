@@ -39,6 +39,7 @@ cataclysm-tiles
 cataclysm-vcpkg
 cataclysmdda-*
 chkjson*
+debug.log.prev
 debug.log
 crash.log
 errors.log
