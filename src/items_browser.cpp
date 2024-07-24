@@ -3,35 +3,24 @@
 #include "input.h"
 #include "game.h"
 #include "item.h"
-// #include "catacharset.h"
-#include "units.h"
-#include "string_formatter.h"
 #include "material.h"
 #include "string_input_popup.h"
 #include "json.h"
 #include <vector>
 #include <string>
-// #include <map>
-// #include <iostream>
 #include <fstream>
 #include <dirent.h>
-// #include <sstream>
 #include <curses.h>
 #include <set>
 
-std::string weight_to_string(const units::mass &weight) {
-	return string_format("%d g", to_gram(weight));
-}
 
-std::string volume_to_string(const units::volume &volume) {
-	return string_format("%d ml", to_milliliter(volume));
-}
 
-std::set<std::string> unique_names;
-std::vector<itype_id> item_ids;
 
 std::vector<itype_id> load_item_ids_from_directory(const std::string &directory_path ){
+
+	std::set<std::string> unique_names;
 	std::vector<itype_id> item_ids;
+
 	DIR *dir = opendir(directory_path.c_str());
 	if (dir == nullptr) {
 		return item_ids;
@@ -48,53 +37,29 @@ std::vector<itype_id> load_item_ids_from_directory(const std::string &directory_
 				fprintf(stderr,"error opening file: %s\n", full_path.c_str());
 				continue;
 			}
-//			std::set<itype_id> unique_ids;
 
 			JsonIn jsin(file);
-//			try {
-//				if (jsin.test_array()) {
-//					JsonArray items = jsin.get_array();
-//					for (JsonObject item : items) {
-//						if (item.has_string("id") )  {
-//							std::string id = item.get_string("name");
-//							if (unique_ids.insert(id).second) {
-//							item_ids.push_back(item.get_string("id"));
-//							fprintf(stderr,"json array item ID: %s\n", item.get_string("id").c_str());
-//							}
-//						}
-//					}
-//				}
 
-try {
-    if (jsin.test_array()) {
-        JsonArray items = jsin.get_array();
-        for (JsonObject item : items) {
-            if (item.has_string("id") && item.has_object("name")) {
-                JsonObject name_obj = item.get_object("name");
-                if (name_obj.has_string("str")) {
-                    std::string name = name_obj.get_string("str");
-                    if (unique_names.insert(name).second) {
-                        item_ids.push_back(item.get_string("id"));
-                        //fprintf(stderr, "json array item ID: %s\n", item.get_string("id").c_str());
-                    }
-                }
-            }
-        }
-    }
-//}
-
-			//	else if (jsin.test_object()) {
-			//		JsonObject json = jsin.get_object();
-			//		if (json.has_array("items")) {
-			//			JsonArray items = json.get_array("items");
-			//			for (JsonObject item : items) {
-			//				if (item.has_string("id")) {
-			//					item_ids.push_back(item.get_string("id"));
-			//					fprintf(stderr,"json object item ID: %s\n", item.get_string("id").c_str());
-			//				}
-			//			}
-			//		}
-			//	}
+			try {
+			    if (jsin.test_array()) {
+			        JsonArray items = jsin.get_array();
+			        for (JsonObject item : items) {
+			            if (item.has_string("id") && item.has_object("name")) {
+			                JsonObject name_obj = item.get_object("name");
+			                if (name_obj.has_string("str")) {
+			                    std::string name = name_obj.get_string("str");
+								// don't add duplicates
+			                    if (unique_names.insert(name).second) {
+			                        item_ids.push_back(item.get_string("id"));
+			                        //fprintf(stderr, "json array item ID: %s\n", item.get_string("id").c_str());
+			                    } else {
+									// print duplicates on stderr
+									// fprintf(stderr, "json array item ID: %s\n", item.get_string("id").c_str());
+								}
+			                }
+			            }
+			        }
+			    }
 			} catch (const JsonError &err) {
 				fprintf(stderr, "Error parsing JSON file: %s", err.what());
 			}
@@ -121,7 +86,7 @@ void game::items_browser() {
 
 	std::vector<std::string> directories = {"data/json/items/tool", "data/json/items/resources", "data/json/items/melee", "data/json/items/generic"};
 	//std::vector<std::string> directories = {"data/json/items/resources"};
-	//std::vector<std::string> directories = {"data/json/recipes/weapon"};
+	//std::vector<std::string> directories = {"data/json/items"};
 
 	for (const auto &directory : directories) {
 		std::vector<itype_id> ids_from_directory = load_item_ids_from_directory(directory); //, log_file);
@@ -131,15 +96,12 @@ void game::items_browser() {
 	int entry_count_all = 0;
 	int entry_count_filtered = 0;
 
-	//std::set<itype_id> unique_ids;
 	for (const auto &id : item_ids) {
-		//if (unique_ids.insert(id).second) {
-			const itype *e = item_controller->find_template(id);
-			if (e != nullptr) {
-				entry_count_all++;
-				all_items.emplace_back(e->get_id());
-			}
-		//}
+		const itype *e = item_controller->find_template(id);
+		if (e != nullptr) {
+			entry_count_all++;
+			all_items.emplace_back(e->get_id());
+		}
 	}
 
 	std::vector<item> filtered_items = all_items;
@@ -170,22 +132,27 @@ void game::items_browser() {
 		for (size_t i = top_line; i < filtered_items.size() && i < top_line + num_lines; ++i) {
 			nc_color color = (i == selected_index) ? h_white : c_white;
 			mvwprintz(w, point(1, 3 + i - top_line), color, filtered_items[i].tname().c_str());
-			//fprintf(stderr," filtered_items[i].tname() = %s\n", filtered_items[i].tname().c_str());
 		}
 
+		int line = 2;  // Start from the next line
 		if (!filtered_items.empty()) {
 			const item &selected_item = filtered_items[selected_index];
-			mvwprintz(w, point(50, 3), c_light_blue, "Details:");
-			mvwprintz(w, point(50, 4), c_light_gray, "Name: %s", selected_item.tname().c_str());
-			mvwprintz(w, point(50, 5), c_light_gray, "Weight: %s", weight_to_string(selected_item.weight()).c_str());
-			mvwprintz(w, point(50, 6), c_light_gray, "Volume: %s", volume_to_string(selected_item.volume()).c_str());
+			mvwprintz(w, point(50, ++line), c_light_blue, "Details:");
+			mvwprintz(w, point(50, ++line), c_light_gray, "Name: %s", selected_item.tname().c_str());
+			mvwprintz(w, point(50, ++line), c_light_gray, "Weight: %s", selected_item.get_weight_string().c_str());
+			mvwprintz(w, point(50, ++line), c_light_gray, "Volume: %s", selected_item.get_volume_string().c_str());
+			// if (selected_item.components.empty()) {
+			// 	mvwprintz(w, point(50, ++line), c_light_gray, "Components: No components");
+			// } else {
+			// 	mvwprintz(w, point(50, ++line), c_light_gray, "Components: %s", selected_item.components_to_string().c_str());
+			// }
 
 
-
+			line+=2;
 			const auto &uncraft_components = selected_item.get_uncraft_components();
 			if (!uncraft_components.empty()) {
-				mvwprintz(w, point(50, 8), c_white, "Disassembling info:");
-				int line = 9;  // Start from the next line
+				mvwprintz(w, point(50, line++), c_white, "Disassembling info:");
+
 				for (const auto &component : uncraft_components) {
 					const itype *comp_itype = item::find_type(component.type);
 					if (comp_itype) {
@@ -194,6 +161,7 @@ void game::items_browser() {
 					line++;
 				}
 			}
+
 		}
 		wrefresh(w);
 		const std::string action = ctxt.handle_input();

@@ -506,6 +506,12 @@ class item : public visitable<item>
          */
         bool merge_charges( const item &rhs );
 
+        // get weight value as string
+        std::string get_weight_string() const;
+
+        // get volume value as string
+        std::string get_volume_string() const;
+
         units::mass weight( bool include_contents = true, bool integral = false ) const;
 
         /**

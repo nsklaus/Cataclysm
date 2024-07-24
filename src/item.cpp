@@ -4357,6 +4357,18 @@ int item::price( bool practical ) const
     return res;
 }
 
+std::string item::get_weight_string() const {
+    // Convert units::mass to grams
+    int weight_in_grams = this->weight().value();
+    return std::to_string(weight_in_grams) + " g";
+}
+
+std::string item::get_volume_string() const {
+    // Convert units::volume to milliliters
+    int volume_in_ml = this->volume().value();
+    return std::to_string(volume_in_ml) + " ml";
+}
+
 // TODO: MATERIALS add a density field to materials.json
 units::mass item::weight( bool include_contents, bool integral ) const
 {
