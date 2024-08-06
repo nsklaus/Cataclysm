@@ -553,6 +553,13 @@
   },
   {
     "type": "keybinding",
+    "id": "TOGGLE_UNAVAILABLE",
+    "category": "CRAFTING",
+    "name": "Hide/show unavailable",
+    "bindings": [ { "input_method": "keyboard", "key": "u" } ]
+  },
+  {
+    "type": "keybinding",
     "id": "SCROLL_UP",
     "category": "CRAFTING",
     "name": "Scroll item info up",
@@ -583,13 +590,13 @@
     "type": "keybinding",
     "id": "LEVEL_UP",
     "name": "Go Up",
-    "bindings": [ { "input_method": "keyboard", "key": "<" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" }, { "input_method": "keyboard", "key": "<" } ]
   },
   {
     "type": "keybinding",
     "id": "LEVEL_DOWN",
     "name": "Go Down",
-    "bindings": [ { "input_method": "keyboard", "key": ">" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" }, { "input_method": "keyboard", "key": ">" } ]
   },
   {
     "type": "keybinding",
@@ -719,6 +726,20 @@
   },
   {
     "type": "keybinding",
+    "id": "ZOOM_OUT",
+    "category": "OVERMAP",
+    "name": "Zoom Out",
+    "bindings": [ { "input_method": "keyboard", "key": "Z" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "ZOOM_IN",
+    "category": "OVERMAP",
+    "name": "Zoom In",
+    "bindings": [ { "input_method": "keyboard", "key": "z" } ]
+  },
+  {
+    "type": "keybinding",
     "id": "DELETE_NOTE",
     "category": "OVERMAP_NOTES",
     "name": "Delete Note",
@@ -737,6 +758,20 @@
     "category": "OVERMAP_NOTES",
     "name": "Mark as Dangerous",
     "bindings": [ { "input_method": "keyboard", "key": "M" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "CHANGE_SORT",
+    "category": "OVERMAP_NOTES",
+    "name": "Change sorting mode",
+    "bindings": [ { "input_method": "keyboard", "key": "S" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "CLEAR_FILTER",
+    "category": "OVERMAP_NOTES",
+    "name": "Clear filter",
+    "bindings": [ { "input_method": "keyboard", "key": "R" } ]
   },
   {
     "type": "keybinding",
@@ -800,6 +835,13 @@
     "category": "OVERMAP",
     "name": "Toggle Hordes",
     "bindings": [ { "input_method": "keyboard", "key": "H" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "TOGGLE_OVERMAP_WEATHER",
+    "category": "OVERMAP",
+    "name": "Toggle Visible Weather",
+    "bindings": [ { "input_method": "keyboard", "key": "w" } ]
   },
   {
     "type": "keybinding",
@@ -870,10 +912,10 @@
   {
     "type": "keybinding",
     "id": "FIRE",
+    "category": "TARGET",
     "name": "Fire Weapon",
     "bindings": [
       { "input_method": "keyboard", "key": "f" },
-      { "input_method": "keyboard", "key": "F" },
       { "input_method": "keyboard", "key": "RETURN" },
       { "input_method": "mouse", "key": "MOUSE_RIGHT" }
     ]
@@ -881,6 +923,7 @@
   {
     "type": "keybinding",
     "id": "PREV_TARGET",
+    "category": "TARGET",
     "name": "Prev Target",
     "bindings": [
       { "input_method": "keyboard", "key": "BACKTAB" },
@@ -891,6 +934,7 @@
   {
     "type": "keybinding",
     "id": "NEXT_TARGET",
+    "category": "TARGET",
     "name": "Next Target",
     "bindings": [
       { "input_method": "keyboard", "key": "TAB" },
@@ -901,44 +945,65 @@
   {
     "type": "keybinding",
     "id": "AIM",
+    "category": "TARGET",
     "name": "Aim",
     "bindings": [ { "input_method": "keyboard", "key": "." }, { "input_method": "keyboard", "key": "5" } ]
   },
   {
     "type": "keybinding",
     "id": "AIMED_SHOT",
+    "category": "TARGET",
     "name": "Aimed Shot",
     "bindings": [ { "input_method": "keyboard", "key": "a" } ]
   },
   {
     "type": "keybinding",
     "id": "CAREFUL_SHOT",
+    "category": "TARGET",
     "name": "Careful Shot",
     "bindings": [ { "input_method": "keyboard", "key": "c" } ]
   },
   {
     "type": "keybinding",
     "id": "PRECISE_SHOT",
+    "category": "TARGET",
     "name": "Precise Shot",
     "bindings": [ { "input_method": "keyboard", "key": "p" } ]
   },
   {
     "type": "keybinding",
-    "id": "SWITCH_AIM",
-    "name": "Switch Aiming Mode",
-    "bindings": [ { "input_method": "keyboard", "key": "m" } ]
-  },
-  {
-    "type": "keybinding",
     "id": "SWITCH_AMMO",
+    "category": "TARGET",
     "name": "Switch ammo",
     "bindings": [ { "input_method": "keyboard", "key": "o" } ]
   },
   {
     "type": "keybinding",
     "id": "SWITCH_MODE",
+    "category": "TARGET",
     "name": "Switch Firing Mode",
-    "bindings": [ { "input_method": "keyboard", "key": "s" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "s" }, { "input_method": "keyboard", "key": "F" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "TOGGLE_TURRET_LINES",
+    "category": "TARGET",
+    "name": "Toggle turret lines",
+    "bindings": [ { "input_method": "keyboard", "key": "t" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "TOGGLE_SNAP_TO_TARGET",
+    "category": "TARGET",
+    "name": "Toggle Snap to Target",
+    "bindings": [ { "input_method": "keyboard", "key": "*" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "TOGGLE_MOVE_CURSOR_VIEW",
+    "category": "TARGET",
+    "name": "Toggle moving view / cursor",
+    "bindings": [ { "input_method": "keyboard", "key": "v" } ]
   },
   {
     "type": "keybinding",
@@ -987,12 +1052,6 @@
     "id": "TRAVEL_TO",
     "name": "Travel to destination",
     "bindings": [ { "input_method": "keyboard", "key": "T" } ]
-  },
-  {
-    "type": "keybinding",
-    "id": "TOGGLE_SNAP_TO_TARGET",
-    "name": "Toggle Snap to Target",
-    "bindings": [ { "input_method": "keyboard", "key": "*" } ]
   },
   {
     "type": "keybinding",
@@ -1057,9 +1116,9 @@
   },
   {
     "type": "keybinding",
-    "id": "PICK_RANDOM_NAME",
+    "id": "RANDOMIZE_CHAR_DESCRIPTION",
     "category": "NEW_CHAR_DESCRIPTION",
-    "name": "Pick random character name",
+    "name": "Pick random character description",
     "bindings": [ { "input_method": "keyboard", "key": "*" } ]
   },
   {
@@ -1422,7 +1481,7 @@
     "id": "TOGGLE_SAFE_FUEL",
     "category": "BIONICS",
     "name": "Toggle safe fuel mod",
-    "bindings": [ { "input_method": "keyboard", "key": "s" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "S" } ]
   },
   {
     "type": "keybinding",
@@ -1430,6 +1489,13 @@
     "category": "BIONICS",
     "name": "Toggle auto start mod",
     "bindings": [ { "input_method": "keyboard", "key": "A" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "SORT",
+    "category": "BIONICS",
+    "name": "Sort bionics list",
+    "bindings": [ { "input_method": "keyboard", "key": "s" } ]
   },
   {
     "type": "keybinding",
@@ -1449,8 +1515,7 @@
     "type": "keybinding",
     "name": "Toggle Map Memory",
     "category": "DEFAULTMODE",
-    "id": "toggle_map_memory",
-    "bindings": [ { "input_method": "keyboard", "key": "{" } ]
+    "id": "toggle_map_memory"
   },
   {
     "type": "keybinding",
@@ -1895,7 +1960,7 @@
   },
   {
     "type": "keybinding",
-    "name": "View Scores",
+    "name": "View Achievements, Scores, and Kills",
     "category": "DEFAULTMODE",
     "id": "scores",
     "bindings": [ { "input_method": "keyboard", "key": ")" } ]
@@ -1983,6 +2048,12 @@
   },
   {
     "type": "keybinding",
+    "name": "View Submap Grid",
+    "category": "DEFAULTMODE",
+    "id": "debug_submap_grid"
+  },
+  {
+    "type": "keybinding",
     "name": "Switch Sidebar Style",
     "category": "DEFAULTMODE",
     "id": "toggle_sidebar_style"
@@ -2001,7 +2072,7 @@
   },
   {
     "type": "keybinding",
-    "name": "Toggle Panel Admin",
+    "name": "Sidebar Options",
     "category": "DEFAULTMODE",
     "id": "toggle_panel_adm",
     "bindings": [ { "input_method": "keyboard", "key": "}" } ]
@@ -2447,14 +2518,14 @@
     "id": "PAGE_DOWN",
     "category": "ADVANCED_INVENTORY",
     "name": "Page down",
-    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" }, { "input_method": "keyboard", "key": ">" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" } ]
   },
   {
     "type": "keybinding",
     "id": "PAGE_UP",
     "category": "ADVANCED_INVENTORY",
     "name": "Page up",
-    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" }, { "input_method": "keyboard", "key": "<" } ]
+    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" } ]
   },
   {
     "type": "keybinding",
@@ -2646,6 +2717,20 @@
     "category": "ADVANCED_INVENTORY",
     "name": "Select items @ South-East",
     "bindings": [ { "input_method": "keyboard", "key": "3" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "ITEMS_UP",
+    "category": "ADVANCED_INVENTORY",
+    "name": "Select items from above",
+    "bindings": [ { "input_method": "keyboard", "key": "<" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "ITEMS_DOWN",
+    "category": "ADVANCED_INVENTORY",
+    "name": "Select items from below",
+    "bindings": [ { "input_method": "keyboard", "key": ">" } ]
   },
   {
     "type": "keybinding",
@@ -2889,5 +2974,67 @@
       { "input_method": "keyboard", "key": "SPACE" },
       { "input_method": "keyboard", "key": "RETURN" }
     ]
+  },
+  {
+    "type": "keybinding",
+    "id": "CREATURE",
+    "category": "EXTENDED_DESCRIPTION",
+    "name": "Describe creature",
+    "bindings": [ { "input_method": "keyboard", "key": "c" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "FURNITURE",
+    "category": "EXTENDED_DESCRIPTION",
+    "name": "Describe furniture",
+    "bindings": [ { "input_method": "keyboard", "key": "f" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "TERRAIN",
+    "category": "EXTENDED_DESCRIPTION",
+    "name": "Describe terrain",
+    "bindings": [ { "input_method": "keyboard", "key": "t" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "SWITCH_LISTS",
+    "category": "NPC_TRADE",
+    "name": "Switch lists",
+    "bindings": [ { "input_method": "keyboard", "key": "TAB" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "PAGE_UP",
+    "category": "NPC_TRADE",
+    "name": "Back",
+    "bindings": [ { "input_method": "keyboard", "key": "PPAGE" }, { "input_method": "keyboard", "key": "<" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "PAGE_DOWN",
+    "category": "NPC_TRADE",
+    "name": "More",
+    "bindings": [ { "input_method": "keyboard", "key": "NPAGE" }, { "input_method": "keyboard", "key": ">" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "EXAMINE",
+    "category": "NPC_TRADE",
+    "name": "Examine item",
+    "bindings": [ { "input_method": "keyboard", "key": "/" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "QUIT",
+    "category": "NPC_TRADE",
+    "name": "Cancel trading",
+    "bindings": [ { "input_method": "keyboard", "key": "ESC" } ]
+  },
+  {
+    "type": "keybinding",
+    "id": "CHANGE_PROFESSION_NAME",
+    "name": "Change profession name",
+    "bindings": [ { "input_method": "keyboard", "key": "*" } ]
   }
 ]

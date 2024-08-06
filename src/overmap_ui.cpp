@@ -942,7 +942,7 @@ void draw( const catacurses::window &w, const catacurses::window &wbar, const tr
             const auto sm_pos = omt_to_sm_copy( center );
 
             // NOLINTNEXTLINE(cata-use-named-point-constants)
-            mvwputch( wbar, point( 1, 1 ), ter.get_color(), ter.get_symbol() );
+            // mvwputch( wbar, point( 1, 1 ), ter.get_color(), ter.get_symbol() );
 
             lines = fold_and_print( wbar, point( 3, 1 ), getmaxx( wbar ) - 3, c_light_gray,
                                     overmap_buffer.get_description_at( sm_pos ) );
@@ -1036,10 +1036,10 @@ void draw( const catacurses::window &w, const catacurses::window &wbar, const tr
 
     // draw nice crosshair around the cursor
     if( blink && !uistate.place_terrain && !uistate.place_special ) {
-        mvwputch( w, point( om_half_width - 1, om_half_height - 1 ), c_light_gray, LINE_OXXO );
-        mvwputch( w, point( om_half_width + 1, om_half_height - 1 ), c_light_gray, LINE_OOXX );
-        mvwputch( w, point( om_half_width - 1, om_half_height + 1 ), c_light_gray, LINE_XXOO );
-        mvwputch( w, point( om_half_width + 1, om_half_height + 1 ), c_light_gray, LINE_XOOX );
+        // mvwputch( w, point( om_half_width - 1, om_half_height - 1 ), c_light_gray, LINE_OXXO );
+        // mvwputch( w, point( om_half_width + 1, om_half_height - 1 ), c_light_gray, LINE_OOXX );
+        // mvwputch( w, point( om_half_width - 1, om_half_height + 1 ), c_light_gray, LINE_XXOO );
+        // mvwputch( w, point( om_half_width + 1, om_half_height + 1 ), c_light_gray, LINE_XOOX );
     }
     // Done with all drawing!
     wrefresh( wbar );

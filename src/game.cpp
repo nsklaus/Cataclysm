@@ -530,7 +530,7 @@ void game::init_ui( const bool resized )
     w_minimap = w_minimap_ptr = catacurses::newwin( MINIMAP_HEIGHT, MINIMAP_WIDTH, point( _x, _y ) );
     werase( w_minimap );
 
-    w_panel_adm = w_panel_adm_ptr = catacurses::newwin( 20, 75, point( ( TERMX / 2 ) - 38,
+    w_panel_adm = w_panel_adm_ptr = catacurses::newwin( 20, 75, point( 5,
                                     ( TERMY / 2 ) - 10 ) );
     werase( w_panel_adm );
     // need to init in order to avoid crash. gets updated by the panel code.
@@ -3859,6 +3859,9 @@ void game::mon_info_update( )
     const int current_turn = to_turns<int>( calendar::turn - calendar::turn_zero );
     const int sm_ignored_turns = get_option<int>( "SAFEMODEIGNORETURNS" );
 
+
+    //bool seen = false;
+    g->u.being_seen = false;
     for( Creature *c : u.get_visible_creatures( MAPSIZE_X ) ) {
         monster *m = dynamic_cast<monster *>( c );
         npc *p = dynamic_cast<npc *>( c );
@@ -3924,6 +3927,11 @@ void game::mon_info_update( )
         if( m != nullptr ) {
             //Safemode monster check
             monster &critter = *m;
+
+
+            // Check if the last monster sees the player
+            if ( critter.sees( g->u )) { g->u.being_seen = true; }
+
 
             const monster_attitude matt = critter.attitude( &u );
             const int mon_dist = rl_dist( u.pos(), critter.pos() );
@@ -4020,6 +4028,7 @@ void game::mon_info_update( )
 
     previous_turn = current_turn;
     mostseen = newseen;
+
 }
 
 void game::cleanup_dead()
@@ -5605,9 +5614,8 @@ cata::optional<tripoint> game::look_debug()
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_look,
-                                const std::string &area_name, int column,
-                                int &line,
-                                const int last_line, bool draw_terrain_indicators,
+                                int column, int &line, const int last_line,
+                                bool draw_terrain_indicators,
                                 const visibility_variables &cache )
 {
     visibility_type visibility = VIS_HIDDEN;
@@ -5619,7 +5627,7 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
         case VIS_CLEAR: {
             const optional_vpart_position vp = m.veh_at( lp );
             const Creature *creature = critter_at( lp, true );
-            print_terrain_info( lp, w_look, area_name, column, line );
+            print_terrain_info( lp, w_look, column, line );
             print_fields_info( lp, w_look, column, line );
             print_trap_info( lp, w_look, column, line );
             print_creature_info( creature, w_look, column, line, last_line );
@@ -5702,37 +5710,58 @@ void game::print_visibility_info( const catacurses::window &w_look, int column, 
 }
 
 void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_look,
-                               const std::string &area_name, int column,
-                               int &line )
+                               int column, int &line )
 {
-    const int max_width = getmaxx( w_look ) - column - 1;
-    int lines;
+    const int max_width = getmaxx( w_look ) - column - 8;
+    int lines=0; // = line;
+
+
+    // grab area name and its color from overmap according to cursor position
+    const oter_id &cur_ter_m = overmap_buffer.ter( ms_to_omt_copy( g->m.getabs( lp ) ) );
+    const std::string area_name = cur_ter_m->get_name();
+    const nc_color area_color = cur_ter_m->get_color();
     std::string tile = m.tername( lp );
-    tile = "(" + area_name + ") " + tile;
-    if( m.has_furn( lp ) ) {
-        tile += "; " + m.furnname( lp );
-    }
 
+    line++;
+    mvwprintz( w_look, point( column, line ), c_dark_gray, "Place:");
+    lines = fold_and_print( w_look, point( column+7, line ), max_width,
+                            area_color, area_name);
+
+    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    mvwprintz( w_look, point( column, line), c_dark_gray, "Tile :");
+    lines = fold_and_print( w_look, point( column+7, line ), max_width,
+                            m.has_furn( lp ) ? m.furn(lp).obj().color() : m.ter(lp).obj().color(), m.has_furn( lp ) ? m.furnname( lp ) : m.tername( lp ));
+
+    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    const auto ll = get_light_level( std::max( 1.0, LIGHT_AMBIENT_LIT - m.ambient_light_at( lp ) + 1.0 ) );
+    mvwprintw( w_look, point( column, line ), "Light: "  );
+    wprintz( w_look, ll.second, ll.first );
+    lines = 0;
+
+    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    mvwprintz(w_look, point( column, line), c_dark_gray, "Move :");
     if( m.impassable( lp ) ) {
-        lines = fold_and_print( w_look, point( column, line ), max_width, c_light_blue,
-                                _( "%s; Impassable" ),
-                                tile );
+        lines = fold_and_print( w_look, point( column+7, line ), max_width, c_red, "Impassable" );
     } else {
-        lines = fold_and_print( w_look, point( column, line ), max_width, c_red,
-                                _( "%s; Movement cost %d" ),
-                                tile, m.move_cost( lp ) * 50 );
-
-        const auto ll = get_light_level( std::max( 1.0,
-                                         LIGHT_AMBIENT_LIT - m.ambient_light_at( lp ) + 1.0 ) );
-        mvwprintw( w_look, point( column, ++lines ), _( "Lighting: " ) );
-        wprintz( w_look, ll.second, ll.first );
+        lines = fold_and_print( w_look, point( column+7, line ), max_width, c_light_blue,
+                                "%d", m.move_cost( lp ) * 50 );
     }
+
+    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    mvwprintz(w_look, point( column, line), c_dark_gray, "Cover:");
+    lines = fold_and_print( w_look, point( column+7, line ), max_width,
+                    c_light_gray, "%d%%", m.coverage( lp ) );
+
+    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    mvwprintz(w_look, point( column, line), c_dark_gray, "Props:");
+    lines = fold_and_print( w_look, point( column+7, line ),
+                                        max_width, c_dark_gray, m.features( lp ) );
 
     std::string signage = m.get_signage( lp );
     if( !signage.empty() ) {
-        trim_and_print( w_look, point( column, ++lines ), max_width, c_dark_gray,
+        trim_and_print( w_look, point( column, ++line ), max_width, c_dark_gray,
                         // NOLINTNEXTLINE(cata-text-style): the question mark does not end a sentence
-                        u.has_trait( trait_ILLITERATE ) ? _( "Sign: ???" ) : _( "Sign: %s" ), signage );
+                        u.has_trait( trait_ILLITERATE ) ? _( "Sign : ???" ) : _( "Sign : %s" ), signage );
     }
 
     if( m.has_zlevels() && lp.z > -OVERMAP_DEPTH && !m.has_floor( lp ) ) {
@@ -5744,22 +5773,19 @@ void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_l
         }
 
         if( !m.has_floor_or_support( lp ) ) {
-            fold_and_print( w_look, point( column, ++lines ), max_width, c_dark_gray,
+            fold_and_print( w_look, point( column, ++line ), max_width, c_dark_gray,
                             _( "Below: %s; No support" ),
                             tile_below );
         } else {
-            fold_and_print( w_look, point( column, ++lines ), max_width, c_dark_gray,
+            fold_and_print( w_look, point( column, ++line ), max_width, c_dark_gray,
                             _( "Below: %s; Walkable" ),
                             tile_below );
         }
     }
 
-    int map_features = fold_and_print( w_look, point( column, ++lines ), max_width, c_dark_gray,
-                                       m.features( lp ) );
-    fold_and_print( w_look, point( column, ++lines ), max_width, c_light_gray, _( "Coverage: %d%%" ),
-                    m.coverage( lp ) );
+
     if( line < lines ) {
-        line = lines + map_features - 1;
+        line = lines  - 1;
     }
 }
 
@@ -5776,7 +5802,8 @@ void game::print_fields_info( const tripoint &lp, const catacurses::window &w_lo
                                         get_fire_fuel_string( lp ) ) - 1;
             line += lines;
         } else {
-            mvwprintz( w_look, point( column, ++line ), cur.color(), cur.name() );
+            mvwprintz( w_look, point( column, ++line ), c_dark_gray, "Info : ");
+            mvwprintz( w_look, point( column+7, line ), cur.color(), cur.name() );
         }
     }
 }
@@ -5803,9 +5830,20 @@ void game::print_trap_info( const tripoint &lp, const catacurses::window &w_look
 void game::print_creature_info( const Creature *creature, const catacurses::window &w_look,
                                 const int column, int &line, const int last_line )
 {
-    int vLines = last_line - line;
     if( creature != nullptr && ( u.sees( *creature ) || creature == &u ) ) {
-        line = creature->print_info( w_look, ++line, vLines, column );
+
+        line++;
+        const int max_width = getmaxx( w_look ) - column - 1;
+        std::string text = " creature ";
+        int left_length = (max_width - text.length()) / 2;
+
+        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwprintw(w_look, point(left_length,line), text.c_str());
+        mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
+                                max_width - left_length - text.length()+1);
+        line+=2;
+            int vLines = last_line - line;
+            line = creature->print_info( w_look, line, vLines, column );
     }
 }
 
@@ -5852,6 +5890,8 @@ void game::print_items_info( const tripoint &lp, const catacurses::window &w_loo
                              int &line,
                              const int last_line )
 {
+    line+=2;
+    const int max_width = getmaxx( w_look ) - column - 1;
     if( !m.sees_some_items( lp, u ) ) {
         return;
     } else if( m.has_flag( "CONTAINER", lp ) && !m.could_see_items( lp, u ) ) {
@@ -5861,26 +5901,74 @@ void game::print_items_info( const tripoint &lp, const catacurses::window &w_loo
                    _( "There's something there, but you can't see what it is." ) );
         return;
     } else {
-        std::map<std::string, int> item_names;
-        for( auto &item : m.i_at( lp ) ) {
-            ++item_names[item.tname()];
-        }
+//         std::map<std::string, int> item_names;
+//         ++item_names[item.tname()];
+//
+//         for( auto &item : m.i_at( lp ) ) {
+//             fold_and_print( w_look, point( column, ++line ), max_width,
+//                     item.color(), item.tname() );
+//         }
 
-        const int max_width = getmaxx( w_look ) - column - 1;
-        for( const auto &it : item_names ) {
-            if( line >= last_line - 2 ) {
-                mvwprintz( w_look, point( column, ++line ), c_yellow, _( "More items here…" ) );
-                break;
-            }
+        //mvwhline(w_look, point(0,line), LINE_OXOX, max_width);
 
-            if( it.second > 1 ) {
-                trim_and_print( w_look, point( column, ++line ), max_width, c_white,
-                                pgettext( "%s is the name of the item.  %d is the quantity of that item.", "%s [%d]" ),
-                                it.first.c_str(), it.second );
+        std::string text = " items ";
+        int left_length = (max_width - text.length()) / 2;
+
+        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwprintw(w_look, point(left_length,line), text.c_str());
+        mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
+                               max_width - left_length - text.length()+1);
+        line++;
+        std::map<std::string, std::pair<int, nc_color>> item_map;
+
+        for (auto &item : m.i_at(lp)) {
+            std::string item_name = item.nname(item.typeId(),1);
+            nc_color item_color = item.color(); //color_in_inventory();
+
+            // Increment count if item already exists, otherwise add it
+            if (item_map.count(item_name) > 0) {
+                item_map[item_name].first++;
             } else {
-                trim_and_print( w_look, point( column, ++line ), max_width, c_white, it.first );
+                item_map[item_name] = std::make_pair(1, item_color);
             }
         }
+
+        //int line = 0;
+        for (const auto &entry : item_map) {
+            std::string item_display = entry.first;
+            if (entry.second.first > 1) {
+                item_display += " x" + std::to_string(entry.second.first);
+            }
+            if (line >= last_line - 2) {
+                mvwprintz(w_look, point(column, ++line), c_yellow, _("More items here…"));
+                break;
+            } else {
+                mvwprintz(w_look, point(column, ++line), c_dark_gray, "• ");
+                int lines_used = fold_and_print(w_look, point(column+2, line), max_width -2,
+                                                entry.second.second, item_display);
+                line += lines_used - 1; // Adjust the line counter based on lines used by fold_and_print
+            }
+        }
+
+
+
+        // for( const auto &it : item_names ) {
+        //     if( line >= last_line - 2 ) {
+        //         mvwprintz( w_look, point( column, ++line ), c_yellow, _( "More items here…" ) );
+        //         break;
+        //     }
+        //
+        //     if( it.second > 1 ) {
+        //         // trim_and_print( w_look, point( column, ++line ), max_width, c_white,
+        //         //                 pgettext( "%s is the name of the item.  %d is the quantity of that item.", "%s [%d]" ),
+        //         //                 it.first.c_str(), it.second );
+        //     } else {
+        //         //nc_color = item // ( lp ).obj().color();
+        //         // fold_and_print( w_look, point( column, ++line ), max_width,
+        //         //      c_light_gray, "%d%%", m.coverage( lp ) );
+        //         //trim_and_print( w_look, point( column, ++line ), max_width, c_white, it.first );
+        //     }
+        // }
     }
 }
 
@@ -5892,11 +5980,19 @@ void game::print_graffiti_info( const tripoint &lp, const catacurses::window &w_
         return;
     }
 
-    const int max_width = getmaxx( w_look ) - column - 2;
+
     if( m.has_graffiti_at( lp ) ) {
-        fold_and_print( w_look, point( column, ++line ), max_width, c_light_gray,
-                        m.ter( lp ) == t_grave_new ? _( "Graffiti: %s" ) : _( "Inscription: %s" ),
-                        m.graffiti_at( lp ) );
+
+        const int max_width = getmaxx( w_look ) - column - 1;
+        std::string text = " message ";
+        int left_length = (max_width - text.length()) / 2;
+
+        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwprintw(w_look, point(left_length,line), text.c_str());
+        mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
+                                max_width - left_length - text.length()+1);
+        line+=2;
+        fold_and_print( w_look, point( column, line ), max_width, c_light_gray, m.graffiti_at( lp ) );
     }
 }
 
@@ -6444,17 +6540,17 @@ void game::zones_manager()
     refresh_all();
 }
 
+/*
 void game::pre_print_all_tile_info( const tripoint &lp, const catacurses::window &w_info,
                                     int &first_line, const int last_line,
                                     const visibility_variables &cache )
 {
     // get global area info according to look_around caret position
-    const oter_id &cur_ter_m = overmap_buffer.ter( ms_to_omt_copy( g->m.getabs( lp ) ) );
+    //const oter_id &cur_ter_m = overmap_buffer.ter( ms_to_omt_copy( g->m.getabs( lp ) ) );
     // we only need the area name and then pass it to print_all_tile_info() function below
-    const std::string area_name = cur_ter_m->get_name();
-    print_all_tile_info( lp, w_info, area_name, 1, first_line, last_line, !is_draw_tiles_mode(),
-                         cache );
-}
+    //const std::string area_name = cur_ter_m->get_name();
+    print_all_tile_info( lp, w_info, 1, first_line, last_line, !is_draw_tiles_mode(), cache );
+}*/
 
 cata::optional<tripoint> game::look_around()
 {
@@ -6576,7 +6672,7 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
 
                 int first_line = 1;
                 const int last_line = getmaxy( w_info ) - 2;
-                pre_print_all_tile_info( lp, w_info, first_line, last_line, cache );
+                print_all_tile_info( lp, w_info, 1, first_line, last_line, !is_draw_tiles_mode(), cache );
             }
 
             draw_ter( center, true );
@@ -6816,7 +6912,8 @@ void game::draw_trail_to_square( const tripoint &t, bool bDrawX )
     tripoint center = u.pos() + u.view_offset;
     if( t != tripoint_zero ) {
         //Draw trail
-        pts = line_to( u.pos(), u.pos() + t, 0, 0 );
+        // pts = line_to( u.pos(), u.pos() + t, 0, 0 );
+        pts = line_to( u.pos()+ t, u.pos() + t, 0, 0 );
     } else {
         //Draw point
         pts.push_back( u.pos() );
@@ -6944,8 +7041,9 @@ bool game::take_screenshot( const std::string &/*path*/ ) const
 #endif
 
 //helper method so we can keep list_items shorter
-void game::reset_item_list_state( const catacurses::window &window, int height, bool bRadiusSort )
+void game::reset_item_list_state( )
 {
+    /*
     const int width = 44;
     for( int i = 1; i < TERMX; i++ ) {
         if( i < width ) {
@@ -6982,7 +7080,7 @@ void game::reset_item_list_state( const catacurses::window &window, int height, 
 
     int letters = utf8_width( sSort );
 
-    shortcut_print( window, point( getmaxx( window ) - letters, 0 ), c_white, c_light_green, sSort );
+    //shortcut_print( window, point( getmaxx( window ) - letters, 0 ), c_white, c_light_green, sSort );
 
     std::vector<std::string> tokens;
     if( !sFilter.empty() ) {
@@ -7011,6 +7109,7 @@ void game::reset_item_list_state( const catacurses::window &window, int height, 
         xpos += shortcut_print( window, point( xpos, ypos ), c_white, c_light_green,
                                 tokens[i] ) + gap_spaces;
     }
+    */
 }
 
 void game::list_items_monsters()
@@ -7032,6 +7131,7 @@ void game::list_items_monsters()
                                       && rl_dist( u.pos(), lhs->pos() ) < rl_dist( u.pos(), rhs->pos() ) );
     } );
 
+    /*
     // If the current list is empty, switch to the non-empty list
     if( uistate.vmenu_show_items ) {
         if( items.empty() ) {
@@ -7040,539 +7140,137 @@ void game::list_items_monsters()
     } else if( mons.empty() ) {
         uistate.vmenu_show_items = true;
     }
-
+    */
+    list_monsters( mons );
+    /*
     temp_exit_fullscreen();
     game::vmenu_ret ret;
     while( true ) {
-        ret = uistate.vmenu_show_items ? list_items( items ) : list_monsters( mons );
-        if( ret == game::vmenu_ret::CHANGE_TAB ) {
-            uistate.vmenu_show_items = !uistate.vmenu_show_items;
-        } else {
-            break;
-        }
+        //ret = uistate.vmenu_show_items ? list_items( items ) :
+        list_monsters( mons );
+        // if( ret == game::vmenu_ret::CHANGE_TAB ) {
+        //     uistate.vmenu_show_items = !uistate.vmenu_show_items;
+        // } else {
+        //     break;
+        // }
     }
 
     if( ret == game::vmenu_ret::FIRE ) {
         avatar_action::fire_wielded_weapon( u, m );
     }
     reenter_fullscreen();
+    */
 }
 
-game::vmenu_ret game::list_items( const std::vector<map_item_stack> &item_list )
+
+void game::list_monsters( const std::vector<Creature *> &monster_list )
 {
-    int iInfoHeight = std::min( 25, TERMY / 2 );
-    const int width = 45;
-    const int offsetX = TERMX - VIEW_OFFSET_X - width;
+    if (monster_list.size()>0)
+    {
+        int iInfoHeight = 14;
+        const int width = 45;
+        const int offsetX = TERMX - VIEW_OFFSET_X - width; //VIEW_OFFSET_X;
 
-    catacurses::window w_items = catacurses::newwin( TERMY - 2 - iInfoHeight - VIEW_OFFSET_Y * 2,
-                                 width - 2, point( offsetX + 1, VIEW_OFFSET_Y + 1 ) );
-    catacurses::window w_items_border = catacurses::newwin( TERMY - iInfoHeight - VIEW_OFFSET_Y * 2,
-                                        width, point( offsetX, VIEW_OFFSET_Y ) );
-    catacurses::window w_item_info = catacurses::newwin( iInfoHeight, width,
-                                     point( offsetX, TERMY - iInfoHeight - VIEW_OFFSET_Y ) );
+        const int max_gun_range = u.weapon.gun_range( &u );
 
-    // use previously selected sorting method
-    bool sort_radius = uistate.list_item_sort != 2;
-    bool addcategory = !sort_radius;
+        const tripoint stored_view_offset = u.view_offset;
+        u.view_offset = tripoint_zero;
 
-    // reload filter/priority settings on the first invocation, if they were active
-    if( !uistate.list_item_init ) {
-        if( uistate.list_item_filter_active ) {
-            sFilter = uistate.list_item_filter;
+        int iActive = 0; // monster index that we're looking at
+        const int iMaxRows = TERMY - iInfoHeight - 2 - VIEW_OFFSET_Y * 2 - 1;
+        int iStartPos = 0;
+        cata::optional<tripoint> iLastActivePos;
+        Creature *cCurMon = nullptr;
+
+        std::string action;
+        input_context ctxt( "LIST_MONSTERS" );
+        ctxt.register_action( "UP", to_translation( "Move cursor up" ) );
+        ctxt.register_action( "DOWN", to_translation( "Move cursor down" ) );
+        ctxt.register_action( "LEFT", to_translation( "Move cursor up" ) );
+        ctxt.register_action( "RIGHT", to_translation( "Move cursor down" ) );
+        ctxt.register_action( "zoom_out" );
+        ctxt.register_action( "zoom_in" );
+        //ctxt.register_action( "CENTER" );
+        ctxt.register_action( "SAFEMODE_BLACKLIST_ADD" );
+        ctxt.register_action( "SAFEMODE_BLACKLIST_REMOVE" );
+        ctxt.register_action( "QUIT" );
+        if( bVMonsterLookFire ) {
+            ctxt.register_action( "look" );
+            ctxt.register_action( "fire" );
         }
-        if( uistate.list_item_downvote_active ) {
-            list_item_downvote = uistate.list_item_downvote;
-        }
-        if( uistate.list_item_priority_active ) {
-            list_item_upvote = uistate.list_item_priority;
-        }
-        uistate.list_item_init = true;
-    }
+        ctxt.register_action( "HELP_KEYBINDINGS" );
 
-    std::vector<map_item_stack> ground_items = item_list;
-    //this stores only those items that match our filter
-    std::vector<map_item_stack> filtered_items =
-        !sFilter.empty() ? filter_item_stacks( ground_items, sFilter ) : ground_items;
-    int highPEnd = list_filter_high_priority( filtered_items, list_item_upvote );
-    int lowPStart = list_filter_low_priority( filtered_items, highPEnd, list_item_downvote );
-    int iItemNum = ground_items.size();
+        // first integer is the row the attitude category string is printed in the menu
+        std::map<int, Creature::Attitude> mSortCategory;
 
-    const tripoint stored_view_offset = u.view_offset;
-
-    u.view_offset = tripoint_zero;
-
-    int iActive = 0; // Item index that we're looking at
-    const int iMaxRows = TERMY - iInfoHeight - 2 - VIEW_OFFSET_Y * 2;
-    int iStartPos = 0;
-    tripoint active_pos;
-    cata::optional<tripoint> iLastActive;
-    bool refilter = true;
-    int page_num = 0;
-    int iCatSortNum = 0;
-    int iScrollPos = 0;
-    map_item_stack *activeItem = nullptr;
-    std::map<int, std::string> mSortCategory;
-
-    std::string action;
-    input_context ctxt( "LIST_ITEMS" );
-    ctxt.register_action( "UP", to_translation( "Move cursor up" ) );
-    ctxt.register_action( "DOWN", to_translation( "Move cursor down" ) );
-    ctxt.register_action( "LEFT", to_translation( "Previous item" ) );
-    ctxt.register_action( "RIGHT", to_translation( "Next item" ) );
-    ctxt.register_action( "PAGE_DOWN" );
-    ctxt.register_action( "PAGE_UP" );
-    ctxt.register_action( "NEXT_TAB" );
-    ctxt.register_action( "PREV_TAB" );
-    ctxt.register_action( "HELP_KEYBINDINGS" );
-    ctxt.register_action( "QUIT" );
-    ctxt.register_action( "FILTER" );
-    ctxt.register_action( "RESET_FILTER" );
-    ctxt.register_action( "EXAMINE" );
-    ctxt.register_action( "COMPARE" );
-    ctxt.register_action( "PRIORITY_INCREASE" );
-    ctxt.register_action( "PRIORITY_DECREASE" );
-    ctxt.register_action( "SORT" );
-    ctxt.register_action( "TRAVEL_TO" );
-
-    do {
-        if( action == "COMPARE" ) {
-            game_menus::inv::compare( u, active_pos );
-            refresh_all();
-        } else if( action == "FILTER" ) {
-            draw_item_filter_rules( w_item_info, 0, iInfoHeight - 1, item_filter_type::FILTER );
-            string_input_popup()
-            .title( _( "Filter:" ) )
-            .width( 55 )
-            .description( _( "UP: history, CTRL-U: clear line, ESC: abort, ENTER: save" ) )
-            .identifier( "item_filter" )
-            .max_length( 256 )
-            .edit( sFilter );
-            refilter = true;
-            addcategory = !sort_radius;
-            uistate.list_item_filter_active = !sFilter.empty();
-        } else if( action == "RESET_FILTER" ) {
-            sFilter.clear();
-            filtered_items = ground_items;
-            iLastActive.reset();
-            refilter = true;
-            uistate.list_item_filter_active = false;
-            addcategory = !sort_radius;
-        } else if( action == "EXAMINE" && !filtered_items.empty() && activeItem ) {
-            std::vector<iteminfo> vThisItem;
-            std::vector<iteminfo> vDummy;
-            activeItem->example->info( true, vThisItem );
-
-            item_info_data info_data( activeItem->example->tname(), activeItem->example->type_name(), vThisItem,
-                                      vDummy );
-            info_data.handle_scrolling = true;
-
-            draw_item_info( 0, width - 5, 0, TERMY - VIEW_OFFSET_Y * 2, info_data );
-            // wait until the user presses a key to wipe the screen
-            iLastActive.reset();
-        } else if( action == "PRIORITY_INCREASE" ) {
-            draw_item_filter_rules( w_item_info, 0, iInfoHeight - 1, item_filter_type::HIGH_PRIORITY );
-            list_item_upvote = string_input_popup()
-                               .title( _( "High Priority:" ) )
-                               .width( 55 )
-                               .text( list_item_upvote )
-                               .description( _( "UP: history, CTRL-U clear line, ESC: abort, ENTER: save" ) )
-                               .identifier( "list_item_priority" )
-                               .max_length( 256 )
-                               .query_string();
-            refilter = true;
-            addcategory = !sort_radius;
-            uistate.list_item_priority_active = !list_item_upvote.empty();
-        } else if( action == "PRIORITY_DECREASE" ) {
-            draw_item_filter_rules( w_item_info, 0, iInfoHeight - 1, item_filter_type::LOW_PRIORITY );
-            list_item_downvote = string_input_popup()
-                                 .title( _( "Low Priority:" ) )
-                                 .width( 55 )
-                                 .text( list_item_downvote )
-                                 .description( _( "UP: history, CTRL-U clear line, ESC: abort, ENTER: save" ) )
-                                 .identifier( "list_item_downvote" )
-                                 .max_length( 256 )
-                                 .query_string();
-            refilter = true;
-            addcategory = !sort_radius;
-            uistate.list_item_downvote_active = !list_item_downvote.empty();
-        } else if( action == "SORT" ) {
-            if( sort_radius ) {
-                sort_radius = false;
-                addcategory = true;
-                uistate.list_item_sort = 2; // list is sorted by category
-            } else {
-                sort_radius = true;
-                uistate.list_item_sort = 1; // list is sorted by distance
-            }
-            highPEnd = -1;
-            lowPStart = -1;
-            iCatSortNum = 0;
-
-            mSortCategory.clear();
-            refilter = true;
-        } else if( action == "TRAVEL_TO" ) {
-            if( !u.sees( u.pos() + active_pos ) ) {
-                add_msg( _( "You can't see that destination." ) );
-            }
-            auto route = m.route( u.pos(), u.pos() + active_pos, u.get_pathfinding_settings(),
-                                  u.get_path_avoid() );
-            if( route.size() > 1 ) {
-                route.pop_back();
-                u.set_destination( route );
-                break;
-            } else {
-                add_msg( m_info, _( "You can't travel there." ) );
+        for( int i = 0, last_attitude = -1; i < static_cast<int>( monster_list.size() ); i++ ) {
+            const auto attitude = monster_list[i]->attitude_to( u );
+            if( attitude != last_attitude ) {
+                mSortCategory[i + mSortCategory.size()] = attitude;
+                last_attitude = attitude;
             }
         }
-        if( uistate.list_item_sort == 1 ) {
-            ground_items = item_list;
-        } else if( uistate.list_item_sort == 2 ) {
-            std::sort( ground_items.begin(), ground_items.end(), map_item_stack::map_item_stack_sort );
-        }
 
-        if( refilter ) {
-            refilter = false;
-            filtered_items = filter_item_stacks( ground_items, sFilter );
-            highPEnd = list_filter_high_priority( filtered_items, list_item_upvote );
-            lowPStart = list_filter_low_priority( filtered_items, highPEnd, list_item_downvote );
-            iActive = 0;
-            page_num = 0;
-            iLastActive.reset();
-            iItemNum = filtered_items.size();
-        }
-
-        if( addcategory ) {
-            addcategory = false;
-            iCatSortNum = 0;
-            mSortCategory.clear();
-            if( highPEnd > 0 ) {
-                mSortCategory[0] = _( "HIGH PRIORITY" );
-                iCatSortNum++;
-            }
-            std::string last_cat_name;
-            for( int i = std::max( 0, highPEnd );
-                 i < std::min( lowPStart, static_cast<int>( filtered_items.size() ) ); i++ ) {
-                const std::string &cat_name = filtered_items[i].example->get_category().name();
-                if( cat_name != last_cat_name ) {
-                    mSortCategory[i + iCatSortNum++] = cat_name;
-                    last_cat_name = cat_name;
-                }
-            }
-            if( lowPStart < static_cast<int>( filtered_items.size() ) ) {
-                mSortCategory[lowPStart + iCatSortNum++] = _( "LOW PRIORITY" );
-            }
-            if( !mSortCategory[0].empty() ) {
-                iActive++;
-            }
-            iItemNum = static_cast<int>( filtered_items.size() ) + iCatSortNum;
-        }
-
-        reset_item_list_state( w_items_border, iInfoHeight, sort_radius );
-
-        if( action == "HELP_KEYBINDINGS" ) {
-            draw_ter();
-            wrefresh( w_terrain );
-        } else if( action == "UP" ) {
-            do {
+        do {
+            if( action == "HELP_KEYBINDINGS" ) {
+                draw_ter();
+                wrefresh( w_terrain );
+            } else if( action == "UP" || action == "LEFT") {
                 iActive--;
-
-            } while( !mSortCategory[iActive].empty() );
-            iScrollPos = 0;
-            page_num = 0;
-            if( iActive < 0 ) {
-                iActive = iItemNum - 1;
-            }
-        } else if( action == "DOWN" ) {
-            do {
+                if( iActive < 0 ) {
+                    iActive = static_cast<int>( monster_list.size() ) - 1;
+                }
+            } else if( action == "DOWN" || action == "RIGHT") {
                 iActive++;
-
-            } while( !mSortCategory[iActive].empty() );
-            iScrollPos = 0;
-            page_num = 0;
-            if( iActive >= iItemNum ) {
-                iActive = mSortCategory[0].empty() ? 0 : 1;
-            }
-        } else if( action == "RIGHT" ) {
-            if( !filtered_items.empty() && activeItem ) {
-                if( ++page_num >= static_cast<int>( activeItem->vIG.size() ) ) {
-                    page_num = activeItem->vIG.size() - 1;
+                if( iActive >= static_cast<int>( monster_list.size() ) ) {
+                    iActive = 0;
                 }
-            }
-        } else if( action == "LEFT" ) {
-            page_num = std::max( 0, page_num - 1 );
-        } else if( action == "PAGE_UP" ) {
-            iScrollPos--;
-        } else if( action == "PAGE_DOWN" ) {
-            iScrollPos++;
-        } else if( action == "NEXT_TAB" || action == "PREV_TAB" ) {
-            u.view_offset = stored_view_offset;
-            return game::vmenu_ret::CHANGE_TAB;
-        }
+            } else if( action == "zoom_in" ) {
+                //center.x = lp.x;
+                //center.y = lp.y;
+                zoom_in();
+            } else if( action == "zoom_out" ) {
+                //center.x = lp.x;
+                //center.y = lp.y;
+                zoom_out();
 
-        if( ground_items.empty() ) {
-            reset_item_list_state( w_items_border, iInfoHeight, sort_radius );
-            wrefresh( w_items_border );
-            mvwprintz( w_items, point( 2, 10 ), c_white, _( "You don't see any items around you!" ) );
-        } else {
-            werase( w_items );
-            calcStartPos( iStartPos, iActive, iMaxRows, iItemNum );
-            int iNum = 0;
-            active_pos = tripoint_zero;
-            bool high = false;
-            bool low = false;
-            int index = 0;
-            int iCatSortOffset = 0;
+            /* } else if( action == "CENTER" ) {
+                //center = u.pos();
+                //lp = u.pos();
+                u.view_offset = stored_view_offset;
+                u.view_offset.z = 0;*/
 
-            for( int i = 0; i < iStartPos; i++ ) {
-                if( !mSortCategory[i].empty() ) {
-                    iNum++;
-                }
-            }
-            for( auto iter = filtered_items.begin(); iter != filtered_items.end(); ++index ) {
-                if( highPEnd > 0 && index < highPEnd + iCatSortOffset ) {
-                    high = true;
-                    low = false;
-                } else if( index >= lowPStart + iCatSortOffset ) {
-                    high = false;
-                    low = true;
-                } else {
-                    high = false;
-                    low = false;
-                }
-
-                if( iNum >= iStartPos && iNum < iStartPos + ( iMaxRows > iItemNum ? iItemNum : iMaxRows ) ) {
-                    int iThisPage = 0;
-                    if( !mSortCategory[iNum].empty() ) {
-                        iCatSortOffset++;
-                        mvwprintz( w_items, point( 1, iNum - iStartPos ), c_magenta, mSortCategory[iNum] );
-                    } else {
-                        if( iNum == iActive ) {
-                            iThisPage = page_num;
-                            active_pos = iter->vIG[iThisPage].pos;
-                            activeItem = &( *iter );
-                        }
-                        std::string sText;
-                        if( iter->vIG.size() > 1 ) {
-                            sText += string_format( "[%d/%d] (%d) ", iThisPage + 1, iter->vIG.size(), iter->totalcount );
-                        }
-                        sText += iter->example->tname();
-                        if( iter->vIG[iThisPage].count > 1 ) {
-                            sText += string_format( "[%d]", iter->vIG[iThisPage].count );
-                        }
-
-                        nc_color col = c_light_green;
-                        if( iNum != iActive ) {
-                            if( high ) {
-                                col = c_yellow;
-                            } else if( low ) {
-                                col = c_red;
-                            } else {
-                                col = iter->example->color_in_inventory();
-                            }
-                        }
-                        trim_and_print( w_items, point( 1, iNum - iStartPos ), width - 9, col, sText );
-                        const int numw = iItemNum > 9 ? 2 : 1;
-                        const int x = iter->vIG[iThisPage].pos.x;
-                        const int y = iter->vIG[iThisPage].pos.y;
-                        mvwprintz( w_items, point( width - 6 - numw, iNum - iStartPos ),
-                                   iNum == iActive ? c_light_green : c_light_gray,
-                                   "%*d %s", numw, rl_dist( point_zero, point( x, y ) ),
-                                   direction_name_short( direction_from( point_zero, point( x, y ) ) ) );
-                        ++iter;
-                    }
-                } else {
-                    ++iter;
-                }
-                iNum++;
-            }
-            iNum = 0;
-            for( int i = 0; i < iActive; i++ ) {
-                if( !mSortCategory[i].empty() ) {
-                    iNum++;
-                }
-            }
-            mvwprintz( w_items_border, point( ( width - 9 ) / 2 + ( iItemNum > 9 ? 0 : 1 ), 0 ),
-                       c_light_green, " %*d", iItemNum > 9 ? 2 : 1, iItemNum > 0 ? iActive - iNum + 1 : 0 );
-            wprintz( w_items_border, c_white, " / %*d ", iItemNum > 9 ? 2 : 1, iItemNum - iCatSortNum );
-            werase( w_item_info );
-
-            if( iItemNum > 0 ) {
-                std::vector<iteminfo> vThisItem;
-                std::vector<iteminfo> vDummy;
-                activeItem->example->info( true, vThisItem );
-
-                item_info_data dummy( "", "", vThisItem, vDummy, iScrollPos );
-                dummy.without_getch = true;
-                dummy.without_border = true;
-
-                draw_item_info( w_item_info, dummy );
-
-                iLastActive.emplace( active_pos );
-                centerlistview( active_pos, width );
-                draw_trail_to_square( active_pos, true );
-            }
-            draw_scrollbar( w_items_border, iActive, iMaxRows, iItemNum, point_south );
-            wrefresh( w_items_border );
-        }
-
-        const bool bDrawLeft = ground_items.empty() || filtered_items.empty();
-        draw_custom_border( w_item_info, bDrawLeft, true, true, true, LINE_XXXO, LINE_XOXX, true, true );
-
-        if( iItemNum > 0 ) {
-            // print info window title: < item name >
-            mvwprintw( w_item_info, point( 2, 0 ), "< " );
-            trim_and_print( w_item_info, point( 4, 0 ), width - 8, activeItem->example->color_in_inventory(),
-                            activeItem->example->display_name() );
-            wprintw( w_item_info, " >" );
-        }
-
-        wrefresh( w_items );
-        wrefresh( w_item_info );
-        catacurses::refresh();
-        action = ctxt.handle_input();
-    } while( action != "QUIT" );
-
-    u.view_offset = stored_view_offset;
-    return game::vmenu_ret::QUIT;
-}
-
-game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list )
-{
-    int iInfoHeight = 14;
-    const int width = 45;
-    const int offsetX = TERMX - VIEW_OFFSET_X - width; //VIEW_OFFSET_X;
-    catacurses::window w_monsters = catacurses::newwin( TERMY - iInfoHeight - VIEW_OFFSET_Y * 2,
-                                    width - 2, point( offsetX + 1, VIEW_OFFSET_Y + 1 ) );
-    catacurses::window w_monsters_border = catacurses::newwin( TERMY - iInfoHeight - VIEW_OFFSET_Y * 2,
-                                           width, point( offsetX, VIEW_OFFSET_Y ) );
-    catacurses::window w_monster_info = catacurses::newwin( iInfoHeight - 1, width - 2,
-                                        point( offsetX + 1, TERMY - iInfoHeight - VIEW_OFFSET_Y ) );
-    catacurses::window w_monster_info_border = catacurses::newwin( iInfoHeight, width + 1,
-            point( offsetX, TERMY - iInfoHeight - VIEW_OFFSET_Y ) );
-
-    const int max_gun_range = u.weapon.gun_range( &u );
-
-    const tripoint stored_view_offset = u.view_offset;
-    u.view_offset = tripoint_zero;
-
-    int iActive = 0; // monster index that we're looking at
-    const int iMaxRows = TERMY - iInfoHeight - 2 - VIEW_OFFSET_Y * 2 - 1;
-    int iStartPos = 0;
-    cata::optional<tripoint> iLastActivePos;
-    Creature *cCurMon = nullptr;
-
-    for( int j = 0; j < iInfoHeight - 1; j++ ) {
-        mvwputch( w_monster_info_border, point( 0, j ), c_light_gray, LINE_XOXO );
-        mvwputch( w_monster_info_border, point( width - 1, j ), c_light_gray, LINE_XOXO );
-    }
-
-    for( int j = 0; j < width - 1; j++ ) {
-        mvwputch( w_monster_info_border, point( j, iInfoHeight - 1 ), c_light_gray, LINE_OXOX );
-    }
-
-    mvwputch( w_monsters_border, point_zero, BORDER_COLOR, LINE_OXXO ); // |^
-    // NOLINTNEXTLINE(cata-use-named-point-constants)
-    mvwhline( w_monsters_border, point( 1, 0 ), 0, width );
-    mvwputch( w_monsters_border, point( width - 1, 0 ), BORDER_COLOR, LINE_OOXX ); // ^|
-
-    for( int i = 1; i < getmaxy( w_monsters ) - 1; i++ ) {
-        mvwputch( w_monsters_border, point( 0, i ), BORDER_COLOR, LINE_XOXO ); // |
-        mvwputch( w_monsters_border, point( width - 1, i ), BORDER_COLOR, LINE_XOXO ); // |
-    }
-
-    mvwprintz( w_monsters_border, point( 2, 0 ), c_light_green, "<Tab> " );
-    wprintz( w_monsters_border, c_white, _( "Monsters" ) );
-
-    std::string action;
-    input_context ctxt( "LIST_MONSTERS" );
-    ctxt.register_action( "UP", to_translation( "Move cursor up" ) );
-    ctxt.register_action( "DOWN", to_translation( "Move cursor down" ) );
-    ctxt.register_action( "NEXT_TAB" );
-    ctxt.register_action( "PREV_TAB" );
-    ctxt.register_action( "SAFEMODE_BLACKLIST_ADD" );
-    ctxt.register_action( "SAFEMODE_BLACKLIST_REMOVE" );
-    ctxt.register_action( "QUIT" );
-    if( bVMonsterLookFire ) {
-        ctxt.register_action( "look" );
-        ctxt.register_action( "fire" );
-    }
-    ctxt.register_action( "HELP_KEYBINDINGS" );
-
-    // first integer is the row the attitude category string is printed in the menu
-    std::map<int, Creature::Attitude> mSortCategory;
-
-    for( int i = 0, last_attitude = -1; i < static_cast<int>( monster_list.size() ); i++ ) {
-        const auto attitude = monster_list[i]->attitude_to( u );
-        if( attitude != last_attitude ) {
-            mSortCategory[i + mSortCategory.size()] = attitude;
-            last_attitude = attitude;
-        }
-    }
-
-    do {
-        if( action == "HELP_KEYBINDINGS" ) {
-            draw_ter();
-            wrefresh( w_terrain );
-        } else if( action == "UP" ) {
-            iActive--;
-            if( iActive < 0 ) {
-                iActive = static_cast<int>( monster_list.size() ) - 1;
-            }
-        } else if( action == "DOWN" ) {
-            iActive++;
-            if( iActive >= static_cast<int>( monster_list.size() ) ) {
-                iActive = 0;
-            }
-        } else if( action == "NEXT_TAB" || action == "PREV_TAB" ) {
-            u.view_offset = stored_view_offset;
-            return game::vmenu_ret::CHANGE_TAB;
-        } else if( action == "SAFEMODE_BLACKLIST_REMOVE" ) {
-            const auto m = dynamic_cast<monster *>( cCurMon );
-            const std::string monName = ( m != nullptr ) ? m->name() : "human";
-
-            if( get_safemode().has_rule( monName, Creature::A_ANY ) ) {
-                get_safemode().remove_rule( monName, Creature::A_ANY );
-            }
-        } else if( action == "SAFEMODE_BLACKLIST_ADD" ) {
-            if( !get_safemode().empty() ) {
+            } else if( action == "SAFEMODE_BLACKLIST_REMOVE" ) {
                 const auto m = dynamic_cast<monster *>( cCurMon );
                 const std::string monName = ( m != nullptr ) ? m->name() : "human";
 
-                get_safemode().add_rule( monName, Creature::A_ANY, get_option<int>( "SAFEMODEPROXIMITY" ),
-                                         RULE_BLACKLISTED );
-            }
-        } else if( action == "look" ) {
-            iLastActivePos = look_around();
-        } else if( action == "fire" ) {
-            if( cCurMon != nullptr && rl_dist( u.pos(), cCurMon->pos() ) <= max_gun_range ) {
-                u.last_target = shared_from( *cCurMon );
-                u.view_offset = stored_view_offset;
-                return game::vmenu_ret::FIRE;
-            }
-        }
+                if( get_safemode().has_rule( monName, Creature::A_ANY ) ) {
+                    get_safemode().remove_rule( monName, Creature::A_ANY );
+                }
+            } else if( action == "SAFEMODE_BLACKLIST_ADD" ) {
+                if( !get_safemode().empty() ) {
+                    const auto m = dynamic_cast<monster *>( cCurMon );
+                    const std::string monName = ( m != nullptr ) ? m->name() : "human";
 
-        if( monster_list.empty() ) {
-            mvwputch( w_monsters_border, point( 0, TERMY - iInfoHeight - 1 - VIEW_OFFSET_Y * 2 ), BORDER_COLOR,
-                      LINE_XOXO ); // |
-            mvwputch( w_monsters_border, point( width - 1, TERMY - iInfoHeight - 1 - VIEW_OFFSET_Y * 2 ),
-                      BORDER_COLOR, LINE_XOXO ); // |
-            wrefresh( w_monsters_border );
-            mvwprintz( w_monsters, point( 2, 10 ), c_white, _( "You don't see any monsters around you!" ) );
-        } else {
-            werase( w_monsters );
-
-            mvwputch( w_monsters_border, point( 0, TERMY - iInfoHeight - 1 - VIEW_OFFSET_Y * 2 ), BORDER_COLOR,
-                      LINE_XXXO ); // |-
-            mvwputch( w_monsters_border, point( width - 1, TERMY - iInfoHeight - 1 - VIEW_OFFSET_Y * 2 ),
-                      BORDER_COLOR,
-                      LINE_XOXX ); // -|
+                    get_safemode().add_rule( monName, Creature::A_ANY, get_option<int>( "SAFEMODEPROXIMITY" ),
+                                            RULE_BLACKLISTED );
+                }
+            } else if( action == "look" ) {
+                iLastActivePos = look_around();
+            } else if( action == "fire" ) {
+                if( cCurMon != nullptr && rl_dist( u.pos(), cCurMon->pos() ) <= max_gun_range ) {
+                    u.last_target = shared_from( *cCurMon );
+                    u.view_offset = stored_view_offset;
+                    //return game::vmenu_ret::FIRE;
+                }
+            }
 
             const int iNumMonster = monster_list.size();
             const int iMenuSize = monster_list.size() + mSortCategory.size();
 
             const int numw = iNumMonster > 999 ? 4 :
-                             iNumMonster > 99  ? 3 :
-                             iNumMonster > 9   ? 2 : 1;
+                            iNumMonster > 99  ? 3 :
+                            iNumMonster > 9   ? 2 : 1;
 
             // given the currently selected monster iActive. get the selected row
             int iSelPos = iActive;
@@ -7602,8 +7300,8 @@ game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list
                     const int iCatPos = CatSortIter->first;
                     if( iCurPos == iCatPos ) {
                         const std::string cat_name = Creature::get_attitude_ui_data(
-                                                         CatSortIter->second ).first.translated();
-                        mvwprintz( w_monsters, point( 1, y ), c_magenta, cat_name );
+                                                        CatSortIter->second ).first.translated();
+                        //mvwprintz( w_monsters, point( 1, y ), c_magenta, cat_name );
                         ++CatSortIter;
                         continue;
                     }
@@ -7612,34 +7310,29 @@ game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list
                 const auto critter = monster_list[iCurMon];
                 const bool selected = iCurMon == iActive;
                 ++iCurMon;
-                if( critter->sees( g->u ) ) {
-                    mvwprintz( w_monsters, point( 0, y ), c_yellow, "!" );
-                }
+                // if( critter->sees( g->u ) ) {
+                //     // //mvwprintz( w_monsters, point( 0, y ), c_yellow, "!" );
+                //     // add_msg( m_info, "The %s is aware of your presence!", critter->get_name() );
+                //     // // refresh game panel while list panel is open
+                //     // g->refresh_all();
+                //     g->u.being_seen =true;
+                //
+                // }
+                // else {g->u.being_seen =false;}
                 bool is_npc = false;
                 const monster *m = dynamic_cast<monster *>( critter );
                 const npc     *p = dynamic_cast<npc *>( critter );
 
-                if( m != nullptr ) {
-                    mvwprintz( w_monsters, point( 1, y ), selected ? c_light_green : c_white, m->name() );
-                } else {
-                    mvwprintz( w_monsters, point( 1, y ), selected ? c_light_green : c_white, critter->disp_name() );
-                    is_npc = true;
-                }
-
-                if( selected && !get_safemode().empty() ) {
-                    const std::string monName = is_npc ? get_safemode().npc_type_name() : m->name();
-
-                    std::string sSafemode;
-                    if( get_safemode().has_rule( monName, Creature::A_ANY ) ) {
-                        sSafemode = _( "<R>emove from safemode Blacklist" );
-                    } else {
-                        sSafemode = _( "<A>dd to safemode Blacklist" );
-                    }
-
-                    mvwhline( w_monsters, point( 0, getmaxy( w_monsters ) - 2 ), 0, width - 1 );
-                    shortcut_print( w_monsters, point( 1, getmaxy( w_monsters ) - 2 ),
-                                    c_white, c_light_green, sSafemode );
-                }
+                // if( selected && !get_safemode().empty() ) {
+                //     const std::string monName = is_npc ? get_safemode().npc_type_name() : m->name();
+                //
+                //     std::string sSafemode;
+                //     if( get_safemode().has_rule( monName, Creature::A_ANY ) ) {
+                //         sSafemode = _( "<R>emove from safemode Blacklist" );
+                //     } else {
+                //         sSafemode = _( "<A>dd to safemode Blacklist" );
+                //     }
+                // }
 
                 nc_color color = c_white;
                 std::string sText;
@@ -7650,7 +7343,7 @@ game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list
                     std::tie( sText, color ) =
                         ::get_hp_bar( critter->get_hp(), critter->get_hp_max(), false );
                 }
-                mvwprintz( w_monsters, point( 22, y ), color, sText );
+                //mvwprintz( w_monsters, point( 22, y ), color, sText );
 
                 if( m != nullptr ) {
                     const auto att = m->get_attitude();
@@ -7660,81 +7353,39 @@ game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list
                     sText = npc_attitude_name( p->get_attitude() );
                     color = p->symbol_color();
                 }
-                mvwprintz( w_monsters, point( 28, y ), color, sText );
-
-                mvwprintz( w_monsters, point( width - ( 6 + numw ), y ),
-                           ( selected ? c_light_green : c_light_gray ),
-                           "%*d %s",
-                           numw, rl_dist( u.pos(), critter->pos() ),
-                           direction_name_short( direction_from( u.pos(), critter->pos() ) ) );
             }
-
-            mvwprintz( w_monsters_border, point( ( width / 2 ) - numw - 2, 0 ), c_light_green, " %*d", numw,
-                       iActive + 1 );
-            wprintz( w_monsters_border, c_white, " / %*d ", numw, static_cast<int>( monster_list.size() ) );
 
             cCurMon = monster_list[iActive];
 
-            werase( w_monster_info );
-            cCurMon->print_info( w_monster_info, 1, 11, 1 );
+            if( bVMonsterLookFire )
+            {
+                //mvwprintz( w_monsters, point( 1, getmaxy( w_monsters ) - 3 ), c_light_green,
+                //           ctxt.press_x( "look" ) );
+                //wprintz( w_monsters, c_light_gray, " %s", _( "to look around" ) );
 
-            if( bVMonsterLookFire ) {
-                mvwprintz( w_monsters, point( 1, getmaxy( w_monsters ) - 3 ), c_light_green,
-                           ctxt.press_x( "look" ) );
-                wprintz( w_monsters, c_light_gray, " %s", _( "to look around" ) );
-
-                if( rl_dist( u.pos(), cCurMon->pos() ) <= max_gun_range ) {
-                    wprintz( w_monsters, c_light_gray, "%s", " " );
-                    mvwprintz( w_monsters, point( 24, getmaxy( w_monsters ) - 3 ), c_light_green,
-                               ctxt.press_x( "fire" ) );
-                    wprintz( w_monsters, c_light_gray, " %s", _( "to shoot" ) );
+                if( rl_dist( u.pos(), cCurMon->pos() ) <= max_gun_range )
+                {
+                //     wprintz( w_monsters, c_light_gray, "%s", " " );
+                //     mvwprintz( w_monsters, point( 24, getmaxy( w_monsters ) - 3 ), c_light_green,
+                //                ctxt.press_x( "fire" ) );
+                //     wprintz( w_monsters, c_light_gray, " %s", _( "to shoot" ) );
+                // }
                 }
+
+                // Only redraw trail/terrain if x/y position changed or if keybinding menu erased it
+                tripoint iActivePos = cCurMon->pos() - u.pos();
+                iLastActivePos.emplace( iActivePos );
+                centerlistview( iActivePos, width );
+                draw_trail_to_square( iActivePos, false );
+
             }
 
-            // Only redraw trail/terrain if x/y position changed or if keybinding menu erased it
-            tripoint iActivePos = cCurMon->pos() - u.pos();
-            iLastActivePos.emplace( iActivePos );
-            centerlistview( iActivePos, width );
-            draw_trail_to_square( iActivePos, false );
-
-            draw_scrollbar( w_monsters_border, iActive, iMaxRows, static_cast<int>( monster_list.size() ),
-                            point_south );
-            wrefresh( w_monsters_border );
-        }
-
-        // repairing the damage caused by refreshing the whole screen for w_terrain
-        // the previous situation was only refreshing the screen minus sidebar width.
-        for( int j = 0; j < iInfoHeight - 1; j++ ) {
-            mvwputch( w_monster_info_border, point( 0, j ), c_light_gray, LINE_XOXO );
-            mvwputch( w_monster_info_border, point( width - 1, j ), c_light_gray, LINE_XOXO );
-        }
-
-        for( int j = 0; j < width - 1; j++ ) {
-            mvwputch( w_monster_info_border, point( j, iInfoHeight - 1 ), c_light_gray, LINE_OXOX );
-        }
-
-        for( int i = 1; i < getmaxy( w_monsters ) - 1; i++ ) {
-            mvwputch( w_monsters_border, point( 0, i ), BORDER_COLOR, LINE_XOXO ); // |
-            mvwputch( w_monsters_border, point( width - 1, i ), BORDER_COLOR, LINE_XOXO ); // |
-        }
-
-        mvwputch( w_monster_info_border, point( 0, getmaxy( w_monster_info_border ) - 1 ), BORDER_COLOR,
-                  LINE_XXOO );  // |_
-        mvwputch( w_monster_info_border, point( width - 1, getmaxy( w_monster_info_border ) - 1 ),
-                  BORDER_COLOR, LINE_XOOX ); // _|
-
-        wrefresh( w_monsters_border );
-        wrefresh( w_monster_info_border );
-        wrefresh( w_monsters );
-        wrefresh( w_monster_info );
-        catacurses::refresh();
-
-        action = ctxt.handle_input();
-    } while( action != "QUIT" );
+            catacurses::refresh();
+            action = ctxt.handle_input();
+        } while( action != "QUIT" );
 
     u.view_offset = stored_view_offset;
-
-    return game::vmenu_ret::QUIT;
+    }
 }
 
 void game::drop()

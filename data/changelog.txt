@@ -1,3 +1,7 @@
 # 0.01
 
-- options window is now options screen 
+- look_around uses new presentation
+- no more item and monster list
+- no more tiles highlight
+- player overlay indicate when you're being seen by monsters
+

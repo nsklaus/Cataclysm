@@ -1,5 +1,8 @@
 {
-  "typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ],
-  "map_typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ],
-  "overmap_typeface": [ "data/font/SourceCodePro-Bold.otf", "data/font/Terminus.ttf", "data/font/unifont.ttf" ]
+  "typeface": "data/font/SourceCodePro-Bold.otf",
+  "map_typeface": "data/font/SourceCodePro-Bold.otf",
+  "overmap_fontwidth": 32,
+  "overmap_fontheight": 32,
+  "overmap_fontsize": 32,
+  "overmap_typeface": "map_font_LARWICK.png"
 }

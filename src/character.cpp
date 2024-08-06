@@ -2669,6 +2669,7 @@ item Character::item_worn_with_flag( const std::string &flag, body_part bp ) con
 
 std::vector<std::string> Character::get_overlay_ids() const
 {
+
     std::vector<std::string> rval;
     std::multimap<int, std::string> mutation_sorting;
     int order;
@@ -2712,8 +2713,13 @@ std::vector<std::string> Character::get_overlay_ids() const
     if( move_mode != CMM_WALK ) {
         rval.push_back( character_movemode_str[ move_mode ] );
     }
+    if (g->u.being_seen) {
+        rval.push_back( "attention");
+    }
     return rval;
 }
+
+
 
 const SkillLevelMap &Character::get_all_skills() const
 {

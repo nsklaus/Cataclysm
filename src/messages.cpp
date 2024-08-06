@@ -61,11 +61,12 @@ struct game_message : public JsonDeserializer, public JsonSerializer {
     }
 
     std::string get_with_count() const {
-        if( count <= 1 ) {
-            return message;
-        }
-        //~ Message %s on the message log was repeated %d times, e.g. "You hear a whack! x 12"
-        return string_format( _( "%s x %d" ), message, count );
+        // if( count <= 1 ) {
+        //     return message;
+        // }
+        // //~ Message %s on the message log was repeated %d times, e.g. "You hear a whack! x 12"
+        // return string_format( _( "%s x %d" ), message, count );
+        return message;
     }
 
     /** Get whether or not a message should not be displayed (hidden) in the side bar because it's in a cooldown period.

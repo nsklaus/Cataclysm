@@ -1,4 +1,4 @@
-#if defined(TILES)
+
 #include "cata_tiles.h"
 
 #include <cmath>
@@ -2881,13 +2881,17 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
     }
 }
 
+// no tiles, corpses or item stack highlight
 bool cata_tiles::draw_item_highlight( const tripoint &pos )
-{
+{ /*
     return draw_from_id_string( ITEM_HIGHLIGHT, C_NONE, empty_string, pos, 0, 0, LL_LIT, false );
+  */
+  return false;
 }
 
 void tileset_loader::ensure_default_item_highlight()
 {
+    /*
     if( ts.find_tile_type( ITEM_HIGHLIGHT ) ) {
         return;
     }
@@ -2901,6 +2905,7 @@ void tileset_loader::ensure_default_item_highlight()
                                 highlight_alpha ) ) != 0, "SDL_FillRect failed" );
     ts.tile_values.emplace_back( CreateTextureFromSurface( renderer, surface ), SDL_Rect{ 0, 0, ts.tile_width, ts.tile_height } );
     ts.tile_ids[ITEM_HIGHLIGHT].fg.add( std::vector<int>( {index} ), 1 );
+    */
 }
 
 /* Animation Functions */
@@ -2942,9 +2947,11 @@ void cata_tiles::init_draw_cursor( const tripoint &p )
     do_draw_cursor = true;
     cursors.emplace_back( p );
 }
+
+// no tiles, corpses or stack highlight
 void cata_tiles::init_draw_highlight( const tripoint &p )
 {
-    do_draw_highlight = true;
+    do_draw_highlight = false;
     highlights.emplace_back( p );
 }
 void cata_tiles::init_draw_weather( weather_printable weather, std::string name )
@@ -3535,16 +3542,16 @@ template<typename Iter, typename Func>
 void cata_tiles::lr_generic( Iter begin, Iter end, Func id_func, const std::string &label,
                              const std::string &prefix )
 {
-    int missing = 0;
-    int present = 0;
+    //int missing = 0;
+    //int present = 0;
     std::string missing_list;
     for( ; begin != end; ++begin ) {
         const std::string id_string = id_func( begin );
         if( !tileset_ptr->find_tile_type( prefix + id_string ) ) {
-            missing++;
+            //missing++;
             missing_list.append( id_string + " " );
         } else {
-            present++;
+            //present++;
         }
     }
     DebugLog( D_INFO, DC_ALL ) << "Missing " << label << ": " << missing_list;
@@ -3631,4 +3638,3 @@ std::vector<options_manager::id_and_option> cata_tiles::build_display_list()
     return display_names.empty() ? default_display_names : display_names;
 }
 
-#endif // SDL_TILES

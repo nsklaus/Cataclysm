@@ -965,10 +965,11 @@ bool main_menu::load_character_tab( bool transfer )
             }
 
             mvwprintz( w_open, menu_offset + point( offset_x + extra_w / 2, -2 - sel2 + offset_y ), h_white,
-                       "%s", wn );
+                       "%s:", wn );
 
+            // load menu entries TODO: calc world name length to position sub entries
             if( savegames.empty() ) {
-                mvwprintz( w_open, menu_offset + point( 40 + extra_w / 2, -2 - sel2 + offset_y ),
+                mvwprintz( w_open, menu_offset + point( 30 + extra_w / 2, -2 - sel2 + offset_y ),
                            c_red, "%s", _( "No save games found!" ) );
                 on_error();
             } else {
@@ -976,7 +977,7 @@ bool main_menu::load_character_tab( bool transfer )
 
                 for( const auto &savename : savegames ) {
                     const bool selected = sel3 + line == menu_offset.y - 2;
-                    mvwprintz( w_open, point( 40 + menu_offset.x + extra_w / 2, line-- + offset_y ),
+                    mvwprintz( w_open, point( 30 + menu_offset.x + extra_w / 2, line-- + offset_y ),
                                selected ? h_white : c_white,
                                "%s", savename.player_name() );
                 }

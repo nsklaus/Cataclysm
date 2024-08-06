@@ -10152,7 +10152,7 @@
         },
         {
           "id": "unknown",
-          "fg": 4225,
+          "fg": 2853,
           "bg": 957,
           "rotates": true
         },
@@ -16743,12 +16743,6 @@
               "bg": 972
             }
           ]
-        },
-        {
-          "id": "footstep",
-          "fg": 2958,
-          "bg": 972,
-          "rotates": false
         },
         {
           "id": ["t_null", "t_sliding_wall_o"],
@@ -38087,11 +38081,6 @@
         {
           "id": "fd_spotlight",
           "fg": 2952,
-          "rotates": false
-        },
-        {
-          "id": "highlight_item",
-          "fg": 2959,
           "rotates": false
         },
         {
@@ -61549,7 +61538,12 @@
           "fg": 23743,
           "rotates": false
         },
-
+        { "id": "footstep", "fg": 23744, "rotates": false },
+        { "id": "footstep_above", "fg": 23745, "rotates": false },
+        { "id": "footstep_below", "fg": 23746, "rotates": false },
+        { "id": "graffiti", "fg": 23747, "rotates": false },
+		{ "id": "overlay_attention", "fg": 23748, "rotates": false },	
+		{ "id": "overlay_hostile_sees_player", "fg": 23748  },
 		{
           "id": "atlatl",
           "fg": 1986,

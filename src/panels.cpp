@@ -1427,9 +1427,9 @@ static void draw_needs_narrow( const avatar &u, const catacurses::window &w )
     std::pair<nc_color, std::string> temp_pair = temp_stat( u );
     std::pair<std::string, nc_color> pain_pair = u.get_pain_description();
     // NOLINTNEXTLINE(cata-use-named-point-constants)
-    mvwprintz( w, point( 1, 0 ), c_light_gray, _( "Hunger:" ) );
+    mvwprintz( w, point( 1, 0 ), c_light_gray, _( "Food :" ) );
     // NOLINTNEXTLINE(cata-use-named-point-constants)
-    mvwprintz( w, point( 1, 1 ), c_light_gray, _( "Thirst:" ) );
+    mvwprintz( w, point( 1, 1 ), c_light_gray, _( "Drink:" ) );
     mvwprintz( w, point( 1, 2 ), c_light_gray, _( "Rest :" ) );
     mvwprintz( w, point( 1, 3 ), c_light_gray, _( "Pain :" ) );
     mvwprintz( w, point( 1, 4 ), c_light_gray, _( "Heat :" ) );

@@ -554,8 +554,8 @@ class game
 
         // Shared method to print "look around" info
         void print_all_tile_info( const tripoint &lp, const catacurses::window &w_look,
-                                  const std::string &area_name, int column,
-                                  int &line, int last_line, bool draw_terrain_indicators, const visibility_variables &cache );
+                                  int column, int &line, int last_line, bool draw_terrain_indicators,
+                                  const visibility_variables &cache );
 
         /** Long description of (visible) things at tile. */
         void extended_description( const tripoint &p );
@@ -743,11 +743,12 @@ class game
             FIRE, // Who knew, apparently you can do that in list_monsters
         };
 
-        game::vmenu_ret list_items( const std::vector<map_item_stack> &item_list );
+        //game::vmenu_ret list_items( const std::vector<map_item_stack> &item_list );
         std::vector<map_item_stack> find_nearby_items( int iRadius );
-        void reset_item_list_state( const catacurses::window &window, int height, bool bRadiusSort );
+        void reset_item_list_state(  );
 
-        game::vmenu_ret list_monsters( const std::vector<Creature *> &monster_list );
+        //game::vmenu_ret list_monsters( const std::vector<Creature *> &monster_list );
+        void list_monsters( const std::vector<Creature *> &monster_list );
 
         /** Check for dangerous stuff at dest_loc, return false if the player decides
         not to step there */
@@ -803,8 +804,7 @@ class game
         void print_fields_info( const tripoint &lp, const catacurses::window &w_look, int column,
                                 int &line );
         void print_terrain_info( const tripoint &lp, const catacurses::window &w_look,
-                                 const std::string &area_name, int column,
-                                 int &line );
+                                 int column, int &line );
         void print_trap_info( const tripoint &lp, const catacurses::window &w_look, int column,
                               int &line );
         void print_creature_info( const Creature *creature, const catacurses::window &w_look, int column,

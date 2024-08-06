@@ -191,7 +191,6 @@
     "type": "overmap_terrain",
     "id": "campus_commons_0_0_3",
     "name": "campus commons roof",
-    "color": "blue",
     "copy-from": "campus_commons_0_0_0"
   },
   {
@@ -316,7 +315,6 @@
     "type": "overmap_terrain",
     "id": "campus_media_0_0_4",
     "name": "campus media building roof",
-    "color": "blue",
     "copy-from": "campus_media_0_0_0"
   },
   {
@@ -465,7 +463,6 @@
     "type": "overmap_terrain",
     "id": "campus_lecture_0_0_3",
     "name": "campus lecture hall roof",
-    "color": "blue",
     "copy-from": "campus_lecture_0_0_0"
   },
   {

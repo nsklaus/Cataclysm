@@ -50,14 +50,20 @@ std::vector<itype_id> load_item_ids_from_directory(const std::string &directory_
 			                    std::string name = name_obj.get_string("str");
 								// don't add duplicates
 			                    if (unique_names.insert(name).second) {
-			                        item_ids.push_back(item.get_string("id"));
+                                    itype_id id(item.get_string("id"));
+                                    item_ids.push_back(id);
+			                        //item_ids.push_back(item.get_string("id"));
 			                        //fprintf(stderr, "json array item ID: %s\n", item.get_string("id").c_str());
 			                    } else {
 									// print duplicates on stderr
 									// fprintf(stderr, "json array item ID: %s\n", item.get_string("id").c_str());
 								}
 			                }
+			                //name_obj.allow_omitted_members();
+                            name_obj.allow_omitted_members();
+                            
 			            }
+                        item.allow_omitted_members();
 			        }
 			    }
 			} catch (const JsonError &err) {
@@ -96,13 +102,22 @@ void game::items_browser() {
 	int entry_count_all = 0;
 	int entry_count_filtered = 0;
 
+	//for (const auto &id : item_ids) {
+	//	const itype *e = item_controller->find_template(id);
+	//	if (e != nullptr) {
+	//		entry_count_all++;
+	//		all_items.emplace_back(e->get_id());
+	//	}
+	//}
+
 	for (const auto &id : item_ids) {
-		const itype *e = item_controller->find_template(id);
-		if (e != nullptr) {
-			entry_count_all++;
-			all_items.emplace_back(e->get_id());
-		}
-	}
+        for (const auto &item : item_controller->all()) {
+            if (item->get_id() == id) {
+                entry_count_all++;
+                all_items.emplace_back(item->get_id());
+            }
+        }
+    }
 
 	std::vector<item> filtered_items = all_items;
 	std::string filter_text;
@@ -128,19 +143,24 @@ void game::items_browser() {
 		}
 		const int num_lines = TERMY - 4;
 
-		mvwprintz(w, point(1, 1 ), c_white, "item count: %d",entry_count_filtered);
+        center_print(w, 0, c_white, "CODEX (work in progress)");
+        //mvwprintz(w, point(0,0), c_white, "CODEX (work in progress)");
+		mvwprintz(w, point(1, 2 ), c_white, "item count: %d",entry_count_filtered);
 		for (size_t i = top_line; i < filtered_items.size() && i < top_line + num_lines; ++i) {
 			nc_color color = (i == selected_index) ? h_white : c_white;
-			mvwprintz(w, point(1, 3 + i - top_line), color, filtered_items[i].tname().c_str());
+			mvwprintz(w, point(1, 4 + i - top_line), color, filtered_items[i].tname().c_str());
 		}
 
-		int line = 2;  // Start from the next line
+		int line = 3;  // Start from the next line
+		mvwprintz(w, point(50, 2), c_light_blue, "Details:");
 		if (!filtered_items.empty()) {
 			const item &selected_item = filtered_items[selected_index];
-			mvwprintz(w, point(50, ++line), c_light_blue, "Details:");
+
 			mvwprintz(w, point(50, ++line), c_light_gray, "Name: %s", selected_item.tname().c_str());
-			mvwprintz(w, point(50, ++line), c_light_gray, "Weight: %s", selected_item.get_weight_string().c_str());
-			mvwprintz(w, point(50, ++line), c_light_gray, "Volume: %s", selected_item.get_volume_string().c_str());
+			const std::string capacity = selected_item.get_property_string("weight").c_str();
+            //fprintf(stderr,"weight=%s\n",capacity.c_str());
+            mvwprintz(w, point(50, ++line), c_light_gray, "Weight: %s",capacity.c_str());// get_weight_string().c_str());
+			//mvwprintz(w, point(50, ++line), c_light_gray, "Volume: %s", selected_item.get_volume_string().c_str());
 			// if (selected_item.components.empty()) {
 			// 	mvwprintz(w, point(50, ++line), c_light_gray, "Components: No components");
 			// } else {
@@ -149,7 +169,13 @@ void game::items_browser() {
 
 
 			line+=2;
+
+            std::string bleh =  selected_item.components_to_string().c_str();  //.disassembly_requirements();
+            //fprintf(stderr,"bleh=%s\n",bleh.c_str());
+            mvwprintz(w, point(50, line), c_light_gray, "- %s",bleh);
+            /*
 			const auto &uncraft_components = selected_item.get_uncraft_components();
+
 			if (!uncraft_components.empty()) {
 				mvwprintz(w, point(50, line++), c_white, "Disassembling info:");
 
@@ -161,6 +187,8 @@ void game::items_browser() {
 					line++;
 				}
 			}
+			*/
+
 
 		}
 		wrefresh(w);
