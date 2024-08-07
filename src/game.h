@@ -801,22 +801,22 @@ class game
         void chat(); // Talk to a nearby NPC  'C'
 
         // Internal methods to show "look around" info
-        void print_fields_info( const tripoint &lp, const catacurses::window &w_look, int column,
+        int print_fields_info( const tripoint &lp, const catacurses::window &w_look, int column,
                                 int &line );
-        void print_terrain_info( const tripoint &lp, const catacurses::window &w_look,
+        int print_terrain_info( const tripoint &lp, const catacurses::window &w_look,
                                  int column, int &line );
-        void print_trap_info( const tripoint &lp, const catacurses::window &w_look, int column,
+        int print_trap_info( const tripoint &lp, const catacurses::window &w_look, int column,
                               int &line );
-        void print_creature_info( const Creature *creature, const catacurses::window &w_look, int column,
+        int print_creature_info( const Creature *creature, const catacurses::window &w_look, int column,
                                   int &line, int last_line );
-        void print_vehicle_info( const vehicle *veh, int veh_part, const catacurses::window &w_look,
+        int print_vehicle_info( const vehicle *veh, int veh_part, const catacurses::window &w_look,
                                  int column, int &line, int last_line );
-        void print_visibility_info( const catacurses::window &w_look, int column, int &line,
+        int print_visibility_info( const catacurses::window &w_look, int column, int &line,
                                     visibility_type visibility );
-        void print_visibility_indicator( visibility_type visibility );
-        void print_items_info( const tripoint &lp, const catacurses::window &w_look, int column, int &line,
+        int print_visibility_indicator( visibility_type visibility );
+        int print_items_info( const tripoint &lp, const catacurses::window &w_look, int column, int &line,
                                int last_line );
-        void print_graffiti_info( const tripoint &lp, const catacurses::window &w_look, int column,
+        int print_graffiti_info( const tripoint &lp, const catacurses::window &w_look, int column,
                                   int &line, int last_line );
 
         input_context get_player_input( std::string &action );

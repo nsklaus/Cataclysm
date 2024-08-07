@@ -639,27 +639,71 @@ static std::pair<std::string, nc_color> hp_description( int cur_hp, int max_hp )
 int monster::print_info( const catacurses::window &w, int vStart, int vLines, int column ) const
 {
     const int vEnd = vStart + vLines;
-
-    mvwprintz( w, point( column, vStart ), c_white, "%s ", name() );
+    //int lines = 0;
+    int initial_line = vStart;
+    const int max_width_label = getmaxx( w ) - (column+7); // there's a label
+    const int max_width_full = getmaxx( w ) - 2; // full panel width, no label
+    mvwprintz( w, point( column, vStart ), c_dark_gray, "Name : " );
+    //mvwprintz( w, point( column+7, vStart ), this->color_with_effects(), name() );
+    vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, this->color_with_effects(), name() );
 
     const auto att = get_attitude();
-    wprintz( w, att.second, att.first );
+    mvwprintz( w, point( column, vStart), c_dark_gray, "Pose :");
+    //mvwprintz( w, point( column+7, vStart ), att.second, att.first );
+    vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, att.second, att.first);
 
-    if( debug_mode ) {
-        wprintz( w, c_light_gray, _( " Difficulty " ) + to_string( type->difficulty ) );
+    std::string difficulty_str;
+    nc_color c_level;
+    difficulty_str = _( "Difficulty " ) + to_string( type->difficulty );
+    if( type->difficulty < 3 ) {
+        difficulty_str = _( "Minimal threat." );
+        c_level = c_light_green;
+    } else if( type->difficulty < 10 ) {
+        difficulty_str = _( "Mildly dangerous." );
+         c_level = c_yellow;
+    } else if( type->difficulty < 20 ) {
+        difficulty_str = _( "Dangerous." );
+         c_level = c_light_red;
+    } else if( type->difficulty < 30 ) {
+        difficulty_str = _( "Very dangerous." );
+         c_level = c_red;
+    } else if( type->difficulty < 50 ) {
+        difficulty_str = _( "Extremely dangerous!" );
+         c_level = c_magenta;
+    } else {
+        difficulty_str = _( "Fatally dangerous!" );
+         c_level = c_magenta_white;
     }
 
+    mvwprintz( w, point(column, vStart), c_dark_gray, "Level: ");
+    //mvwprintz( w, point(column+7, vStart), c_level, difficulty_str);
+    vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, c_level, difficulty_str);
+
+    // if( debug_mode ) {
+    //     wprintz( w, c_light_gray, _( " Difficulty " ) + to_string( type->difficulty ) );
+    // }
+
+    mvwprintz( w, point( column, vStart ), c_dark_gray, "Aware: ");
     if( sees( g->u ) ) {
-        mvwprintz( w, point( column, ++vStart ), c_yellow, _( "Aware of your presence!" ) );
+        //mvwprintz( w, point( column+7, vStart ), c_red,    "It knows you're here!" );
+        vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, c_red, "It knows you're here!");
+    } else {
+        //mvwprintz( w, point( column+7, vStart ), c_yellow, "It hasn't noticed you." );
+        vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, c_yellow, "It hasn't noticed you.");
     }
 
+    /*
     std::string effects = get_effect_status();
     if( !effects.empty() ) {
         trim_and_print( w, point( column, ++vStart ), getmaxx( w ) - 2, h_white, effects );
     }
+    */
 
     const auto hp_desc = hp_description( hp, type->hp );
-    mvwprintz( w, point( column, ++vStart ), hp_desc.second, hp_desc.first );
+    mvwprintz( w, point( column, vStart ), c_dark_gray, "State: ");
+    vStart += fold_and_print( w, point( column+7, vStart ), max_width_label, hp_desc.second, hp_desc.first );
+
+    /*
     if( has_effect( effect_ridden ) && mounted_player ) {
         mvwprintz( w, point( column, ++vStart ), c_white, _( "Rider: %s" ), mounted_player->disp_name() );
     }
@@ -667,14 +711,21 @@ int monster::print_info( const catacurses::window &w, int vStart, int vLines, in
     if( size_bonus > 0 ) {
         wprintz( w, c_light_gray, _( " It is %s." ), size_names.at( get_size() ) );
     }
+    */
 
+    /*
     std::vector<std::string> lines = foldstring( type->get_description(), getmaxx( w ) - 1 - column );
     int numlines = lines.size();
+    vStart++;
     for( int i = 0; i < numlines && vStart <= vEnd; i++ ) {
         mvwprintz( w, point( column, ++vStart ), c_white, lines[i] );
-    }
+    }*/
 
-    return vStart;
+    vStart++;
+    vStart += fold_and_print(w, point(column, vStart), max_width_full, c_white, type->get_description());
+
+    //return vStart;
+    return vStart - initial_line;
 }
 
 std::string monster::extended_description() const

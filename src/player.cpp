@@ -5524,8 +5524,16 @@ std::string player::short_description() const
 
 int player::print_info( const catacurses::window &w, int vStart, int, int column ) const
 {
-    mvwprintw( w, point( column, vStart++ ), _( "You (%s)" ), name );
-    return vStart;
+    // TODO: extend player description
+    int initial_line = vStart;
+    const int max_width_label = getmaxx( w ) - (column+7); // there's a label
+    const int max_width_full = getmaxx( w ) - 2; // full panel width, no label
+    mvwprintz( w, point( column, vStart ), c_dark_gray, "Name : " );
+    mvwprintz( w, point( column+7, vStart ), c_white, name );
+    vStart+=2;
+    vStart += fold_and_print( w, point( column, vStart ), max_width_full, c_white, this->short_description());
+
+    return vStart - initial_line;
 }
 
 bool player::is_visible_in_range( const Creature &critter, const int range ) const

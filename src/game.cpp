@@ -5605,6 +5605,10 @@ void game::peek( const tripoint &p )
     wrefresh( w_terrain );
     draw_panels();
 }
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 cata::optional<tripoint> game::look_debug()
 {
@@ -5614,7 +5618,7 @@ cata::optional<tripoint> game::look_debug()
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_look,
-                                int column, int &line, const int last_line,
+                                int column, int &line, int last_line,
                                 bool draw_terrain_indicators,
                                 const visibility_variables &cache )
 {
@@ -5627,14 +5631,38 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
         case VIS_CLEAR: {
             const optional_vpart_position vp = m.veh_at( lp );
             const Creature *creature = critter_at( lp, true );
+
+            //fprintf(stderr,"before print_terrain_info() line = %d \n", line);
             print_terrain_info( lp, w_look, column, line );
+            //fprintf(stderr,"after print_terrain_info() line = %d \n", line);
+
+            //fprintf(stderr,"before print_fields_info() line = %d \n", line);
             print_fields_info( lp, w_look, column, line );
+            //fprintf(stderr,"after print_fields_info() line = %d \n", line);
+
+            /*
+            fprintf(stderr,"before print_trap_info() line = %d \n", line);
             print_trap_info( lp, w_look, column, line );
+            fprintf(stderr,"after print_trap_info() line = %d \n", line);
+            */
+
+            //fprintf(stderr,"before print_creature_info() line = %d \n", line);
             print_creature_info( creature, w_look, column, line, last_line );
-            print_vehicle_info( veh_pointer_or_null( vp ), vp ? vp->part_index() : -1, w_look, column, line,
-                                last_line );
+            //fprintf(stderr,"after print_creature_info() line = %d \n", line);
+
+            //fprintf(stderr,"before print_items_info() line = %d \n", line);
             print_items_info( lp, w_look, column, line, last_line );
+            //fprintf(stderr,"after print_items_info() line = %d \n", line);
+
+            //fprintf(stderr,"before print_graffiti_info() line = %d \n", line);
             print_graffiti_info( lp, w_look, column, line, last_line );
+            //fprintf(stderr,"after print_graffiti_info() line = %d \n", line);
+
+            //fprintf(stderr,"before print_vehicle_info() line = %d \n", line);
+            print_vehicle_info( veh_pointer_or_null( vp ),
+                                        vp ? vp->part_index() : -1, w_look, column,
+                                        line, last_line );
+            //fprintf(stderr,"after print_vehicle_info() line = %d \n", line);
 
             if( draw_terrain_indicators && !liveview.is_enabled() ) {
                 if( creature != nullptr && u.sees( *creature ) ) {
@@ -5643,6 +5671,7 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
                     m.drawsq( w_terrain, u, lp, true, true, lp );
                 }
             }
+            //fprintf(stderr," ---------- \n\n");
         }
         break;
         case VIS_BOOMER:
@@ -5650,11 +5679,13 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
         case VIS_DARK:
         case VIS_LIT:
         case VIS_HIDDEN:
+            /*
             print_visibility_info( w_look, column, line, visibility );
 
             if( draw_terrain_indicators && !liveview.is_enabled() ) {
                 print_visibility_indicator( visibility );
             }
+            */
             break;
     }
     if( !inbounds ) {
@@ -5680,9 +5711,10 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
     }
 }
 
-void game::print_visibility_info( const catacurses::window &w_look, int column, int &line,
+int game::print_visibility_info( const catacurses::window &w_look, int column, int &line,
                                   visibility_type visibility )
 {
+    /*
     const char *visibility_message = nullptr;
     switch( visibility ) {
         case VIS_CLEAR:
@@ -5707,14 +5739,15 @@ void game::print_visibility_info( const catacurses::window &w_look, int column, 
 
     mvwprintw( w_look, point( line, column ), visibility_message );
     line += 2;
+    return line; // CHECK THE FUNCTION, YOU'VE JUST SILENCED THE ERRORS BY ADDING RETURN
+    */
+    return 0;
 }
 
-void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_look,
-                               int column, int &line )
+int game::print_terrain_info( const tripoint &lp, const catacurses::window &w_look, int column, int &line )
 {
+    int initial_line = line;
     const int max_width = getmaxx( w_look ) - column - 8;
-    int lines=0; // = line;
-
 
     // grab area name and its color from overmap according to cursor position
     const oter_id &cur_ter_m = overmap_buffer.ter( ms_to_omt_copy( g->m.getabs( lp ) ) );
@@ -5722,41 +5755,43 @@ void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_l
     const nc_color area_color = cur_ter_m->get_color();
     std::string tile = m.tername( lp );
 
-    line++;
+    // PLACE:
     mvwprintz( w_look, point( column, line ), c_dark_gray, "Place:");
-    lines = fold_and_print( w_look, point( column+7, line ), max_width,
-                            area_color, area_name);
+    line += fold_and_print( w_look, point( column+7, line ), max_width, area_color, area_name);
 
-    if ( lines>1 ) { line+=lines; } else { line+=1;}
+
+    // TILE:
     mvwprintz( w_look, point( column, line), c_dark_gray, "Tile :");
-    lines = fold_and_print( w_look, point( column+7, line ), max_width,
-                            m.has_furn( lp ) ? m.furn(lp).obj().color() : m.ter(lp).obj().color(), m.has_furn( lp ) ? m.furnname( lp ) : m.tername( lp ));
+    line += fold_and_print( w_look, point( column+7, line ), max_width,
+                            m.has_furn( lp ) ? m.furn(lp).obj().color() : m.ter(lp).obj().color(),
+                            m.has_furn( lp ) ? m.furnname( lp ) : m.tername( lp ));
 
-    if ( lines>1 ) { line+=lines; } else { line+=1;}
+
+    // LIGHT:
     const auto ll = get_light_level( std::max( 1.0, LIGHT_AMBIENT_LIT - m.ambient_light_at( lp ) + 1.0 ) );
     mvwprintw( w_look, point( column, line ), "Light: "  );
-    wprintz( w_look, ll.second, ll.first );
-    lines = 0;
+    line += fold_and_print( w_look, point( column+7, line ), max_width, ll.second, ll.first );
 
-    if ( lines>1 ) { line+=lines; } else { line+=1;}
+
+    // MOVE:
     mvwprintz(w_look, point( column, line), c_dark_gray, "Move :");
     if( m.impassable( lp ) ) {
-        lines = fold_and_print( w_look, point( column+7, line ), max_width, c_red, "Impassable" );
+        line += fold_and_print( w_look, point( column+7, line ), max_width, c_red, "Impassable" );
     } else {
-        lines = fold_and_print( w_look, point( column+7, line ), max_width, c_light_blue,
-                                "%d", m.move_cost( lp ) * 50 );
+        line += fold_and_print( w_look, point( column+7, line ), max_width, c_light_blue, "%d", m.move_cost( lp ) * 50 );
     }
 
-    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    // COVER:
     mvwprintz(w_look, point( column, line), c_dark_gray, "Cover:");
-    lines = fold_and_print( w_look, point( column+7, line ), max_width,
-                    c_light_gray, "%d%%", m.coverage( lp ) );
+    line += fold_and_print( w_look, point( column+7, line ), max_width, c_light_gray, "%d%%", m.coverage( lp ) );
 
-    if ( lines>1 ) { line+=lines; } else { line+=1;}
+    // PROPS:
     mvwprintz(w_look, point( column, line), c_dark_gray, "Props:");
-    lines = fold_and_print( w_look, point( column+7, line ),
-                                        max_width, c_dark_gray, m.features( lp ) );
+    line += fold_and_print( w_look, point( column+7, line ), max_width, c_dark_gray, m.features( lp ) );
 
+    /*
+    // NEED TO CHECK THIS, FOR NOW IT IS ALL UNTESTED
+    // SIGN:
     std::string signage = m.get_signage( lp );
     if( !signage.empty() ) {
         trim_and_print( w_look, point( column, ++line ), max_width, c_dark_gray,
@@ -5764,6 +5799,7 @@ void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_l
                         u.has_trait( trait_ILLITERATE ) ? _( "Sign : ???" ) : _( "Sign : %s" ), signage );
     }
 
+    // NEED TO CHECK THIS, FOR NOW IT IS ALL UNTESTED
     if( m.has_zlevels() && lp.z > -OVERMAP_DEPTH && !m.has_floor( lp ) ) {
         // Print info about stuff below
         tripoint below( lp.xy(), lp.z - 1 );
@@ -5783,34 +5819,49 @@ void game::print_terrain_info( const tripoint &lp, const catacurses::window &w_l
         }
     }
 
-
-    if( line < lines ) {
-        line = lines  - 1;
-    }
+    // if( line < lines_used ) {
+    //     line = lines_used  - 1;
+    // }
+    */
+    return line - initial_line;
 }
 
-void game::print_fields_info( const tripoint &lp, const catacurses::window &w_look, int column,
+int game::print_fields_info( const tripoint &lp, const catacurses::window &w_look, int column,
                               int &line )
 {
+    int initial_line = line;
+    const int max_width = getmaxx( w_look ) - column - 8;
     const field &tmpfield = m.field_at( lp );
+    bool printed_info = false;
+
+    // NEED TO CHECK THIS, FOR NOW IT IS UNTESTED (ELSE IS OK, BUT THE IF IS UNCHECKED)
     for( auto &fld : tmpfield ) {
         const field_entry &cur = fld.second;
         if( fld.first.obj().has_fire && ( m.has_flag( TFLAG_FIRE_CONTAINER, lp ) ||
                                           m.ter( lp ) == t_pit_shallow || m.ter( lp ) == t_pit ) ) {
             const int max_width = getmaxx( w_look ) - column - 2;
-            int lines = fold_and_print( w_look, point( column, ++line ), max_width, cur.color(),
+            line += fold_and_print( w_look, point( column, line ), max_width, cur.color(),
                                         get_fire_fuel_string( lp ) ) - 1;
-            line += lines;
         } else {
-            mvwprintz( w_look, point( column, ++line ), c_dark_gray, "Info : ");
-            mvwprintz( w_look, point( column+7, line ), cur.color(), cur.name() );
+            if (!printed_info )
+            {
+                mvwprintz( w_look, point( column, line ), c_dark_gray, "Info : ");
+                printed_info = true;
+            }
+            line += fold_and_print( w_look, point( column+7, line ), max_width, cur.color(), cur.name() );
         }
     }
+    return line - initial_line;
 }
 
-void game::print_trap_info( const tripoint &lp, const catacurses::window &w_look, const int column,
+int game::print_trap_info( const tripoint &lp, const catacurses::window &w_look, const int column,
                             int &line )
 {
+    /*
+    int initial_line = line;
+    const int max_width = getmaxx( w_look ) - column - 8;
+
+    // NEED TO CHECK THIS, FOR NOW IT IS UNTESTED
     const trap &tr = m.tr_at( lp );
     if( tr.can_see( lp, u ) ) {
         partial_con *pc = g->m.partial_con_at( lp );
@@ -5823,47 +5874,82 @@ void game::print_trap_info( const tripoint &lp, const catacurses::window &w_look
             tr_name = tr.name();
         }
 
-        mvwprintz( w_look, point( column, ++line ), tr.color, tr_name );
+        mvwprintz( w_look, point( column, line ), tr.color, tr_name );
     }
+    return line - initial_line;
+    */
+    return 0;
 }
 
-void game::print_creature_info( const Creature *creature, const catacurses::window &w_look,
-                                const int column, int &line, const int last_line )
+int game::print_creature_info( const Creature *creature, const catacurses::window &w_look,
+                               const int column, int &line, const int last_line )
 {
-    if( creature != nullptr && ( u.sees( *creature ) || creature == &u ) ) {
-
-        line++;
+    int initial_line = line;
+    if( creature != nullptr && ( u.sees( *creature ) || creature == &u ) )
+    {
         const int max_width = getmaxx( w_look ) - column - 1;
         std::string text = " creature ";
         int left_length = (max_width - text.length()) / 2;
 
-        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwhline(w_look, point(column, ++line), LINE_OXOX, left_length+1);
         mvwprintw(w_look, point(left_length,line), text.c_str());
         mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
                                 max_width - left_length - text.length()+1);
-        line+=2;
-            int vLines = last_line - line;
-            line = creature->print_info( w_look, line, vLines, column );
+        line++;
+
+        //fprintf(stderr, "1) in print_creature_info() line = %d \n",line);
+
+        direction dir = direction_from( u.pos(), creature->pos());
+        std::string location = to_string(rl_dist( u.pos(), creature->pos()));
+        location += " tiles " + direction_name(dir);
+
+        mvwprintz( w_look, point(column, ++line), c_dark_gray, "Area : " );
+        line += fold_and_print( w_look, point( column+7, line ), max_width, c_white, location );
+        //fprintf(stderr, "2) in print_creature_info() line = %d \n",line);
+
+        int vLines = last_line - line;
+        line += creature->print_info( w_look, line, vLines, column );
+        //mvwprintz( w_look, point(column, line), c_dark_gray, "BLOB ----------------- " );
+        //fprintf(stderr, "3) in print_creature_info() line = %d \n",line);
     }
+    return line - initial_line;
 }
 
-void game::print_vehicle_info( const vehicle *veh, int veh_part, const catacurses::window &w_look,
+int game::print_vehicle_info( const vehicle *veh, int veh_part, const catacurses::window &w_look,
                                const int column, int &line, const int last_line )
 {
+    int initial_line = line;
+    const int max_width = getmaxx( w_look ) - column - 8;
     if( veh ) {
-        mvwprintw( w_look, point( column, ++line ), _( "There is a %s there.  Parts:" ), veh->name );
-        line = veh->print_part_list( w_look, ++line, last_line, getmaxx( w_look ), veh_part );
+
+        const int max_width = getmaxx( w_look ) - column - 1;
+        std::string text = " car parts ";
+        int left_length = (max_width - text.length()) / 2;
+
+        mvwhline(w_look, point(column, ++line), LINE_OXOX, left_length+1);
+        mvwprintw(w_look, point(left_length,line), text.c_str());
+        mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
+                                max_width - left_length - text.length()+1);
+        line++;
+
+
+        //mvwprintz( w_look, point( column, line ), c_dark_gray, "Parts: " );
+        //mvwprintw( w_look, point( column, line ), _( "There is a %s there.  Parts:" ), veh->name );
+        line += veh->print_part_list( w_look, ++line, last_line, getmaxx( w_look ), veh_part );
+        //lines_used = fold_and_print( w_look, point( column+7, line ), max_width,
     }
+    return line - initial_line;
 }
 
-void game::print_visibility_indicator( visibility_type visibility )
+int game::print_visibility_indicator( visibility_type visibility )
 {
+    /*
     std::string visibility_indicator;
     nc_color visibility_indicator_color = c_white;
     switch( visibility ) {
         case VIS_CLEAR:
             // Nothing printed when visibility is clear
-            return;
+            return 0;
         case VIS_BOOMER:
         case VIS_BOOMER_DARK:
             visibility_indicator = '#';
@@ -5884,47 +5970,41 @@ void game::print_visibility_indicator( visibility_type visibility )
     }
 
     mvwputch( w_terrain, point( POSX, POSY ), visibility_indicator_color, visibility_indicator );
+    return 1;
+    */
+    return 0;
 }
 
-void game::print_items_info( const tripoint &lp, const catacurses::window &w_look, const int column,
+int game::print_items_info( const tripoint &lp, const catacurses::window &w_look, const int column,
                              int &line,
                              const int last_line )
 {
-    line+=2;
+    int initial_line = line;
+
     const int max_width = getmaxx( w_look ) - column - 1;
     if( !m.sees_some_items( lp, u ) ) {
-        return;
+        return 0;
     } else if( m.has_flag( "CONTAINER", lp ) && !m.could_see_items( lp, u ) ) {
         mvwprintw( w_look, point( column, ++line ), _( "You cannot see what is inside of it." ) );
     } else if( u.has_effect( effect_blind ) || u.worn_with_flag( "BLIND" ) ) {
         mvwprintz( w_look, point( column, ++line ), c_yellow,
                    _( "There's something there, but you can't see what it is." ) );
-        return;
+        return 1;
     } else {
-//         std::map<std::string, int> item_names;
-//         ++item_names[item.tname()];
-//
-//         for( auto &item : m.i_at( lp ) ) {
-//             fold_and_print( w_look, point( column, ++line ), max_width,
-//                     item.color(), item.tname() );
-//         }
-
-        //mvwhline(w_look, point(0,line), LINE_OXOX, max_width);
 
         std::string text = " items ";
         int left_length = (max_width - text.length()) / 2;
 
-        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwhline(w_look, point(1, ++line), LINE_OXOX, left_length+1);
         mvwprintw(w_look, point(left_length,line), text.c_str());
         mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
                                max_width - left_length - text.length()+1);
-        line++;
+
         std::map<std::string, std::pair<int, nc_color>> item_map;
 
         for (auto &item : m.i_at(lp)) {
             std::string item_name = item.nname(item.typeId(),1);
-            nc_color item_color = item.color(); //color_in_inventory();
-
+            nc_color item_color = item.color();
             // Increment count if item already exists, otherwise add it
             if (item_map.count(item_name) > 0) {
                 item_map[item_name].first++;
@@ -5932,52 +6012,34 @@ void game::print_items_info( const tripoint &lp, const catacurses::window &w_loo
                 item_map[item_name] = std::make_pair(1, item_color);
             }
         }
-
+        line+=2;
         //int line = 0;
         for (const auto &entry : item_map) {
             std::string item_display = entry.first;
             if (entry.second.first > 1) {
                 item_display += " x" + std::to_string(entry.second.first);
             }
-            if (line >= last_line - 2) {
+            if (line >= last_line - 1) {
                 mvwprintz(w_look, point(column, ++line), c_yellow, _("More items here…"));
                 break;
             } else {
-                mvwprintz(w_look, point(column, ++line), c_dark_gray, "• ");
-                int lines_used = fold_and_print(w_look, point(column+2, line), max_width -2,
+                mvwprintz(w_look, point(column, line), c_dark_gray, "• ");
+                line += fold_and_print(w_look, point(column+2, line), max_width -2,
                                                 entry.second.second, item_display);
-                line += lines_used - 1; // Adjust the line counter based on lines used by fold_and_print
+                //line += lines_used - 1; // Adjust the line counter based on lines used by fold_and_print
             }
         }
-
-
-
-        // for( const auto &it : item_names ) {
-        //     if( line >= last_line - 2 ) {
-        //         mvwprintz( w_look, point( column, ++line ), c_yellow, _( "More items here…" ) );
-        //         break;
-        //     }
-        //
-        //     if( it.second > 1 ) {
-        //         // trim_and_print( w_look, point( column, ++line ), max_width, c_white,
-        //         //                 pgettext( "%s is the name of the item.  %d is the quantity of that item.", "%s [%d]" ),
-        //         //                 it.first.c_str(), it.second );
-        //     } else {
-        //         //nc_color = item // ( lp ).obj().color();
-        //         // fold_and_print( w_look, point( column, ++line ), max_width,
-        //         //      c_light_gray, "%d%%", m.coverage( lp ) );
-        //         //trim_and_print( w_look, point( column, ++line ), max_width, c_white, it.first );
-        //     }
-        // }
     }
+    return line - initial_line;
 }
 
-void game::print_graffiti_info( const tripoint &lp, const catacurses::window &w_look,
+int game::print_graffiti_info( const tripoint &lp, const catacurses::window &w_look,
                                 const int column, int &line,
                                 const int last_line )
 {
+    int initial_line = line;
     if( line > last_line ) {
-        return;
+        return 0;
     }
 
 
@@ -5987,13 +6049,14 @@ void game::print_graffiti_info( const tripoint &lp, const catacurses::window &w_
         std::string text = " message ";
         int left_length = (max_width - text.length()) / 2;
 
-        mvwhline(w_look, point(1,line), LINE_OXOX, left_length+1);
+        mvwhline(w_look, point(1, ++line), LINE_OXOX, left_length+1);
         mvwprintw(w_look, point(left_length,line), text.c_str());
         mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
                                 max_width - left_length - text.length()+1);
-        line+=2;
-        fold_and_print( w_look, point( column, line ), max_width, c_light_gray, m.graffiti_at( lp ) );
+
+        line += fold_and_print( w_look, point( column, line ), max_width, c_light_gray, m.graffiti_at( lp ) );
     }
+    return line - initial_line;
 }
 
 bool game::check_zone( const zone_type_id &type, const tripoint &where ) const
@@ -6639,7 +6702,7 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
     ctxt.register_action( "HELP_KEYBINDINGS" );
     ctxt.register_action( "zoom_out" );
     ctxt.register_action( "zoom_in" );
-    ctxt.register_action( "toggle_pixel_minimap" );
+    //ctxt.register_action( "toggle_pixel_minimap" );
 
     const int old_levz = get_levz();
     const int min_levz = std::max( old_levz - fov_3d_z_range, -OVERMAP_DEPTH );
@@ -6659,16 +6722,14 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
 
                 center_print( w_info, 0, c_white, string_format( _( "< <color_green>Look Around</color> >" ) ) );
 
-                std::string fast_scroll_text = string_format( _( "%s - %s" ),
-                                               ctxt.get_desc( "TOGGLE_FAST_SCROLL" ),
-                                               ctxt.get_action_name( "TOGGLE_FAST_SCROLL" ) );
-                std::string pixel_minimap_text = string_format( _( "%s - %s" ),
-                                                 ctxt.get_desc( "toggle_pixel_minimap" ),
-                                                 ctxt.get_action_name( "toggle_pixel_minimap" ) );
-                mvwprintz( w_info, point( 1, getmaxy( w_info ) - 1 ), fast_scroll ? c_light_green : c_green,
-                           fast_scroll_text );
-                right_print( w_info, getmaxy( w_info ) - 1, 1, pixel_minimap_option ? c_light_green : c_green,
-                             pixel_minimap_text );
+                // std::string fast_scroll_text = string_format( _( "%s - %s" ),
+                //                                ctxt.get_desc( "TOGGLE_FAST_SCROLL" ),
+                //                                ctxt.get_action_name( "TOGGLE_FAST_SCROLL" ) );
+                // std::string pixel_minimap_text = string_format( _( "%s - %s" ),
+                //                                  ctxt.get_desc( "toggle_pixel_minimap" ),
+                //                                  ctxt.get_action_name( "toggle_pixel_minimap" ) );
+                //mvwprintz( w_info, point( 1, getmaxy( w_info ) - 1 ), fast_scroll ? c_light_green : c_green, fast_scroll_text );
+                //right_print( w_info, getmaxy( w_info ) - 1, 1, pixel_minimap_option ? c_light_green : c_green, pixel_minimap_text );
 
                 int first_line = 1;
                 const int last_line = getmaxy( w_info ) - 2;
@@ -7043,73 +7104,7 @@ bool game::take_screenshot( const std::string &/*path*/ ) const
 //helper method so we can keep list_items shorter
 void game::reset_item_list_state( )
 {
-    /*
-    const int width = 44;
-    for( int i = 1; i < TERMX; i++ ) {
-        if( i < width ) {
-            mvwputch( window, point( i, 0 ), c_light_gray, LINE_OXOX ); // -
-            mvwputch( window, point( i, TERMY - height - 1 - VIEW_OFFSET_Y * 2 ), c_light_gray,
-                      LINE_OXOX ); // -
-        }
 
-        if( i < TERMY - height - VIEW_OFFSET_Y * 2 ) {
-            mvwputch( window, point( 0, i ), c_light_gray, LINE_XOXO ); // |
-            mvwputch( window, point( width - 1, i ), c_light_gray, LINE_XOXO ); // |
-        }
-    }
-
-    mvwputch( window, point_zero, c_light_gray, LINE_OXXO ); // |^
-    mvwputch( window, point( width - 1, 0 ), c_light_gray, LINE_OOXX ); // ^|
-
-    mvwputch( window, point( 0, TERMY - height - 1 - VIEW_OFFSET_Y * 2 ), c_light_gray,
-              LINE_XXXO ); // |-
-    mvwputch( window, point( width - 1, TERMY - height - 1 - VIEW_OFFSET_Y * 2 ), c_light_gray,
-              LINE_XOXX ); // -|
-
-    mvwprintz( window, point( 2, 0 ), c_light_green, "<Tab> " );
-    wprintz( window, c_white, _( "Items" ) );
-
-    std::string sSort;
-    if( bRadiusSort ) {
-        //~ Sort type: distance.
-        sSort = _( "<s>ort: dist" );
-    } else {
-        //~ Sort type: category.
-        sSort = _( "<s>ort: cat" );
-    }
-
-    int letters = utf8_width( sSort );
-
-    //shortcut_print( window, point( getmaxx( window ) - letters, 0 ), c_white, c_light_green, sSort );
-
-    std::vector<std::string> tokens;
-    if( !sFilter.empty() ) {
-        tokens.emplace_back( _( "<R>eset" ) );
-    }
-
-    tokens.emplace_back( _( "<E>xamine" ) );
-    tokens.emplace_back( _( "<C>ompare" ) );
-    tokens.emplace_back( _( "<F>ilter" ) );
-    tokens.emplace_back( _( "<+/->Priority" ) );
-
-    int gaps = tokens.size() + 1;
-    letters = 0;
-    int n = tokens.size();
-    for( int i = 0; i < n; i++ ) {
-        letters += utf8_width( tokens[i] ) - 2; //length ignores < >
-    }
-
-    int usedwidth = letters;
-    const int gap_spaces = ( width - usedwidth ) / gaps;
-    usedwidth += gap_spaces * gaps;
-    int xpos = gap_spaces + ( width - usedwidth ) / 2;
-    const int ypos = TERMY - height - 1 - VIEW_OFFSET_Y * 2;
-
-    for( int i = 0; i < n; i++ ) {
-        xpos += shortcut_print( window, point( xpos, ypos ), c_white, c_light_green,
-                                tokens[i] ) + gap_spaces;
-    }
-    */
 }
 
 void game::list_items_monsters()
@@ -7131,35 +7126,7 @@ void game::list_items_monsters()
                                       && rl_dist( u.pos(), lhs->pos() ) < rl_dist( u.pos(), rhs->pos() ) );
     } );
 
-    /*
-    // If the current list is empty, switch to the non-empty list
-    if( uistate.vmenu_show_items ) {
-        if( items.empty() ) {
-            uistate.vmenu_show_items = false;
-        }
-    } else if( mons.empty() ) {
-        uistate.vmenu_show_items = true;
-    }
-    */
     list_monsters( mons );
-    /*
-    temp_exit_fullscreen();
-    game::vmenu_ret ret;
-    while( true ) {
-        //ret = uistate.vmenu_show_items ? list_items( items ) :
-        list_monsters( mons );
-        // if( ret == game::vmenu_ret::CHANGE_TAB ) {
-        //     uistate.vmenu_show_items = !uistate.vmenu_show_items;
-        // } else {
-        //     break;
-        // }
-    }
-
-    if( ret == game::vmenu_ret::FIRE ) {
-        avatar_action::fire_wielded_weapon( u, m );
-    }
-    reenter_fullscreen();
-    */
 }
 
 
@@ -7226,20 +7193,9 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                     iActive = 0;
                 }
             } else if( action == "zoom_in" ) {
-                //center.x = lp.x;
-                //center.y = lp.y;
                 zoom_in();
             } else if( action == "zoom_out" ) {
-                //center.x = lp.x;
-                //center.y = lp.y;
                 zoom_out();
-
-            /* } else if( action == "CENTER" ) {
-                //center = u.pos();
-                //lp = u.pos();
-                u.view_offset = stored_view_offset;
-                u.view_offset.z = 0;*/
-
             } else if( action == "SAFEMODE_BLACKLIST_REMOVE" ) {
                 const auto m = dynamic_cast<monster *>( cCurMon );
                 const std::string monName = ( m != nullptr ) ? m->name() : "human";
@@ -7264,7 +7220,7 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                     //return game::vmenu_ret::FIRE;
                 }
             }
-
+            g->refresh_all();
             const int iNumMonster = monster_list.size();
             const int iMenuSize = monster_list.size() + mSortCategory.size();
 
@@ -7310,77 +7266,21 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                 const auto critter = monster_list[iCurMon];
                 const bool selected = iCurMon == iActive;
                 ++iCurMon;
-                // if( critter->sees( g->u ) ) {
-                //     // //mvwprintz( w_monsters, point( 0, y ), c_yellow, "!" );
-                //     // add_msg( m_info, "The %s is aware of your presence!", critter->get_name() );
-                //     // // refresh game panel while list panel is open
-                //     // g->refresh_all();
-                //     g->u.being_seen =true;
-                //
-                // }
-                // else {g->u.being_seen =false;}
-                bool is_npc = false;
-                const monster *m = dynamic_cast<monster *>( critter );
-                const npc     *p = dynamic_cast<npc *>( critter );
 
-                // if( selected && !get_safemode().empty() ) {
-                //     const std::string monName = is_npc ? get_safemode().npc_type_name() : m->name();
-                //
-                //     std::string sSafemode;
-                //     if( get_safemode().has_rule( monName, Creature::A_ANY ) ) {
-                //         sSafemode = _( "<R>emove from safemode Blacklist" );
-                //     } else {
-                //         sSafemode = _( "<A>dd to safemode Blacklist" );
-                //     }
-                // }
-
-                nc_color color = c_white;
-                std::string sText;
-
-                if( m != nullptr ) {
-                    m->get_HP_Bar( color, sText );
-                } else {
-                    std::tie( sText, color ) =
-                        ::get_hp_bar( critter->get_hp(), critter->get_hp_max(), false );
-                }
-                //mvwprintz( w_monsters, point( 22, y ), color, sText );
-
-                if( m != nullptr ) {
-                    const auto att = m->get_attitude();
-                    sText = att.first;
-                    color = att.second;
-                } else if( p != nullptr ) {
-                    sText = npc_attitude_name( p->get_attitude() );
-                    color = p->symbol_color();
-                }
             }
 
             cCurMon = monster_list[iActive];
 
             if( bVMonsterLookFire )
             {
-                //mvwprintz( w_monsters, point( 1, getmaxy( w_monsters ) - 3 ), c_light_green,
-                //           ctxt.press_x( "look" ) );
-                //wprintz( w_monsters, c_light_gray, " %s", _( "to look around" ) );
-
-                if( rl_dist( u.pos(), cCurMon->pos() ) <= max_gun_range )
-                {
-                //     wprintz( w_monsters, c_light_gray, "%s", " " );
-                //     mvwprintz( w_monsters, point( 24, getmaxy( w_monsters ) - 3 ), c_light_green,
-                //                ctxt.press_x( "fire" ) );
-                //     wprintz( w_monsters, c_light_gray, " %s", _( "to shoot" ) );
-                // }
-                }
-
                 // Only redraw trail/terrain if x/y position changed or if keybinding menu erased it
                 tripoint iActivePos = cCurMon->pos() - u.pos();
                 iLastActivePos.emplace( iActivePos );
                 centerlistview( iActivePos, width );
                 draw_trail_to_square( iActivePos, false );
-
             }
 
-            catacurses::refresh();
+            //catacurses::refresh();
             action = ctxt.handle_input();
         } while( action != "QUIT" );
 

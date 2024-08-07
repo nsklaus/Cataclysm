@@ -31,7 +31,7 @@
   { "info": "If true, music and sound are enabled.", "default": "Default: True", "name": "SOUND_ENABLED", "value": "true" },
   { "info": "Choose the soundpack you want to use.  Requires restart.", "default": "Default: basic - Values: basic, CC-Sounds", "name": "SOUNDPACKS", "value": "CC-Sounds" },
   { "info": "Adjust the volume of the music being played in the background.", "default": "Default: 100 - Min: 0, Max: 128", "name": "MUSIC_VOLUME", "value": "100" },
-  { "info": "Adjust the volume of sound effects being played by the game.", "default": "Default: 100 - Min: 0, Max: 128", "name": "SOUND_EFFECT_VOLUME", "value": "10" },
+  { "info": "Adjust the volume of sound effects being played by the game.", "default": "Default: 100 - Min: 0, Max: 128", "name": "SOUND_EFFECT_VOLUME", "value": "20" },
   { "info": "Adjust the volume of ambient sounds being played by the game.", "default": "Default: 100 - Min: 0, Max: 128", "name": "AMBIENT_SOUND_VOLUME", "value": "100" },
   { "info": "Switch Language.", "default": "Default:  - Values: en, de, es_AR, es_ES, fr, hu, ja, ko, pl, pt_BR, ru, zh_CN, zh_TW", "name": "USE_LANG", "value": "" },
   { "info": "Switch between Celsius, Fahrenheit and Kelvin.", "default": "Default: fahrenheit - Values: fahrenheit, celsius, kelvin", "name": "USE_CELSIUS", "value": "fahrenheit" },

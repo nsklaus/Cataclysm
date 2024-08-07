@@ -183,7 +183,7 @@
     "price": 1000,
     "material": [ "cotton" ],
     "symbol": "[",
-    "color": "black",
+    "color": "dark_gray",
     "flags": [ "FANCY" ]
   },
   {

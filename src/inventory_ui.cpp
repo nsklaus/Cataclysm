@@ -243,7 +243,7 @@ bool inventory_selector_preset::sort_compare( const inventory_entry &lhs,
 
 nc_color inventory_selector_preset::get_color( const inventory_entry &entry ) const
 {
-    return entry.is_item() ? entry.any_item()->color_in_inventory() : c_magenta;
+    return entry.is_item() ? entry.any_item()->color() : c_magenta;
 }
 
 std::function<bool( const inventory_entry & )> inventory_selector_preset::get_filter(
@@ -1321,7 +1321,7 @@ void inventory_selector::prepare_layout()
     const int win_height = snap( std::max<int>( get_layout_height() + nc_height, FULL_SCREEN_HEIGHT ),
                                  TERMY );
 
-    prepare_layout( win_width - nc_width, win_height - nc_height );
+    prepare_layout( TERMX, TERMY );
 
     resize_window( win_width, win_height );
     layout_is_valid = true;
@@ -1475,8 +1475,7 @@ std::vector<std::string> inventory_selector::get_stats() const
 void inventory_selector::resize_window( int width, int height )
 {
     if( !w_inv || width != getmaxx( w_inv ) || height != getmaxy( w_inv ) ) {
-        w_inv = catacurses::newwin( height, width,
-                                    point( VIEW_OFFSET_X + ( TERMX - width ) / 2, VIEW_OFFSET_Y + ( TERMY - height ) / 2 ) );
+        w_inv = catacurses::newwin( TERMY, TERMX, point( 0, 0 ) );
     }
 }
 
