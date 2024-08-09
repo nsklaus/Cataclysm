@@ -179,25 +179,26 @@ int vehicle::print_part_list( const catacurses::window &win, int y1, const int m
                                        volume_units_abbr() );
         }
 
-        bool armor = part_flag( pl[i], "ARMOR" );
-        std::string left_sym;
-        std::string right_sym;
-        if( armor ) {
-            left_sym = "(";
-            right_sym = ")";
-        } else if( part_info( pl[i] ).location == part_location_structure ) {
-            left_sym = "[";
-            right_sym = "]";
-        } else {
-            left_sym = "-";
-            right_sym = "-";
-        }
+        //bool armor = part_flag( pl[i], "ARMOR" );
+        std::string left_sym = "• ";
+//         if( armor ) {
+//             left_sym = "• ";
+//         }
+//
+//         else if( part_info( pl[i] ).location == part_location_structure ) {
+//             left_sym = "[";
+//             right_sym = "]";
+//         } else {
+//             left_sym = "-";
+//             right_sym = "-";
+//         }
         nc_color sym_color = static_cast<int>( i ) == hl ? hilite( c_light_gray ) : c_light_gray;
         mvwprintz( win, point( 1, y ), sym_color, left_sym );
         trim_and_print( win, point( 2, y ), getmaxx( win ) - 4,
                         static_cast<int>( i ) == hl ? hilite( c_light_gray ) : c_light_gray, partname );
-        wprintz( win, sym_color, right_sym );
+        //wprintz( win, sym_color, right_sym );
 
+        /*
         if( i == 0 && vpart_position( const_cast<vehicle &>( *this ), pl[i] ).is_inside() ) {
             //~ indicates that a vehicle part is inside
             mvwprintz( win, point( width - 2 - utf8_width( _( "Interior" ) ), y ), c_light_gray,
@@ -207,6 +208,7 @@ int vehicle::print_part_list( const catacurses::window &win, int y1, const int m
             mvwprintz( win, point( width - 2 - utf8_width( _( "Exterior" ) ), y ), c_light_gray,
                        _( "Exterior" ) );
         }
+        */
         y++;
     }
 
@@ -337,18 +339,21 @@ void vehicle::print_fuel_indicators( const catacurses::window &win, int y, int x
     if( fuels.empty() ) {
         return;
     }
+
+    //fprintf(stderr, "fuel = %s  \n ", fuels.front().c_str());
+
     if( !fullsize ) {
         for( size_t e = 0; e < engines.size(); e++ ) {
             // if only one display, print the first engine that's on and consumes power
             if( is_engine_on( e ) &&
                 !( is_perpetual_type( e ) || is_engine_type( e, fuel_type_muscle ) ) ) {
-                print_fuel_indicator( win, point( x, y ), parts[ engines [ e ] ].fuel_current(), verbose,
-                                      desc );
+                print_fuel_indicator( win, point( x, y ), parts[ engines [ e ] ].fuel_current(), verbose, desc );
                 return;
             }
         }
         // or print the first fuel if no engines
         print_fuel_indicator( win, point( x, y ), fuels.front(), verbose, desc );
+
         return;
     }
 

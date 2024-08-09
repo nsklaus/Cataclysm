@@ -60,7 +60,13 @@ enum m_size : int {
 enum FacingDirection {
     FD_NONE = 0,
     FD_LEFT = 1,
-    FD_RIGHT = 2
+    FD_RIGHT = 2,
+    FD_UP = 3,
+    FD_DOWN = 4,
+    FD_UPRIGHT = 5,
+    FD_UPLEFT  = 6,
+    FD_DOWNRIGHT  = 7,
+    FD_DOWNLEFT = 8
 };
 
 class Creature

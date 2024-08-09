@@ -225,7 +225,7 @@
     "power_draw": 10000,
     "revert_to": "flashlight",
     "use_action": { "menu_text": "Turn off", "type": "transform", "msg": "You turn the flashlight off.", "target": "flashlight" },
-    "flags": [ "LIGHT_300", "CHARGEDIM", "TRADER_AVOID" ]
+    "flags": [  "CONE_LIGHT", "LIGHT_30", "CHARGEDIM", "TRADER_AVOID" ]
   },
   {
     "id": "gasoline_lantern",

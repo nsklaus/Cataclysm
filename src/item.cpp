@@ -7763,10 +7763,14 @@ bool item::getlight( float &luminance, int &width, int &direction ) const
     direction = 0;
     if( light.luminance > 0 ) {
         luminance = static_cast<float>( light.luminance );
+        fprintf(stderr, "light.width = %d \n", light.width);
+        //light.width = 5;
         if( light.width > 0 ) {  // width > 0 is a light arc
             width = light.width;
             direction = light.direction;
         }
+        width = 5;
+        direction = g->u.facing;
         return true;
     } else {
         const int lumint = getlight_emit();

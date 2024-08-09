@@ -470,10 +470,10 @@ Messages::dialog::dialog()
 
 void Messages::dialog::init()
 {
-    w_width = std::min( TERMX, FULL_SCREEN_WIDTH );
-    w_height = std::min( TERMY, FULL_SCREEN_HEIGHT );
-    w_x = ( TERMX - w_width ) / 2;
-    w_y = ( TERMY - w_height ) / 2;
+    w_width = TERMX;
+    w_height = TERMY;
+    w_x = 0;
+    w_y = 0;
 
     w = catacurses::newwin( w_height, w_width, point( w_x, w_y ) );
 

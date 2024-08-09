@@ -692,12 +692,12 @@ bool veh_interact::can_install_part()
 
     bool is_engine = sel_vpart_info->has_flag( "ENGINE" );
     //count current engines, some engines don't require higher skill
-    int engines = 0;
+    //int engines = 0;
     int dif_eng = 0;
     if( is_engine && sel_vpart_info->has_flag( "E_HIGHER_SKILL" ) ) {
         for( const vpart_reference &vp : veh->get_avail_parts( "ENGINE" ) ) {
             if( vp.has_feature( "E_HIGHER_SKILL" ) ) {
-                engines++;
+                //engines++;
                 dif_eng = dif_eng / 2 + 8;
             }
         }
@@ -2360,6 +2360,7 @@ void veh_interact::display_stats() const
     const auto print_part = [&]( const std::string & str, int slot, vehicle_part * pt ) {
         mvwprintz( w_stats, point( x[slot], y[slot] ), c_light_gray, str );
         int iw = utf8_width( str ) + 1;
+        //fprintf(stderr, "%s \n", pt->name().c_str() );
         return fold_and_print( w_stats, point( x[slot] + iw, y[slot] ), w[slot], c_light_gray, pt->name() );
     };
 
@@ -2369,8 +2370,8 @@ void veh_interact::display_stats() const
     // Write the most damaged part
     if( mostDamagedPart ) {
         const std::string damaged_header = mostDamagedPart == most_repairable ?
-                                           _( "Most damaged:" ) :
-                                           _( "Most damaged (can't repair):" );
+                                           _( "Damaged:" ) :
+                                           _( "Broken :" );
         i += print_part( damaged_header, i, mostDamagedPart );
     } else {
         i += 1;
@@ -2430,9 +2431,10 @@ void veh_interact::display_stats() const
     i = std::max( i, 2 * stats_h );
 
     // Print fuel percentage & type name only if it fits in the window, 10 is width of "E...F 100%"
-    veh->print_fuel_indicators( w_stats, y[i], x[i], fuel_index, true,
-                                ( x[ i ] + 10 < getmaxx( w_stats ) ),
-                                ( x[ i ] + 10 < getmaxx( w_stats ) ) );
+    veh->print_fuel_indicators( w_stats, y[i], TERMX-25, fuel_index, true,
+                                //( x[ i ] + 10 < getmaxx( w_stats ) ),
+                                //( x[ i ] + 10 < getmaxx( w_stats ) ) );
+                                false, true,false );
 
     wrefresh( w_stats );
 }

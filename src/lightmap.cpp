@@ -65,6 +65,7 @@ void map::add_light_from_items( const tripoint &p, item_stack::iterator begin,
         float ilum = 0.0; // brightness
         int iwidth = 0; // 0-360 degrees. 0 is a circular light_source
         int idir = 0;   // otherwise, it's a light_arc pointed in this direction
+        //apply_light_arc( p, idir, 0.1, 1 );
         if( itm_it->getlight( ilum, iwidth, idir ) ) {
             if( iwidth > 0 ) {
                 apply_light_arc( p, idir, ilum, iwidth );
@@ -181,22 +182,86 @@ bool map::build_vision_transparency_cache( const int zlev )
     return dirty;
 }
 
+tripoint direction_to_tripoint(FacingDirection dir) {
+    switch (dir) {
+        case FD_LEFT:
+            return tripoint(-1, 0, 0);
+        case FD_RIGHT:
+            return tripoint(1, 0, 0);
+        case FD_UP:
+            return tripoint(0, -1, 0);
+        case FD_DOWN:
+            return tripoint(0, 1, 0);
+        case FD_UPLEFT:
+            return tripoint(-1, -1, 0);
+        case FD_UPRIGHT:
+            return tripoint(1, -1, 0);
+        case FD_DOWNLEFT:
+            return tripoint(-1, 1, 0);
+        case FD_DOWNRIGHT:
+            return tripoint(1, 1, 0);
+        default:
+            return tripoint(0, 0, 0); // No movement
+    }
+}
+
+
 void map::apply_character_light( player &p )
 {
     if( p.has_effect( effect_onfire ) ) {
         apply_light_source( p.pos(), 8 );
-    } else if( p.has_effect( effect_haslight ) ) {
-        apply_light_source( p.pos(), 4 );
     }
+
+    // else if( p.has_effect( effect_haslight ) ) {
+    //     apply_light_source( p.pos(), 4 );
+    // }
+
+
+    /*
+    if( vp.has_flag( VPFLAG_CONE_LIGHT ) ) {
+    if( veh_luminance > LL_LIT ) {
+        add_light_source( src, M_SQRT2 ); // Add a little surrounding light
+        apply_light_arc( src, v->face.dir() + pt->direction, veh_luminance, 45 );
+    }
+
+     */
 
     const float held_luminance = p.active_light();
+    tripoint next_pos = p.pos() +  direction_to_tripoint(p.facing);
     if( held_luminance > LIGHT_AMBIENT_LOW ) {
-        apply_light_source( p.pos(), held_luminance );
+        //apply_light_source( /*p.pos()*/next_pos, held_luminance );
+        //add_light_source( p.pos(), M_SQRT2 );
+
+        // game seems to think the "north" (up) is at "east" (right).
+        if (p.facing == FD_RIGHT) {
+            apply_light_arc( next_pos, 0, 150, 65);
+        }
+        if (p.facing == FD_LEFT) {
+            apply_light_arc( next_pos, 180, 150, 65);
+        }
+        if (p.facing == FD_UP) {
+            apply_light_arc( next_pos, 270, 150, 65);
+        }
+        if (p.facing == FD_DOWN) {
+            apply_light_arc( next_pos, 90, 150, 65);
+        }
+        if (p.facing == FD_UPRIGHT) {
+            apply_light_arc( next_pos, 315 , 150, 65);
+        }
+        if (p.facing == FD_UPLEFT) {
+            apply_light_arc( next_pos, 225 , 150, 65);
+        }
+        if (p.facing == FD_DOWNRIGHT) {
+            apply_light_arc( next_pos, 45, 150, 65);
+        }
+        if (p.facing == FD_DOWNLEFT) {
+            apply_light_arc( next_pos, 135, 150, 65);
+        }
     }
 
-    if( held_luminance >= 4 && held_luminance > ambient_light_at( p.pos() ) - 0.5f ) {
-        p.add_effect( effect_haslight, 1_turns );
-    }
+    // if( held_luminance >= 4 && held_luminance > ambient_light_at( p.pos() ) - 0.5f ) {
+    //     p.add_effect( effect_haslight, 1_turns );
+    // }
 }
 
 // This function raytraces starting at the upper limit of the simulated area descending

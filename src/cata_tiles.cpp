@@ -2862,7 +2862,21 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
         draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
     } else if( ch.facing == FD_LEFT ) {
         draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+    } else if (ch.facing == FD_UP) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+    } else if (ch.facing == FD_DOWN) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+    } else if (ch.facing == FD_UPLEFT) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+    }else if (ch.facing == FD_UPRIGHT) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+    }    else if (ch.facing == FD_DOWNLEFT) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+    }else if (ch.facing == FD_DOWNRIGHT) {
+        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
     }
+
+
 
     // next up, draw all the overlays
     std::vector<std::string> overlays = ch.get_overlay_ids();
@@ -2874,7 +2888,20 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
                 draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
             } else if( ch.facing == FD_LEFT ) {
                 draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+            } else if( ch.facing == FD_UP ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+            } else if( ch.facing == FD_DOWN ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+            }else if( ch.facing == FD_UPLEFT ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+            }else if( ch.facing == FD_UPRIGHT ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
+            }else if( ch.facing == FD_DOWNLEFT ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+            }else if( ch.facing == FD_DOWNRIGHT ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
             }
+
             // the tallest height-having overlay is the one that counts
             height_3d = std::max( height_3d, overlay_height_3d );
         }

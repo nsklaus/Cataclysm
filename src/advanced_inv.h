@@ -154,6 +154,7 @@ class advanced_inventory
          * actual location has been queried).
          */
         bool query_destination( aim_location &def );
+
         /**
          * Move content of source container into destination container (destination pane = AIM_CONTAINER)
          * @param src_container Source container

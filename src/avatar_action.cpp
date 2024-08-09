@@ -149,17 +149,50 @@ bool avatar_action::move( avatar &you, map &m, int dx, int dy, int dz )
     int new_dy = dest_loc.y - you.posy();
 
     if( !tile_iso ) {
-        if( new_dx > 0 ) {
+
+
+        if( new_dx > 0 && new_dy == 0) {
             you.facing = FD_RIGHT;
             if( is_riding ) {
                 you.mounted_creature->facing = FD_RIGHT;
             }
-        } else if( new_dx < 0 ) {
+        }
+
+        else if( new_dx < 0  && new_dy == 0) {
             you.facing = FD_LEFT;
             if( is_riding ) {
                 you.mounted_creature->facing = FD_LEFT;
             }
         }
+
+        else if ( new_dx == 0 && new_dy < 0) {
+            you.facing = FD_UP;
+        }
+
+        else if ( new_dx == 0 && new_dy > 0) {
+            you.facing = FD_DOWN;
+        }
+
+        else if ( new_dx < 0  &&  new_dy < 0       ) {
+            you.facing = FD_UPLEFT;
+        }
+
+        else if (  new_dx > 0  && new_dy < 0   ) {
+            you.facing = FD_UPRIGHT;
+        }
+
+        else if ( new_dx < 0  &&  new_dy >0  ) {
+            you.facing = FD_DOWNLEFT;
+        }
+
+        else if ( new_dx > 0  && new_dy > 0    ) {
+            you.facing = FD_DOWNRIGHT;
+        }
+
+        // fprintf(stderr, "new_dx: %d, new_dy: %d\n", new_dx, new_dy);
+        // fprintf(stderr, "222 you.facing= %d\n", you.facing);
+
+
     } else {
         //
         // iso:

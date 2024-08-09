@@ -455,11 +455,11 @@ void game::init_ui( const bool resized )
 #endif
     // remove some space for the sidebar, this is the maximal space
     // (using standard font) that the terrain window can have
-    int sidebar_left = panel_manager::get_manager().get_width_left();
-    int sidebar_right = panel_manager::get_manager().get_width_right();
+    //int sidebar_left = panel_manager::get_manager().get_width_left();
+    //int sidebar_right = panel_manager::get_manager().get_width_right();
 
     TERRAIN_WINDOW_HEIGHT = TERMY;
-    TERRAIN_WINDOW_WIDTH = TERMX - ( sidebar_left + sidebar_right );
+    TERRAIN_WINDOW_WIDTH = TERMX;// - ( sidebar_left + sidebar_right );
     TERRAIN_WINDOW_TERM_WIDTH = TERRAIN_WINDOW_WIDTH;
     TERRAIN_WINDOW_TERM_HEIGHT = TERRAIN_WINDOW_HEIGHT;
 
@@ -507,8 +507,10 @@ void game::init_ui( const bool resized )
     POSX = TERRAIN_WINDOW_WIDTH / 2;
     POSY = TERRAIN_WINDOW_HEIGHT / 2;
 
-    w_terrain = w_terrain_ptr = catacurses::newwin( TERRAIN_WINDOW_HEIGHT, TERRAIN_WINDOW_WIDTH,
-                                point( VIEW_OFFSET_X + sidebar_left, VIEW_OFFSET_Y ) );
+    w_terrain = w_terrain_ptr = catacurses::newwin( TERRAIN_WINDOW_HEIGHT,
+                                                    TERRAIN_WINDOW_WIDTH,
+                                                    point( VIEW_OFFSET_X,
+                                                           VIEW_OFFSET_Y ) );
     werase( w_terrain );
 
     /**
@@ -1950,11 +1952,6 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
 
     item &oThisItem = *locThisItem;
     if( u.has_item( oThisItem ) ) {
-#if defined(__ANDROID__)
-        if( get_option<bool>( "ANDROID_INVENTORY_AUTOADD" ) ) {
-            add_key_to_quick_shortcuts( oThisItem.invlet, "INVENTORY", false );
-        }
-#endif
 
         std::vector<iteminfo> vThisItem;
         std::vector<iteminfo> vDummy;
@@ -2159,14 +2156,14 @@ bool game::handle_mouseview( input_context &ctxt, std::string &action )
             if( mouse_pos && ( !liveview_pos || *mouse_pos != *liveview_pos ) ) {
                 liveview_pos = mouse_pos;
                 liveview.show( *liveview_pos );
-                draw_panels( true );
+                draw_panels( false );
                 const catacurses::window &w = catacurses::newwin( TERMY / 2, width,
                                               point( sidebar_right ? TERMX - width : 0, 0 ) );
                 liveview.draw( w, TERMY / 2 );
             } else if( !mouse_pos ) {
                 liveview_pos.reset();
                 liveview.hide();
-                draw_panels( true );
+                draw_panels( false );
             }
         }
     } while( action == "MOUSE_MOVE" ); // Freeze animation when moving the mouse
@@ -2300,7 +2297,7 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "peek" );
     ctxt.register_action( "listitems" );
     ctxt.register_action( "zones" );
-    ctxt.register_action( "inventory" );
+    //ctxt.register_action( "inventory" );
     ctxt.register_action( "compare" );
     ctxt.register_action( "organize" );
     ctxt.register_action( "apply" );
@@ -2377,7 +2374,7 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "toggle_fullscreen" );
 #endif
     ctxt.register_action( "toggle_pixel_minimap" );
-    ctxt.register_action( "toggle_panel_adm" );
+    //ctxt.register_action( "toggle_panel_adm" );
     ctxt.register_action( "reload_tileset" );
     ctxt.register_action( "toggle_auto_features" );
     ctxt.register_action( "toggle_auto_pulp_butcher" );
@@ -3115,12 +3112,12 @@ void game::draw()
     draw_ter();
     wrefresh( w_terrain );
 
-    draw_panels( true );
+    draw_panels( false );
 }
 
 void game::draw_panels( bool force_draw )
 {
-    draw_panels( 0, 1, force_draw );
+    //draw_panels( 0, 1, force_draw );
 }
 
 void game::draw_panels( size_t column, size_t index, bool force_draw )
@@ -5330,7 +5327,7 @@ void game::examine()
     // redraw terrain to erase 'examine' window
     draw_ter();
     wrefresh( w_terrain );
-    draw_panels( true );
+    draw_panels( false );
     examine( *examp_ );
     u.manual_examine = false;
 }
@@ -5632,37 +5629,15 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
             const optional_vpart_position vp = m.veh_at( lp );
             const Creature *creature = critter_at( lp, true );
 
-            //fprintf(stderr,"before print_terrain_info() line = %d \n", line);
             print_terrain_info( lp, w_look, column, line );
-            //fprintf(stderr,"after print_terrain_info() line = %d \n", line);
-
-            //fprintf(stderr,"before print_fields_info() line = %d \n", line);
             print_fields_info( lp, w_look, column, line );
-            //fprintf(stderr,"after print_fields_info() line = %d \n", line);
-
-            /*
-            fprintf(stderr,"before print_trap_info() line = %d \n", line);
             print_trap_info( lp, w_look, column, line );
-            fprintf(stderr,"after print_trap_info() line = %d \n", line);
-            */
-
-            //fprintf(stderr,"before print_creature_info() line = %d \n", line);
             print_creature_info( creature, w_look, column, line, last_line );
-            //fprintf(stderr,"after print_creature_info() line = %d \n", line);
-
-            //fprintf(stderr,"before print_items_info() line = %d \n", line);
             print_items_info( lp, w_look, column, line, last_line );
-            //fprintf(stderr,"after print_items_info() line = %d \n", line);
-
-            //fprintf(stderr,"before print_graffiti_info() line = %d \n", line);
             print_graffiti_info( lp, w_look, column, line, last_line );
-            //fprintf(stderr,"after print_graffiti_info() line = %d \n", line);
-
-            //fprintf(stderr,"before print_vehicle_info() line = %d \n", line);
             print_vehicle_info( veh_pointer_or_null( vp ),
                                         vp ? vp->part_index() : -1, w_look, column,
                                         line, last_line );
-            //fprintf(stderr,"after print_vehicle_info() line = %d \n", line);
 
             if( draw_terrain_indicators && !liveview.is_enabled() ) {
                 if( creature != nullptr && u.sees( *creature ) ) {
@@ -5671,7 +5646,6 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
                     m.drawsq( w_terrain, u, lp, true, true, lp );
                 }
             }
-            //fprintf(stderr," ---------- \n\n");
         }
         break;
         case VIS_BOOMER:
@@ -5679,13 +5653,11 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
         case VIS_DARK:
         case VIS_LIT:
         case VIS_HIDDEN:
-            /*
             print_visibility_info( w_look, column, line, visibility );
 
             if( draw_terrain_indicators && !liveview.is_enabled() ) {
                 print_visibility_indicator( visibility );
             }
-            */
             break;
     }
     if( !inbounds ) {
@@ -5714,7 +5686,7 @@ void game::print_all_tile_info( const tripoint &lp, const catacurses::window &w_
 int game::print_visibility_info( const catacurses::window &w_look, int column, int &line,
                                   visibility_type visibility )
 {
-    /*
+    int initial_line = line;
     const char *visibility_message = nullptr;
     switch( visibility ) {
         case VIS_CLEAR:
@@ -5739,9 +5711,7 @@ int game::print_visibility_info( const catacurses::window &w_look, int column, i
 
     mvwprintw( w_look, point( line, column ), visibility_message );
     line += 2;
-    return line; // CHECK THE FUNCTION, YOU'VE JUST SILENCED THE ERRORS BY ADDING RETURN
-    */
-    return 0;
+    return line - initial_line;
 }
 
 int game::print_terrain_info( const tripoint &lp, const catacurses::window &w_look, int column, int &line )
@@ -5857,11 +5827,10 @@ int game::print_fields_info( const tripoint &lp, const catacurses::window &w_loo
 int game::print_trap_info( const tripoint &lp, const catacurses::window &w_look, const int column,
                             int &line )
 {
-    /*
-    int initial_line = line;
-    const int max_width = getmaxx( w_look ) - column - 8;
 
-    // NEED TO CHECK THIS, FOR NOW IT IS UNTESTED
+    int initial_line = line;
+    const int max_width = getmaxx( w_look ) - 2;
+
     const trap &tr = m.tr_at( lp );
     if( tr.can_see( lp, u ) ) {
         partial_con *pc = g->m.partial_con_at( lp );
@@ -5874,11 +5843,9 @@ int game::print_trap_info( const tripoint &lp, const catacurses::window &w_look,
             tr_name = tr.name();
         }
 
-        mvwprintz( w_look, point( column, line ), tr.color, tr_name );
+        line += fold_and_print( w_look, point( column, line ), max_width,  tr.color, tr_name );
     }
     return line - initial_line;
-    */
-    return 0;
 }
 
 int game::print_creature_info( const Creature *creature, const catacurses::window &w_look,
@@ -5919,10 +5886,10 @@ int game::print_vehicle_info( const vehicle *veh, int veh_part, const catacurses
                                const int column, int &line, const int last_line )
 {
     int initial_line = line;
-    const int max_width = getmaxx( w_look ) - column - 8;
+    const int max_width = getmaxx( w_look ) - 2;
     if( veh ) {
 
-        const int max_width = getmaxx( w_look ) - column - 1;
+        //const int max_width = getmaxx( w_look ) - column - 1;
         std::string text = " car parts ";
         int left_length = (max_width - text.length()) / 2;
 
@@ -5930,20 +5897,17 @@ int game::print_vehicle_info( const vehicle *veh, int veh_part, const catacurses
         mvwprintw(w_look, point(left_length,line), text.c_str());
         mvwhline(w_look, point(left_length + text.length(),line), LINE_OXOX,
                                 max_width - left_length - text.length()+1);
+        line+=2;
+        mvwprintz( w_look, point( column, line ), c_dark_gray, "Name : %s", veh->name);
         line++;
-
-
-        //mvwprintz( w_look, point( column, line ), c_dark_gray, "Parts: " );
-        //mvwprintw( w_look, point( column, line ), _( "There is a %s there.  Parts:" ), veh->name );
-        line += veh->print_part_list( w_look, ++line, last_line, getmaxx( w_look ), veh_part );
-        //lines_used = fold_and_print( w_look, point( column+7, line ), max_width,
+        line += veh->print_part_list( w_look, line, last_line, max_width, veh_part );
     }
     return line - initial_line;
 }
 
 int game::print_visibility_indicator( visibility_type visibility )
 {
-    /*
+
     std::string visibility_indicator;
     nc_color visibility_indicator_color = c_white;
     switch( visibility ) {
@@ -5971,8 +5935,7 @@ int game::print_visibility_indicator( visibility_type visibility )
 
     mvwputch( w_terrain, point( POSX, POSY ), visibility_indicator_color, visibility_indicator );
     return 1;
-    */
-    return 0;
+
 }
 
 int game::print_items_info( const tripoint &lp, const catacurses::window &w_look, const int column,
@@ -6365,7 +6328,7 @@ void game::zones_manager()
 
                     draw_ter();
                     wrefresh( w_terrain );
-                    draw_panels( true );
+                    draw_panels( false );//nsk true
                 }
                 blink = false;
                 stuff_changed = true;
@@ -6653,7 +6616,7 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
     bool bNewWindow = false;
     if( !w_info ) {
         int panel_width = panel_manager::get_manager().get_current_layout().begin()->get_width();
-        int height = pixel_minimap_option ? TERMY - getmaxy( w_pixel_minimap ) : TERMY;
+        int height = TERMY - 4;
 
         // If particularly small, base height on panel width irrespective of other elements.
         // Value here is attempting to get a square-ish result assuming 1x2 proportioned font.
@@ -6661,7 +6624,7 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
             height = panel_width / 2;
         }
 
-        int la_y = 0;
+        int la_y = 2;
         int la_x = TERMX - panel_width;
         int la_h = height;
         int la_w = panel_width;
@@ -6673,6 +6636,7 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
 
     std::string action;
     input_context ctxt( "LOOK" );
+    //input_context ctxt( "DEFAULTMODE" );
     ctxt.set_iso( true );
     ctxt.register_directions();
     ctxt.register_action( "COORDINATE" );
@@ -6702,6 +6666,8 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
     ctxt.register_action( "HELP_KEYBINDINGS" );
     ctxt.register_action( "zoom_out" );
     ctxt.register_action( "zoom_in" );
+    ctxt.register_action( "pause" );
+    ctxt.register_action( "list_monsters" );
     //ctxt.register_action( "toggle_pixel_minimap" );
 
     const int old_levz = get_levz();
@@ -6714,23 +6680,18 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
     bool blink = true;
     bool redraw = true;
     look_around_result result;
+
     do {
-        if( redraw ) {
-            if( bNewWindow ) {
+        // deburg0rz
+        //if (action != "TIMEOUT" ) { fprintf(stderr, "Action received: %s\n", action.c_str()); }
+
+        if( redraw )
+        {
+            if( bNewWindow )
+            {
                 werase( w_info );
                 draw_border( w_info );
-
                 center_print( w_info, 0, c_white, string_format( _( "< <color_green>Look Around</color> >" ) ) );
-
-                // std::string fast_scroll_text = string_format( _( "%s - %s" ),
-                //                                ctxt.get_desc( "TOGGLE_FAST_SCROLL" ),
-                //                                ctxt.get_action_name( "TOGGLE_FAST_SCROLL" ) );
-                // std::string pixel_minimap_text = string_format( _( "%s - %s" ),
-                //                                  ctxt.get_desc( "toggle_pixel_minimap" ),
-                //                                  ctxt.get_action_name( "toggle_pixel_minimap" ) );
-                //mvwprintz( w_info, point( 1, getmaxy( w_info ) - 1 ), fast_scroll ? c_light_green : c_green, fast_scroll_text );
-                //right_print( w_info, getmaxy( w_info ) - 1, 1, pixel_minimap_option ? c_light_green : c_green, pixel_minimap_text );
-
                 int first_line = 1;
                 const int last_line = getmaxy( w_info ) - 2;
                 print_all_tile_info( lp, w_info, 1, first_line, last_line, !is_draw_tiles_mode(), cache );
@@ -6738,7 +6699,8 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
 
             draw_ter( center, true );
 
-            if( select_zone && has_first_point ) {
+            if( select_zone && has_first_point )
+            {
                 if( blink ) {
                     const int dx = start_point.x - offset_x + u.posx() - lx;
                     const int dy = start_point.y - offset_y + u.posy() - ly;
@@ -6747,14 +6709,13 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
                     const tripoint end = tripoint( std::max( dx, POSX ), std::max( dy, POSY ), lz );
 
                     tripoint offset; //ASCII/SDL
-#if defined(TILES)
-                    if( use_tiles ) {
+
+                    if( use_tiles )
+                    {
                         offset = tripoint( offset_x + lx - u.posx(), offset_y + ly - u.posy(), 0 ); //TILES
                     }
-#endif
                     draw_zones( start, end, offset );
                 }
-
                 //Draw first point
                 g->draw_cursor( start_point );
             }
@@ -6769,34 +6730,23 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
 
         }
 
-        if( select_zone && has_first_point ) {
-            ctxt.set_timeout( BLINK_SPEED );
-        }
+        if( select_zone && has_first_point ) { ctxt.set_timeout( BLINK_SPEED ); }
 
         redraw = true;
         //Wait for input
         // only specify a timeout here if "EDGE_SCROLL" is enabled
         // otherwise use the previously set timeout
         int scroll_timeout = get_option<int>( "EDGE_SCROLL" );
-        if( scroll_timeout >= 0 ) {
-            action = ctxt.handle_input( scroll_timeout );
-        } else {
-            action = ctxt.handle_input();
-        }
-        if( action == "LIST_ITEMS" ) {
-            list_items_monsters();
-        } else if( action == "TOGGLE_FAST_SCROLL" ) {
-            fast_scroll = !fast_scroll;
-        } else if( action == "toggle_pixel_minimap" ) {
-            toggle_pixel_minimap();
+        if( scroll_timeout >= 0 )  { action = ctxt.handle_input( scroll_timeout ); }
+        else { action = ctxt.handle_input(); }
 
-            int panel_width = panel_manager::get_manager().get_current_layout().begin()->get_width();
-            int height = pixel_minimap_option ? TERMY - getmaxy( w_pixel_minimap ) : TERMY;
-            w_info = catacurses::newwin( height, panel_width, point( TERMX - panel_width, 0 ) );
-        } else if( action == "LEVEL_UP" || action == "LEVEL_DOWN" ) {
-            if( !allow_zlev_move ) {
-                continue;
-            }
+        if( action == "LIST_ITEMS" ) { list_items_monsters(); }
+
+        else if ( action == "TOGGLE_FAST_SCROLL" )  { fast_scroll = !fast_scroll; }
+
+        else if ( action == "LEVEL_UP" || action == "LEVEL_DOWN" )
+        {
+            if( !allow_zlev_move ) { continue; }
 
             const int dz = ( action == "LEVEL_UP" ? 1 : -1 );
             lz = clamp( lz + dz, min_levz, max_levz );
@@ -6806,20 +6756,26 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
             u.view_offset.z = center.z - u.posz();
             m.invalidate_map_cache( center.z );
             refresh_all();
-            if( select_zone && has_first_point ) { // is blinking
-                blink = true; // Always draw blink symbols when moving cursor
-            }
-        } else if( action == "TRAVEL_TO" ) {
-            if( !u.sees( lp ) ) {
+            if( select_zone && has_first_point )  { blink = true;  }
+
+        }
+
+        else if( action == "TRAVEL_TO" )
+        {
+            if( !u.sees( lp ) )
+            {
                 add_msg( _( "You can't see that destination." ) );
                 continue;
             }
 
             auto route = m.route( u.pos(), lp, u.get_pathfinding_settings(), u.get_path_avoid() );
-            if( route.size() > 1 ) {
+            if( route.size() > 1 )
+            {
                 route.pop_back();
                 u.set_destination( route );
-            } else {
+            }
+            else
+            {
                 add_msg( m_info, _( "You can't travel there." ) );
                 continue;
             }
@@ -6839,49 +6795,18 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
             if( !MAP_SHARING::isCompetitive() || MAP_SHARING::isDebugger() ) {
                 display_radiation();
             }
-        } else if( action == "EXTENDED_DESCRIPTION" ) {
-            extended_description( lp );
-        } else if( action == "CENTER" ) {
+        }
+
+        else if( action == "EXTENDED_DESCRIPTION" ) { extended_description( lp ); }
+        else if( action == "CENTER" )
+        {
             center = u.pos();
             lp = u.pos();
             u.view_offset.z = 0;
-        } else if( action == "MOUSE_MOVE" || action == "TIMEOUT" ) {
-            // This block is structured this way so that edge scroll can work
-            // whether the mouse is moving at the edge or simply stationary
-            // at the edge. But even if edge scroll isn't in play, there's
-            // other things for us to do here.
 
-            if( action == "TIMEOUT" ) {
-                blink = !blink;
-            }
-            tripoint edge_scroll = mouse_edge_scrolling_terrain( ctxt );
-            if( edge_scroll != tripoint_zero ) {
-                if( action == "MOUSE_MOVE" ) {
-                    edge_scroll *= 2;
-                }
-                center += edge_scroll;
-            } else if( action == "MOUSE_MOVE" ) {
-
-                const tripoint old_lp = lp;
-                const tripoint old_center = center;
-
-                const cata::optional<tripoint> mouse_pos = ctxt.get_coordinates( w_terrain );
-                if( mouse_pos ) {
-                    lx = mouse_pos->x;
-                    ly = mouse_pos->y;
-                }
-                if( select_zone && has_first_point ) { // is blinking
-                    if( blink && lp == old_lp ) { // blink symbols drawn (blink == true) and cursor not changed
-                        redraw = false; // no need to redraw, so don't redraw to save CPU
-                    } else {
-                        blink = true; // Always draw blink symbols when moving cursor
-                    }
-                } else if( lp == old_lp && center == old_center ) { // not blinking and cursor not changed
-                    redraw = false; // no need to redraw, so don't redraw to save CPU
-                }
-            }
         } else if( cata::optional<tripoint> vec = ctxt.get_direction( action ) ) {
-            if( fast_scroll ) {
+            if( fast_scroll )
+            {
                 vec->x *= soffset;
                 vec->y *= soffset;
             }
@@ -6890,20 +6815,44 @@ look_around_result game::look_around( catacurses::window w_info, tripoint &cente
             ly = ly + vec->y;
             center.x = center.x + vec->x;
             center.y = center.y + vec->y;
-            if( select_zone && has_first_point ) { // is blinking
-                blink = true; // Always draw blink symbols when moving cursor
-            }
-        } else if( action == "throw_blind" ) {
-            result.peek_action = PA_BLIND_THROW;
-        } else if( action == "zoom_in" ) {
+
+            if( select_zone && has_first_point ) { blink = true; }
+        }
+
+        else if( action == "throw_blind" ) { result.peek_action = PA_BLIND_THROW; }
+        else if( action == "zoom_in" )
+        {
             center.x = lp.x;
             center.y = lp.y;
             zoom_in();
-        } else if( action == "zoom_out" ) {
+        } else if( action == "zoom_out" )
+        {
             center.x = lp.x;
             center.y = lp.y;
             zoom_out();
         }
+
+        else if (action == "pause")
+        {
+            //fprintf(stderr, "(pause) Turn advanced to %d\n", static_cast<int>(to_turn<int>(calendar::turn)));
+
+            u.pause();
+            calendar::turn += 1_turns;
+
+            // Process player turn
+            u.process_turn();
+
+            // Process all other entities
+            g->monmove();
+
+            g->process_activity();
+            // Refresh game state
+            refresh_all();
+        }
+        else if ( action == "list_items_monsters") {
+            list_items_monsters();
+        }
+
     } while( action != "QUIT" && action != "CONFIRM" && action != "SELECT" && action != "TRAVEL_TO" &&
              action != "throw_blind" );
 
@@ -7136,7 +7085,7 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
     {
         int iInfoHeight = 14;
         const int width = 45;
-        const int offsetX = TERMX - VIEW_OFFSET_X - width; //VIEW_OFFSET_X;
+        //const int offsetX = TERMX - VIEW_OFFSET_X - width; //VIEW_OFFSET_X;
 
         const int max_gun_range = u.weapon.gun_range( &u );
 
@@ -7157,6 +7106,7 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
         ctxt.register_action( "RIGHT", to_translation( "Move cursor down" ) );
         ctxt.register_action( "zoom_out" );
         ctxt.register_action( "zoom_in" );
+        ctxt.register_action( "pause");
         //ctxt.register_action( "CENTER" );
         ctxt.register_action( "SAFEMODE_BLACKLIST_ADD" );
         ctxt.register_action( "SAFEMODE_BLACKLIST_REMOVE" );
@@ -7196,6 +7146,21 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                 zoom_in();
             } else if( action == "zoom_out" ) {
                 zoom_out();
+            } else if ( action == "pause" ) {
+
+                u.pause();
+                calendar::turn += 1_turns;
+
+                // Process player turn
+                u.process_turn();
+
+                // Process all other entities
+                g->monmove();
+                g->process_activity();
+
+                // Refresh game state
+                refresh_all();
+
             } else if( action == "SAFEMODE_BLACKLIST_REMOVE" ) {
                 const auto m = dynamic_cast<monster *>( cCurMon );
                 const std::string monName = ( m != nullptr ) ? m->name() : "human";
@@ -7221,12 +7186,12 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                 }
             }
             g->refresh_all();
-            const int iNumMonster = monster_list.size();
+            //const int iNumMonster = monster_list.size();
             const int iMenuSize = monster_list.size() + mSortCategory.size();
 
-            const int numw = iNumMonster > 999 ? 4 :
-                            iNumMonster > 99  ? 3 :
-                            iNumMonster > 9   ? 2 : 1;
+            // const int numw = iNumMonster > 999 ? 4 :
+            //                 iNumMonster > 99  ? 3 :
+            //                 iNumMonster > 9   ? 2 : 1;
 
             // given the currently selected monster iActive. get the selected row
             int iSelPos = iActive;
@@ -7242,11 +7207,11 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
             calcStartPos( iStartPos, iSelPos, iMaxRows, iMenuSize );
 
             // get first visible monster and category
-            int iCurMon = iStartPos;
+            //int iCurMon = iStartPos;
             auto CatSortIter = mSortCategory.cbegin();
             while( CatSortIter != mSortCategory.cend() && CatSortIter->first < iStartPos ) {
                 ++CatSortIter;
-                --iCurMon;
+                //--iCurMon;
             }
 
             const auto endY = std::min<int>( iMaxRows, iMenuSize );
@@ -7263,9 +7228,9 @@ void game::list_monsters( const std::vector<Creature *> &monster_list )
                     }
                 }
                 // select current monster
-                const auto critter = monster_list[iCurMon];
-                const bool selected = iCurMon == iActive;
-                ++iCurMon;
+                //const auto critter = monster_list[iCurMon];
+                //const bool selected = iCurMon == iActive;
+                //++iCurMon;
 
             }
 
@@ -7776,7 +7741,7 @@ void game::butcher()
             butcher_submenu( corpses, indexer_index );
             draw_ter();
             wrefresh( w_terrain );
-            draw_panels( true );
+            draw_panels( false );
             u.activity.targets.emplace_back( map_cursor( u.pos() ), &*corpses[indexer_index] );
         }
         break;
@@ -8412,7 +8377,7 @@ bool game::walk_move( const tripoint &dest_loc )
         }
     }
     // Used to decide whether to print a 'moving is slow message
-    const int mcost_from = m.move_cost( u.pos() ); //calculate this _before_ calling grabbed_move
+    //const int mcost_from = m.move_cost( u.pos() ); //calculate this _before_ calling grabbed_move
 
     int modifier = 0;
     if( grabbed && u.get_grab_type() == OBJECT_FURNITURE && u.pos() + u.grab_point == dest_loc ) {
@@ -8844,6 +8809,8 @@ point game::place_player( const tripoint &dest_loc )
         u.drench( 40, { { bp_foot_l, bp_foot_r, bp_leg_l, bp_leg_r } }, false );
     }
 
+
+    /* no. thanks
     // List items here
     if( !m.has_flag( "SEALED", u.pos() ) ) {
         if( get_option<bool>( "NO_AUTO_PICKUP_ZONES_LIST_ITEMS" ) ||
@@ -8930,6 +8897,7 @@ point game::place_player( const tripoint &dest_loc )
                u.is_mounted() ) {
         add_msg( _( "There are vehicle controls here but you cannot reach them whilst mounted." ) );
     }
+    */
     return submap_shift;
 }
 
@@ -9297,7 +9265,7 @@ void game::fling_creature( Creature *c, const int &dir, float flvel, bool contro
         return;
     }
 
-    int steps = 0;
+    //int steps = 0;
     bool thru = true;
     const bool is_u = ( c == &u );
     // Don't animate critters getting bashed if animations are off
@@ -9381,7 +9349,7 @@ void game::fling_creature( Creature *c, const int &dir, float flvel, bool contro
             break;
         }
         range--;
-        steps++;
+        //steps++;
         if( animate && ( seen || u.sees( *c ) ) ) {
             draw();
         }

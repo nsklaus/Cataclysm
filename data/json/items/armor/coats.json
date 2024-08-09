@@ -715,7 +715,7 @@
     "material": [ "cotton" ],
     "symbol": "[",
     "looks_like": "house_coat",
-    "color": "black",
+    "color": "dark_gray",
     "covers": [ "TORSO", "ARMS" ],
     "coverage": 60,
     "encumbrance": 3,

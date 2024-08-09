@@ -263,7 +263,7 @@ void advanced_inventory::init()
                                        headstart + head_height ) );
 
     // 2 for the borders, 5 for the header stuff
-    itemsPerPage = w_height - 2 - 5;
+    itemsPerPage = w_height - 2 - 6;
 
     panes[left].window = left_window;
     panes[right].window = right_window;
@@ -279,6 +279,8 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
 
     int columns = getmaxx( window );
     std::string spaces( columns - 4, ' ' );
+    double area_weight = 0;
+    std::string area_volume = "";
 
     nc_color norm = active ? c_white : c_dark_gray;
 
@@ -294,13 +296,18 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
                                            volume_carried,
                                            volume_capacity,
                                            volume_units_abbr() );
+
         const int hrightcol = columns - 1 - utf8_width( formatted_head );
-        nc_color color = weight_carried > weight_capacity ? c_red : c_light_green;
-        mvwprintz( window, point( hrightcol, 4 ), color, "%.1f", weight_carried );
-        wprintz( window, c_light_gray, "/%.1f %s  ", weight_capacity, weight_units() );
-        color = g->u.volume_carried().value() > g->u.volume_capacity().value() ? c_red : c_light_green;
-        wprintz( window, color, volume_carried );
-        wprintz( window, c_light_gray, "/%s %s", volume_capacity, volume_units_abbr() );
+        nc_color color = weight_carried > weight_capacity ? c_red : c_green;
+        mvwprintz( window, point( 2, 2 ), c_dark_gray, "Weight: ");
+        wprintz( window, active ? color : norm, "%.1f", weight_carried );
+        wprintz( window, c_dark_gray, "/%.1f %s  ", weight_capacity, weight_units() );
+
+        color = g->u.volume_carried().value() > g->u.volume_capacity().value() ? c_red : c_green;
+        mvwprintz( window, point(2, 3), c_dark_gray, "Volume: ");
+        wprintz( window, active ? color : norm, "%s", volume_carried );
+        wprintz( window, c_dark_gray, "/%s %s", volume_capacity, volume_units_abbr() );
+
     } else {
         //print square's current and total weight + volume
         std::string formatted_head;
@@ -310,6 +317,8 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
                                             weight_units(),
                                             format_volume( squares[pane.get_area()].volume ),
                                             volume_units_abbr() );
+            area_weight = convert_weight( squares[pane.get_area()].weight);
+            area_volume = format_volume( squares[pane.get_area()].volume );
         } else {
             units::volume maxvolume = 0_ml;
             auto &s = squares[pane.get_area()];
@@ -326,41 +335,44 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
                                             format_volume( s.volume ),
                                             format_volume( maxvolume ),
                                             volume_units_abbr() );
+
         }
-        mvwprintz( window, point( columns - 1 - utf8_width( formatted_head ), 4 ), norm, formatted_head );
+        //mvwprintz( window, point( 2,2 ), norm, "BLEH %s", formatted_head);
+            mvwprintz( window, point( 2, 2 ), c_dark_gray , "Weight: %.1f %s", area_weight, weight_units());
+            mvwprintz( window, point(2, 3), c_dark_gray, "Volume: %s %s", area_volume, volume_units_abbr());
+
     }
 
     //print header row and determine max item name length
     // Last printable column
     const int lastcol = columns - 2;
-    const size_t name_startpos = compact ? 1 : 4;
-    const size_t src_startpos = lastcol - 18;
-    const size_t amt_startpos = lastcol - 15;
-    const size_t weight_startpos = lastcol - 10;
-    const size_t vol_startpos = lastcol - 4;
+    const size_t name_startpos = 4;
+    //const size_t src_startpos = lastcol - 18;
+    const size_t amt_startpos = lastcol - 4;
+    //const size_t weight_startpos = lastcol - 10;
+    //const size_t vol_startpos = lastcol - 4;
     // Default name length
-    int max_name_length = amt_startpos - name_startpos - 1;
+    int max_name_length = lastcol -8;
 
     //~ Items list header (length type 1). Table fields length without spaces: amt - 4, weight - 5, vol - 4.
-    const int table_hdr_len1 = utf8_width( _( "amt weight vol" ) );
+    const int table_hdr_len1 = utf8_width( _( "amt" ) );
     //~ Items list header (length type 2). Table fields length without spaces: src - 2, amt - 4, weight - 5, vol - 4.
-    const int table_hdr_len2 = utf8_width( _( "src amt weight vol" ) );
+    const int table_hdr_len2 = utf8_width( _( "amt" ) );
 
-    mvwprintz( window, point( compact ? 1 : 4, 5 ), c_light_gray, _( "Name (charges)" ) );
-    if( pane.get_area() == AIM_ALL && !compact ) {
-        mvwprintz( window, point( lastcol - table_hdr_len2 + 1, 5 ), c_light_gray,
-                   _( "src amt weight vol" ) );
-        // 1 for space
-        max_name_length = src_startpos - name_startpos - 1;
-    } else {
-        mvwprintz( window, point( lastcol - table_hdr_len1 + 1, 5 ), c_light_gray, _( "amt weight vol" ) );
-    }
+    // mvwprintz( window, point( compact ? 1 : 4, 5 ), c_light_gray, _( "Name (charges)" ) );
+    // if( pane.get_area() == AIM_ALL && !compact ) {
+    //     //mvwprintz( window, point( lastcol - table_hdr_len2 + 1, 5 ), c_light_gray, _( "amt" ) );
+    //     // 1 for space
+    //     //max_name_length = name_startpos - 1;
+    // } else {
+    //     mvwprintz( window, point( lastcol - table_hdr_len1 + 1, 5 ), c_light_gray, _( "amt" ) );
+    // }
 
     for( int i = page * itemsPerPage, x = 0 ; i < static_cast<int>( items.size() ) &&
          x < itemsPerPage ; i++, x++ ) {
         const auto &sitem = items[i];
         if( sitem.is_category_header() ) {
-            mvwprintz( window, point( ( columns - utf8_width( sitem.name ) - 6 ) / 2, 6 + x ), c_cyan, "[%s]",
+            mvwprintz( window, point( ( columns - utf8_width( sitem.name ) - 6 ) / 2, 6 + x ), c_magenta, "[%s]",
                        sitem.name );
             continue;
         }
@@ -371,7 +383,7 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
         const auto &it = *sitem.items.front();
         const bool selected = active && index == i;
 
-        nc_color thiscolor = active ? it.color_in_inventory() : norm;
+        nc_color thiscolor = active ? it.color() : norm;
         nc_color thiscolordark = c_dark_gray;
         nc_color print_color;
 
@@ -421,9 +433,9 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
 
         //print src column
         // TODO: specify this is coming from a vehicle!
-        if( pane.get_area() == AIM_ALL && !compact ) {
-            mvwprintz( window, point( src_startpos, 6 + x ), thiscolor, squares[sitem.area].shortname );
-        }
+        // if( pane.get_area() == AIM_ALL && !compact ) {
+        //     mvwprintz( window, point( src_startpos, 6 + x ), thiscolor, squares[sitem.area].shortname );
+        // }
 
         //print "amount" column
         int it_amt = sitem.stacks;
@@ -435,7 +447,7 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
             }
             mvwprintz( window, point( amt_startpos, 6 + x ), print_color, "%4d", it_amt );
         }
-
+/*
         //print weight column
         double it_weight = convert_weight( sitem.weight );
         size_t w_precision;
@@ -469,6 +481,7 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
             mvwprintz( window, point( 1, 6 + x ), magenta_background( it.color_in_inventory() ),
                        compact ? it.tname().substr( 0, 1 ) : ">" );
         }
+        */
     }
 }
 
@@ -715,23 +728,30 @@ void advanced_inventory::redraw_pane( side p )
     auto desc = utf8_truncate( sq.desc[car], width );
     // starts at offset 2, plus space between the header and the text
     width -= 2 + 1;
-    mvwprintz( w, point( 2, 1 ), active ? c_green  : c_light_gray, name );
-    mvwprintz( w, point( 2, 2 ), active ? c_light_blue : c_dark_gray, desc );
+    //mvwprintz( w, point( 2, 1 ), active ? c_green  : c_light_gray, name );
+    //mvwprintz( w, point( 2, 2 ), active ? c_light_blue : c_dark_gray, desc );
     trim_and_print( w, point( 2, 3 ), width, active ? c_cyan : c_dark_gray, square.flags );
 
-    const int max_page = ( pane.items.size() + itemsPerPage - 1 ) / itemsPerPage;
-    if( active && max_page > 1 ) {
-        const int page = pane.index / itemsPerPage;
-        mvwprintz( w, point( 2, 4 ), c_light_blue, _( "[<] page %1$d of %2$d [>]" ), page + 1, max_page );
-    }
+    // const int max_page = ( pane.items.size() + itemsPerPage - 1 ) / itemsPerPage;
+    // if( active && max_page > 1 ) {
+    //     const int page = pane.index / itemsPerPage;
+    //     mvwprintz( w, point( 2, 4 ), c_light_blue, _( "[<] page %1$d of %2$d [>]" ), page + 1, max_page );
+    // }
 
     if( active ) {
         wattron( w, c_cyan );
     }
     // draw a darker border around the inactive pane
     draw_border( w, active ? BORDER_COLOR : c_dark_gray );
-    mvwprintw( w, point( 3, 0 ), _( "< [%s] Sort: %s >" ), ctxt.get_desc( "SORT" ),
-               get_sortname( pane.sortby ) );
+    // mvwprintw( w, point( 3, 0 ), _( "< [%s] Sort: %s >" ), ctxt.get_desc( "SORT" ),
+    //            get_sortname( pane.sortby ) );
+    mvwprintz( w, point( 3, 0 ), active ? c_green  : c_light_gray, " " +name + ": " );
+    const int max_page = ( pane.items.size() + itemsPerPage - 1 ) / itemsPerPage;
+    if( active && max_page > 1 ) {
+        const int page = pane.index / itemsPerPage;
+        mvwprintz( w, point( name.length()+6, 0 ), c_light_blue, " (%1$d/%2$d)", page + 1, max_page );
+    }
+
     int max = square.max_size;
     if( max > 0 ) {
         int itemcount = square.get_item_count();
@@ -862,6 +882,8 @@ bool advanced_inventory::move_all_items( bool nested_call )
     if( spane.items.empty() || liquid_items == spane.items.size() ) {
         return false;
     }
+
+
     bool restore_area = false;
     if( dpane.get_area() == AIM_ALL ) {
         auto loc = dpane.get_area();
@@ -871,6 +893,7 @@ bool advanced_inventory::move_all_items( bool nested_call )
         }
         restore_area = true;
     }
+
     if( !squares[dpane.get_area()].canputitems() ) {
         popup( _( "You can't put items there!" ) );
         return false;
@@ -1009,9 +1032,9 @@ bool advanced_inventory::move_all_items( bool nested_call )
         }
     }
     // if dest was AIM_ALL then we used query_destination and should undo that
-    if( restore_area ) {
-        dpane.restore_area();
-    }
+    // if( restore_area ) {
+    //     dpane.restore_area();
+    // }
     return true;
 }
 
@@ -1542,6 +1565,8 @@ void query_destination_callback::draw_squares( const uilist *menu )
     }
 }
 
+
+
 bool advanced_inventory::query_destination( aim_location &def )
 {
     if( def != AIM_ALL ) {
@@ -1556,7 +1581,7 @@ bool advanced_inventory::query_destination( aim_location &def )
 
     uilist menu;
     menu.text = _( "Select destination" );
-    /* free space for the squares */
+    // free space for the squares
     menu.pad_left = 9;
     query_destination_callback cb( *this );
     menu.callback = &cb;
@@ -1602,6 +1627,7 @@ bool advanced_inventory::query_destination( aim_location &def )
     }
     return false;
 }
+
 
 bool advanced_inventory::move_content( item &src_container, item &dest_container )
 {
@@ -1650,6 +1676,11 @@ bool advanced_inventory::query_charges( aim_location destarea, const advanced_in
 {
     // should be a specific location instead
     assert( destarea != AIM_ALL );
+    // make default dest player's feet '5'
+    //nsk
+    //panes[dest].set_area( squares[AIM_CENTER], true );
+    //fprintf(stderr, "dest square = %c \n", panes[dest].get_area() );
+    //panes[dest].get_area()
     // valid item is obviously required
     assert( !sitem.items.empty() );
     const item &it = *sitem.items.front();

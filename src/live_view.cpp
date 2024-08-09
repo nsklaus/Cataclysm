@@ -34,8 +34,8 @@ int live_view::draw( const catacurses::window &win, const int max_height )
     }
 
     // -1 for border. -1 because getmaxy() actually returns height, not y position.
-    const int line_limit = max_height - 2;
-    const visibility_variables &cache = g->m.get_visibility_variables_cache();
+    //const int line_limit = max_height - 2;
+    //const visibility_variables &cache = g->m.get_visibility_variables_cache();
     int line_out = START_LINE;
 
     // screw the mouse look for now
@@ -43,7 +43,7 @@ int live_view::draw( const catacurses::window &win, const int max_height )
 
     const int live_view_box_height = std::min( max_height, std::max( line_out + 2, MIN_BOX_HEIGHT ) );
 
-#if defined(TILES) || defined(_WIN32)
+
     // HACK: Because of the way the status UI is done, the live view window must
     // be tall enough to clear the entire height of the viewport below the
     // status bar. This hack allows the border around the live view box to
@@ -51,25 +51,25 @@ int live_view::draw( const catacurses::window &win, const int max_height )
     // window tall enough. Won't work for ncurses in Linux, but that doesn't
     // currently support the mouse. If and when it does, there will need to
     // be a different code path here that works for ncurses.
-    const int original_height = win.get<cata_cursesport::WINDOW>()->height;
-    win.get<cata_cursesport::WINDOW>()->height = live_view_box_height;
-    g->draw_panels();
-#endif
+    //const int original_height = win.get<cata_cursesport::WINDOW>()->height;
+    //win.get<cata_cursesport::WINDOW>()->height = live_view_box_height;
+    //g->draw_panels();
 
-    draw_border( win );
-    center_print( win, 0, c_white, _( "< <color_green>Mouse View</color> >" ) );
-    wrefresh( win );
 
-#if defined(TILES) || defined(_WIN32)
-    win.get<cata_cursesport::WINDOW>()->height = original_height;
-#endif
+    //draw_border( win );
+    //center_print( win, 0, c_white, _( "< <color_green>Mouse View</color> >" ) );
+    //wrefresh( win );
+
+
+    //win.get<cata_cursesport::WINDOW>()->height = original_height;
+
 
     return live_view_box_height;
 }
 
 void live_view::hide()
 {
-    enabled = false;
+    enabled = true;
 }
 
 void live_view::show( const tripoint &p )

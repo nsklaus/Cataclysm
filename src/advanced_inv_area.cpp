@@ -202,11 +202,12 @@ void advanced_inv_area::init()
 units::volume advanced_inv_area::free_volume( bool in_vehicle ) const
 {
     // should be a specific location instead
-    assert( id != AIM_ALL );
-    if( id == AIM_INVENTORY || id == AIM_WORN ) {
-        return g->u.volume_capacity() - g->u.volume_carried();
-    }
-    return in_vehicle ? veh->free_volume( vstor ) : g->m.free_volume( pos );
+    // assert( id != AIM_ALL );
+    // if( id == AIM_INVENTORY || id == AIM_WORN ) {
+    //     return g->u.volume_capacity() - g->u.volume_carried();
+    // }
+    //return in_vehicle ? veh->free_volume( vstor ) : g->m.free_volume( pos );
+    return g->m.free_volume( pos );
 }
 
 bool advanced_inv_area::is_same( const advanced_inv_area &other ) const

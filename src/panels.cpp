@@ -1714,7 +1714,7 @@ static void draw_messages( avatar &, const catacurses::window &w )
     werase( w );
     int line = getmaxy( w ) - 2;
     int maxlength = getmaxx( w );
-    Messages::display_messages( w, 1, 0 /*topline*/, maxlength - 1, line );
+    Messages::display_messages( w, 1, 1 /*topline*/, maxlength - 2, line );
     wrefresh( w );
 }
 

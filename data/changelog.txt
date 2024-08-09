@@ -1,7 +1,51 @@
 # 0.01
 
+======================
+user interface changes
+======================
+
 - look_around uses new presentation
-- no more item and monster list
-- no more tiles highlight
-- player overlay indicate when you're being seen by monsters
+- advanced inventory got a small facelift
+- no more item and monster list panels
+- no more side panel
+- no more minimap
+- no more inventory, only advanced inventory remains
+- no more tiles highlight, you've got to search for stuff
+
+
+==================
+engine changes
+==================
+
+- flashlight are now directional. emmiting in the direction player was last moving to. 
+
+
+
+==================
+ gameplay changes 
+==================
+
+- when listing monsters, you can now let time pass and see it approaching you, 
+  cursor gets locked on currently selected monster and can follow as monster is approaching 
+  player.  
+- new player overlay indicate when you're being seen by monsters. so you walk 
+  around, and you'll be warned if hostiles took notice of you.
+
+
+==================
+planned changes
+==================
+
+- no more "auto-combat"
+- when looking at a monster an additionnal arrow shown near screen borders displaying the 
+  player direction, relative to the monster currently being "listed" but only if it's 
+  farther than the player screen visibility. that arrow will just point to the general 
+  direction: N-S-E-W and diagonals too.
+- showing roofs by default, player will get to see the interiors of buildings only when
+  entering them. i will probably try to make the interiors darker too (no eletricity: less light).
+
+
+
+
+
 
