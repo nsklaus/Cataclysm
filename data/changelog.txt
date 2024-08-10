@@ -13,6 +13,7 @@ user interface changes
 - no more tiles highlight, you've got to search for stuff
 
 
+
 ==================
 engine changes
 ==================
@@ -30,6 +31,8 @@ engine changes
   player.  
 - new player overlay indicate when you're being seen by monsters. so you walk 
   around, and you'll be warned if hostiles took notice of you.
+- no more "safe mode"
+
 
 
 ==================

@@ -65,7 +65,7 @@ void map::add_light_from_items( const tripoint &p, item_stack::iterator begin,
         float ilum = 0.0; // brightness
         int iwidth = 0; // 0-360 degrees. 0 is a circular light_source
         int idir = 0;   // otherwise, it's a light_arc pointed in this direction
-        //apply_light_arc( p, idir, 0.1, 1 );
+
         if( itm_it->getlight( ilum, iwidth, idir ) ) {
             if( iwidth > 0 ) {
                 apply_light_arc( p, idir, ilum, iwidth );
@@ -215,16 +215,6 @@ void map::apply_character_light( player &p )
     // else if( p.has_effect( effect_haslight ) ) {
     //     apply_light_source( p.pos(), 4 );
     // }
-
-
-    /*
-    if( vp.has_flag( VPFLAG_CONE_LIGHT ) ) {
-    if( veh_luminance > LL_LIT ) {
-        add_light_source( src, M_SQRT2 ); // Add a little surrounding light
-        apply_light_arc( src, v->face.dir() + pt->direction, veh_luminance, 45 );
-    }
-
-     */
 
     const float held_luminance = p.active_light();
     tripoint next_pos = p.pos() +  direction_to_tripoint(p.facing);

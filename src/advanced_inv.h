@@ -67,13 +67,13 @@ class advanced_inventory
         void swap_panes();
 
         // minimap that displays things around character
-        catacurses::window minimap;
-        catacurses::window mm_border;
-        const int minimap_width  = 3;
-        const int minimap_height = 3;
-        void draw_minimap();
-        void refresh_minimap();
-        char get_minimap_sym( side p ) const;
+        //catacurses::window minimap;
+        //catacurses::window mm_border;
+        //const int minimap_width  = 3;
+        // const int minimap_height = 3;
+        // void draw_minimap();
+        // void refresh_minimap();
+        // char get_minimap_sym( side p ) const;
 
         bool inCategoryMode = false;
 

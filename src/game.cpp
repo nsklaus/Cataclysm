@@ -20,7 +20,7 @@
 #include <exception>
 #include <iostream>
 #include <limits>
-#include <tuple>
+//#include <tuple>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
@@ -1962,22 +1962,27 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
         int max_text_length = 0;
         uilist action_menu;
         action_menu.allow_anykey = true;
+
         const auto addentry = [&]( const char key, const std::string & text, const hint_rating hint ) {
             // The char is used as retval from the uilist *and* as hotkey.
-            action_menu.addentry( key, true, key, text );
-            auto &entry = action_menu.entries.back();
-            switch( hint ) {
-                case HINT_CANT:
-                    entry.text_color = c_light_gray;
-                    break;
-                case HINT_IFFY:
-                    entry.text_color = c_light_red;
-                    break;
-                case HINT_GOOD:
-                    entry.text_color = c_light_green;
-                    break;
+            // fprintf(stderr, "hint = %d \n", hint);
+            // do not add unavailable actions
+            if ( hint != HINT_CANT ) {
+                action_menu.addentry( key, true, key, text );
+                auto &entry = action_menu.entries.back();
+                switch( hint ) {
+                    case HINT_CANT:
+                        entry.text_color = c_light_gray;
+                        break;
+                    case HINT_IFFY:
+                        entry.text_color = c_light_red;
+                        break;
+                    case HINT_GOOD:
+                        entry.text_color = c_light_green;
+                        break;
+                }
+                max_text_length = std::max( max_text_length, utf8_width( text ) );
             }
-            max_text_length = std::max( max_text_length, utf8_width( text ) );
         };
         addentry( 'a', pgettext( "action", "activate" ), u.rate_action_use( oThisItem ) );
         addentry( 'R', pgettext( "action", "read" ), u.rate_action_read( oThisItem ) );
@@ -2028,6 +2033,7 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
                 popup_x = TERMX - popup_width;
                 break;
         }
+
 
         // TODO: Ideally the setup of uilist would be split into calculate variables (size, width...),
         // and actual window creation. This would allow us to let uilist calculate the width, we can

@@ -3,7 +3,7 @@
 #define CATA_SDLTILES_H
 
 #include <array>
-#if defined(TILES)
+
 
 #include <string>
 #include <memory>
@@ -25,6 +25,6 @@ void rescale_tileset( int size );
 bool save_screenshot( const std::string &file_path );
 void toggle_fullscreen_window();
 
-#endif // TILES
+
 
 #endif // CATA_SDLTILES_H

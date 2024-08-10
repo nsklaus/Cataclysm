@@ -129,8 +129,9 @@ advanced_inventory::~advanced_inventory()
     // Only refresh if we exited manually, otherwise we're going to be right back
     if( exit ) {
         werase( head );
-        werase( minimap );
-        werase( mm_border );
+        // no more minimap in aim
+        // werase( minimap );
+        // werase( mm_border );
         werase( left_window );
         werase( right_window );
         g->refresh_all();
@@ -252,11 +253,11 @@ void advanced_inventory::init()
     headstart = 0;
     colstart = TERMX > w_width ? ( TERMX - w_width ) / 2 : 0;
 
-    head = catacurses::newwin( head_height, w_width - minimap_width, point( colstart, headstart ) );
-    mm_border = catacurses::newwin( minimap_height + 2, minimap_width + 2,
-                                    point( colstart + ( w_width - ( minimap_width + 2 ) ), headstart ) );
-    minimap = catacurses::newwin( minimap_height, minimap_width,
-                                  point( colstart + ( w_width - ( minimap_width + 1 ) ), headstart + 1 ) );
+    head = catacurses::newwin( head_height, TERMX, point( colstart, headstart ) );
+
+    //mm_border = catacurses::newwin( minimap_height + 2, minimap_width + 2, point( colstart + ( w_width - ( minimap_width + 2 ) ), headstart ) );
+    //minimap = catacurses::newwin( minimap_height, minimap_width, point( colstart + ( w_width - ( minimap_width + 1 ) ), headstart + 1 ) );
+
     left_window = catacurses::newwin( w_height, w_width / 2, point( colstart,
                                       headstart + head_height ) );
     right_window = catacurses::newwin( w_height, w_width / 2, point( colstart + w_width / 2,
@@ -445,43 +446,8 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
                 it_amt = 9999;
                 print_color = selected ? hilite( c_red ) : c_red;
             }
-            mvwprintz( window, point( amt_startpos, 6 + x ), print_color, "%4d", it_amt );
+            mvwprintz( window, point( amt_startpos, 6 + x ), print_color, "x%d", it_amt );
         }
-/*
-        //print weight column
-        double it_weight = convert_weight( sitem.weight );
-        size_t w_precision;
-        print_color = it_weight > 0 ? thiscolor : thiscolordark;
-
-        if( it_weight >= 1000.0 ) {
-            if( it_weight >= 10000.0 ) {
-                print_color = selected ? hilite( c_red ) : c_red;
-                it_weight = 9999.0;
-            }
-            w_precision = 0;
-        } else if( it_weight >= 100.0 ) {
-            w_precision = 1;
-        } else {
-            w_precision = 2;
-        }
-        mvwprintz( window, point( weight_startpos, 6 + x ), print_color, "%5.*f", w_precision, it_weight );
-
-        //print volume column
-        bool it_vol_truncated = false;
-        double it_vol_value = 0.0;
-        std::string it_vol = format_volume( sitem.volume, 5, &it_vol_truncated, &it_vol_value );
-        if( it_vol_truncated && it_vol_value > 0.0 ) {
-            print_color = selected ? hilite( c_red ) : c_red;
-        } else {
-            print_color = sitem.volume.value() > 0 ? thiscolor : thiscolordark;
-        }
-        mvwprintz( window, point( vol_startpos, 6 + x ), print_color, it_vol );
-
-        if( active && sitem.autopickup ) {
-            mvwprintz( window, point( 1, 6 + x ), magenta_background( it.color_in_inventory() ),
-                       compact ? it.tname().substr( 0, 1 ) : ">" );
-        }
-        */
     }
 }
 
@@ -1127,21 +1093,16 @@ void advanced_inventory::display()
 
         if( redraw && !is_processing() ) {
             werase( head );
-            werase( minimap );
-            werase( mm_border );
             draw_border( head );
             Messages::display_messages( head, 2, 1, w_width - 1, head_height - 2 );
-            draw_minimap();
-            const std::string msg = string_format( _( "< [%s] Show help >" ),
-                                                   ctxt.get_desc( "HELP_KEYBINDINGS" ) );
-            mvwprintz( head, point( w_width - ( minimap_width + 2 ) - utf8_width( msg ) - 1, 0 ),
-                       c_white, msg );
+            const std::string format_str = "< [%s] Show help >";
+            const std::string help = string_format(format_str, ctxt.get_desc("HELP_KEYBINDINGS"));
+            mvwprintz( head, point( TERMX - help.length() - 2, 0 ), c_white, help );
             if( g->u.has_watch() ) {
                 const std::string time = to_string_time_of_day( calendar::turn );
                 mvwprintz( head, point( 2, 0 ), c_white, time );
             }
             wrefresh( head );
-            refresh_minimap();
         }
         redraw = false;
         recalc = false;
@@ -1434,10 +1395,33 @@ void advanced_inventory::display()
             int ret = 0;
             const int info_width = w_width / 2;
             const int info_startx = colstart + ( src == advanced_inventory::side::left ? info_width : 0 );
+
+
             if( spane.get_area() == AIM_INVENTORY || spane.get_area() == AIM_WORN ) {
                 int idx = spane.get_area() == AIM_INVENTORY ? sitem->idx :
-                          player::worn_position_to_index( sitem->idx );
+                player::worn_position_to_index( sitem->idx );
                 item_location loc( g->u, &g->u.i_at( idx ) );
+
+
+
+            /*
+            int idx = 0;
+            if( spane.get_area() == AIM_INVENTORY ||
+                spane.get_area() == AIM_WORN ||
+                spane.get_area() == AIM_WEST ) {
+                if ( spane.get_area() == AIM_INVENTORY ) { idx =  sitem->idx; }
+                else if ( spane.get_area() == AIM_WORN ) { player::worn_position_to_index( sitem->idx ); }
+                else if ( spane.get_area() == AIM_WEST ) { idx =  sitem->idx; }
+                //item_location loc( g->u, &g->u.i_at( idx ) );
+                g->u.i_at(idx);
+                item_location loc(g->m, g->m.i_at(idx);
+            */
+
+
+                // tripoint tile_location = spane. .get_cur_pos();  // Current position on the selected tile
+                // item nearby_item = g->m.i_at(tile_location); // Example: the first item on that tile
+                // item_location loc = item_location(map_cursor(tile_location), nearby_item);
+
                 // Setup a "return to AIM" activity. If examining the item creates a new activity
                 // (e.g. reading, reloading, activating), the new activity will be put on top of
                 // "return to AIM". Once the new activity is finished, "return to AIM" comes back
@@ -1447,12 +1431,12 @@ void advanced_inventory::display()
                 do_return_entry();
                 assert( g->u.has_activity( ACT_ADV_INVENTORY ) );
                 ret = g->inventory_item_menu( loc, info_startx, info_width,
-                                              src == advanced_inventory::side::left ? game::LEFT_OF_INFO : game::RIGHT_OF_INFO );
-                if( !g->u.has_activity( ACT_ADV_INVENTORY ) ) {
-                    exit = true;
-                } else {
-                    g->u.cancel_activity();
-                }
+                                              src == advanced_inventory::side::left ?
+                                              game::LEFT_OF_INFO : game::RIGHT_OF_INFO );
+
+                if( !g->u.has_activity( ACT_ADV_INVENTORY ) ) { exit = true; }
+                else { g->u.cancel_activity(); }
+
                 // Might have changed a stack (activated an item, repaired an item, etc.)
                 if( spane.get_area() == AIM_INVENTORY ) {
                     g->u.inv.restack( g->u );
@@ -1786,91 +1770,6 @@ bool advanced_inventory::query_charges( aim_location destarea, const advanced_in
         }
     }
     return true;
-}
-
-void advanced_inventory::refresh_minimap()
-{
-    // don't update ui if processing demands
-    if( is_processing() ) {
-        return;
-    }
-    // redraw border around minimap
-    draw_border( mm_border );
-    // minor addition to border for AIM_ALL, sorta hacky
-    if( panes[src].get_area() == AIM_ALL || panes[dest].get_area() == AIM_ALL ) {
-        // NOLINTNEXTLINE(cata-use-named-point-constants)
-        mvwprintz( mm_border, point( 1, 0 ), c_light_gray, utf8_truncate( _( "All" ), minimap_width ) );
-    }
-    // refresh border, then minimap
-    wrefresh( mm_border );
-    wrefresh( minimap );
-}
-
-void advanced_inventory::draw_minimap()
-{
-    // if player is in one of the below, invert the player cell
-    static const std::array<aim_location, 3> player_locations = {
-        {AIM_CENTER, AIM_INVENTORY, AIM_WORN}
-    };
-    static const std::array<side, NUM_PANES> sides = {{left, right}};
-    // get the center of the window
-    tripoint pc = {getmaxx( minimap ) / 2, getmaxy( minimap ) / 2, 0};
-    // draw the 3x3 tiles centered around player
-    g->m.draw( minimap, g->u.pos() );
-    for( auto s : sides ) {
-        char sym = get_minimap_sym( s );
-        if( sym == '\0' ) {
-            continue;
-        }
-        auto sq = squares[panes[s].get_area()];
-        auto pt = pc + sq.off;
-        // invert the color if pointing to the player's position
-        auto cl = sq.id == AIM_INVENTORY || sq.id == AIM_WORN ?
-                  invert_color( c_light_cyan ) : c_light_cyan.blink();
-        mvwputch( minimap, pt.xy(), cl, sym );
-    }
-
-    // Invert player's tile color if exactly one pane points to player's tile
-    bool invert_left = false;
-    bool invert_right = false;
-    const auto is_selected = [ this ]( const aim_location & where, size_t side ) {
-        return where == this->panes[ side ].get_area();
-    };
-    for( auto &loc : player_locations ) {
-        invert_left |= is_selected( loc, 0 );
-        invert_right |= is_selected( loc, 1 );
-    }
-
-    if( !invert_left || !invert_right ) {
-        g->u.draw( minimap, g->u.pos(), invert_left || invert_right );
-    }
-}
-
-char advanced_inventory::get_minimap_sym( side p ) const
-{
-    static const std::array<char, NUM_PANES> c_side = {{'L', 'R'}};
-    static const std::array<char, NUM_PANES> d_side = {{'^', 'v'}};
-    static const std::array<char, NUM_AIM_LOCATIONS> g_nome = {{
-            '@', '#', '#', '#', '#', '@', '#',
-            '#', '#', '#', 'D', '^', 'C', '@'
-        }
-    };
-    char ch = g_nome[panes[p].get_area()];
-    switch( ch ) {
-        case '@':
-            // '^' or 'v'
-            ch = d_side[panes[-p + 1].get_area() == AIM_CENTER];
-            break;
-        case '#':
-            // 'L' or 'R'
-            ch = panes[p].in_vehicle() ? 'V' : c_side[p];
-            break;
-        case '^':
-            // do not show anything
-            ch ^= ch;
-            break;
-    }
-    return ch;
 }
 
 void advanced_inventory::swap_panes()

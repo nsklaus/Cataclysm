@@ -3,7 +3,7 @@
 #define CATACURSE_H
 
 #include <utility>
-#if defined(TILES) || defined(_WIN32)
+
 
 #include <array>
 #include <string>
@@ -86,6 +86,6 @@ int projected_window_height();
 bool handle_resize( int w, int h );
 int get_scaling_factor();
 
-#endif
+
 #endif
 
