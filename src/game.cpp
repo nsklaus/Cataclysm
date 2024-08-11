@@ -1937,6 +1937,18 @@ void game::handle_key_blocking_activity()
     }
 }
 
+/** check where the item come from to remove it correctly */
+void remove_item_based_on_location(item_location &locThisItem, item &oThisItem) {
+    if (locThisItem.where() == item_location::type::character) {
+        // Remove from inventory
+        g->u.i_rem(&oThisItem);
+    } else if (locThisItem.where() == item_location::type::map) {
+        // Remove from the map
+        g->m.i_rem(locThisItem.position(), &oThisItem);
+    }
+}
+
+
 /* item submenu for 'i' and '/'
 * It use draw_item_info to draw item info and action menu
 *
@@ -1951,8 +1963,13 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
     int cMenu = static_cast<int>( '+' );
 
     item &oThisItem = *locThisItem;
-    if( u.has_item( oThisItem ) ) {
+    
+    bool item_is_accessible = u.has_item(oThisItem) || locThisItem.where() == item_location::type::map;
 
+
+    // check where the item come from
+    //if( u.has_item( oThisItem ) ) {
+    if( item_is_accessible) {
         std::vector<iteminfo> vThisItem;
         std::vector<iteminfo> vDummy;
 
@@ -2076,9 +2093,18 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
                     break;
                 case 'E':
                     avatar_action::eat( u, locThisItem );
+                    // Check the item's location for correct removal method
+                    if (locThisItem.where() == item_location::type::character) {
+                        // Remove from inventory only if the item was in the inventory
+                        u.i_rem(&oThisItem);
+                    } else if (locThisItem.where() == item_location::type::map) {
+                        // Remove the item from the map if it's on the ground
+                        // tripoint location = locThisItem.position();
+                        g->m.i_rem(locThisItem.position(), &oThisItem);
+                    }
                     break;
                 case 'W':
-                    u.wear( oThisItem );
+                    u.wear( locThisItem, true );
                     break;
                 case 'w':
                     wield( locThisItem );

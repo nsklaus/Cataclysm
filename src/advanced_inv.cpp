@@ -1030,6 +1030,14 @@ bool advanced_inventory::show_sort_menu( advanced_inventory_pane &pane )
     return true;
 }
 
+bool is_adjacent_tile(aim_location area) {
+    return (
+        area == AIM_NORTHWEST || area == AIM_NORTH || area == AIM_NORTHEAST ||
+        area == AIM_WEST || area == AIM_CENTER || area == AIM_EAST ||
+        area == AIM_SOUTHWEST || area == AIM_SOUTH || area == AIM_SOUTHEAST
+    );
+}
+
 void advanced_inventory::display()
 {
     init();
@@ -1397,31 +1405,36 @@ void advanced_inventory::display()
             const int info_startx = colstart + ( src == advanced_inventory::side::left ? info_width : 0 );
 
 
-            if( spane.get_area() == AIM_INVENTORY || spane.get_area() == AIM_WORN ) {
-                int idx = spane.get_area() == AIM_INVENTORY ? sitem->idx :
-                player::worn_position_to_index( sitem->idx );
-                item_location loc( g->u, &g->u.i_at( idx ) );
+            // if( spane.get_area() == AIM_INVENTORY || spane.get_area() == AIM_WORN ) {
+            //     int idx = spane.get_area() == AIM_INVENTORY ? sitem->idx :
+            //     player::worn_position_to_index( sitem->idx );
+            //     item_location loc( g->u, &g->u.i_at( idx ) );
 
 
 
-            /*
-            int idx = 0;
-            if( spane.get_area() == AIM_INVENTORY ||
-                spane.get_area() == AIM_WORN ||
-                spane.get_area() == AIM_WEST ) {
-                if ( spane.get_area() == AIM_INVENTORY ) { idx =  sitem->idx; }
-                else if ( spane.get_area() == AIM_WORN ) { player::worn_position_to_index( sitem->idx ); }
-                else if ( spane.get_area() == AIM_WEST ) { idx =  sitem->idx; }
-                //item_location loc( g->u, &g->u.i_at( idx ) );
-                g->u.i_at(idx);
-                item_location loc(g->m, g->m.i_at(idx);
-            */
+                int idx;
+                item_location loc;  // Declare loc outside the conditional blocks
 
-
-                // tripoint tile_location = spane. .get_cur_pos();  // Current position on the selected tile
-                // item nearby_item = g->m.i_at(tile_location); // Example: the first item on that tile
-                // item_location loc = item_location(map_cursor(tile_location), nearby_item);
-
+                if( spane.get_area() == AIM_INVENTORY ||
+                    spane.get_area() == AIM_WORN ||
+                    is_adjacent_tile(spane.get_area()) ) 
+                {
+                    if ( spane.get_area() == AIM_INVENTORY ) { 
+                        idx = sitem->idx; 
+                        loc = item_location( g->u, &g->u.i_at( idx ) );  
+                    }
+                    else if ( spane.get_area() == AIM_WORN ) { 
+                        idx = player::worn_position_to_index( sitem->idx ); 
+                        loc = item_location( g->u, &g->u.i_at( idx ) );  
+                    }
+                    else if ( is_adjacent_tile(spane.get_area()) ) {  
+                        advanced_inv_listitem *selected_item = spane.get_cur_item_ptr();
+                        const advanced_inv_area &area = spane.get_area();
+                        tripoint item_location_point = area.pos;
+                        item *actual_item = selected_item->items.back();
+                        loc = item_location(map_cursor(item_location_point), actual_item);  
+                    }
+                
                 // Setup a "return to AIM" activity. If examining the item creates a new activity
                 // (e.g. reading, reloading, activating), the new activity will be put on top of
                 // "return to AIM". Once the new activity is finished, "return to AIM" comes back
@@ -1430,6 +1443,7 @@ void advanced_inventory::display()
                 // "return to AIM".
                 do_return_entry();
                 assert( g->u.has_activity( ACT_ADV_INVENTORY ) );
+                
                 ret = g->inventory_item_menu( loc, info_startx, info_width,
                                               src == advanced_inventory::side::left ?
                                               game::LEFT_OF_INFO : game::RIGHT_OF_INFO );

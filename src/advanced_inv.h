@@ -23,6 +23,13 @@ struct sort_case_insensitive_less : public std::binary_function< char, char, boo
     }
 };
 
+/**
+* return true if the the provided area is in nearby tiles around the player.
+* e.g: somewhere on the ground.
+*/
+bool is_adjacent_tile(aim_location area);
+
+
 void create_advanced_inv();
 
 /**
@@ -37,6 +44,9 @@ class advanced_inventory
         advanced_inventory();
         ~advanced_inventory();
 
+
+
+
         void display();
 
         /**
@@ -49,6 +59,9 @@ class advanced_inventory
         advanced_inv_area &get_one_square( const aim_location &loc ) {
             return squares[loc];
         }
+
+
+
     private:
         /**
          * Refers to the two panes, used as index into @ref panes.

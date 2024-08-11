@@ -586,8 +586,12 @@ class player : public Character
         /** Wear item; returns false on fail. If interactive is false, don't alert the player or drain moves on completion. */
         cata::optional<std::list<item>::iterator>
         wear( int pos, bool interactive = true );
+
         cata::optional<std::list<item>::iterator>
         wear( item &to_wear, bool interactive = true );
+
+        cata::optional<std::list<item>::iterator>
+        wear( item_location &locThisItem, bool interactive = true );
 
         /** Takes off an item, returning false on fail. The taken off item is processed in the interact */
         bool takeoff( item &it, std::list<item> *res = nullptr );

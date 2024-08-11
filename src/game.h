@@ -562,6 +562,9 @@ class game
 
         void draw_trail_to_square( const tripoint &t, bool bDrawX );
 
+        /** check where the item come from to remove it correctly */
+        void remove_item_based_on_location(item_location &locThisItem, item &oThisItem);
+
         enum inventory_item_menu_positon {
             RIGHT_TERMINAL_EDGE,
             LEFT_OF_INFO,

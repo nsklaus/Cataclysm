@@ -3645,14 +3645,23 @@ int player::item_reload_cost( const item &it, const item &ammo, int qty ) const
 }
 
 cata::optional<std::list<item>::iterator>
+player::wear(item &to_wear, bool interactive) {
+    item_location locThisItem(*this, &to_wear);
+    return wear(locThisItem, interactive);
+}
+
+cata::optional<std::list<item>::iterator>
 player::wear( int pos, bool interactive )
 {
     return wear( i_at( pos ), interactive );
 }
 
 cata::optional<std::list<item>::iterator>
-player::wear( item &to_wear, bool interactive )
+player::wear( item_location &locThisItem, bool interactive )
 {
+
+item &to_wear =*locThisItem;
+
     if( is_worn( to_wear ) ) {
         if( interactive ) {
             add_msg_player_or_npc( m_info,
@@ -3671,23 +3680,28 @@ player::wear( item &to_wear, bool interactive )
         return cata::nullopt;
     }
 
-    bool was_weapon;
-    item to_wear_copy( to_wear );
-    if( &to_wear == &weapon ) {
-        weapon = item();
-        was_weapon = true;
-    } else {
-        inv.remove_item( &to_wear );
-        inv.restack( *this );
-        was_weapon = false;
+
+    bool was_weapon = false;
+    item to_wear_copy(to_wear);
+
+    // Remove from inventory if the item is in the player's possession
+    if (locThisItem.where() == item_location::type::character) {
+        inv.remove_item(&to_wear);
+        inv.restack(*this);
+    } else if (locThisItem.where() == item_location::type::map) {
+        // Remove from the map directly
+        g->m.i_rem(locThisItem.position(), &to_wear);
     }
 
-    auto result = wear_item( to_wear_copy, interactive );
-    if( !result ) {
-        if( was_weapon ) {
+    auto result = wear_item(to_wear_copy, interactive);
+    if (!result) {
+        // If wearing failed, return the item to its original location
+        if (was_weapon) {
             weapon = to_wear_copy;
-        } else {
-            inv.add_item( to_wear_copy, true );
+        } else if (locThisItem.where() == item_location::type::character) {
+            inv.add_item(to_wear_copy, true);
+        } else if (locThisItem.where() == item_location::type::map) {
+            g->m.add_item_or_charges(locThisItem.position(), to_wear_copy);
         }
         return cata::nullopt;
     }
