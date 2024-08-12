@@ -2104,6 +2104,7 @@ int game::inventory_item_menu( item_location locThisItem, int iStartX, int iWidt
                     }
                     break;
                 case 'W':
+                    //fprintf(stderr, "game: Position before wear: %s\n", locThisItem.position().to_string().c_str());
                     u.wear( locThisItem, true );
                     break;
                 case 'w':
@@ -3149,6 +3150,7 @@ void game::draw()
 
 void game::draw_panels( bool force_draw )
 {
+    (void)force_draw;  // stop complaining about force_draw being unused
     //draw_panels( 0, 1, force_draw );
 }
 

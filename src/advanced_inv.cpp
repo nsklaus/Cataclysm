@@ -298,7 +298,7 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
                                            volume_capacity,
                                            volume_units_abbr() );
 
-        const int hrightcol = columns - 1 - utf8_width( formatted_head );
+        //const int hrightcol = columns - 1 - utf8_width( formatted_head );
         nc_color color = weight_carried > weight_capacity ? c_red : c_green;
         mvwprintz( window, point( 2, 2 ), c_dark_gray, "Weight: ");
         wprintz( window, active ? color : norm, "%.1f", weight_carried );
@@ -347,7 +347,7 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
     //print header row and determine max item name length
     // Last printable column
     const int lastcol = columns - 2;
-    const size_t name_startpos = 4;
+    // const size_t name_startpos = 4;
     //const size_t src_startpos = lastcol - 18;
     const size_t amt_startpos = lastcol - 4;
     //const size_t weight_startpos = lastcol - 10;
@@ -356,9 +356,9 @@ void advanced_inventory::print_items( const advanced_inventory_pane &pane, bool 
     int max_name_length = lastcol -8;
 
     //~ Items list header (length type 1). Table fields length without spaces: amt - 4, weight - 5, vol - 4.
-    const int table_hdr_len1 = utf8_width( _( "amt" ) );
+    //const int table_hdr_len1 = utf8_width( _( "amt" ) );
     //~ Items list header (length type 2). Table fields length without spaces: src - 2, amt - 4, weight - 5, vol - 4.
-    const int table_hdr_len2 = utf8_width( _( "amt" ) );
+    //const int table_hdr_len2 = utf8_width( _( "amt" ) );
 
     // mvwprintz( window, point( compact ? 1 : 4, 5 ), c_light_gray, _( "Name (charges)" ) );
     // if( pane.get_area() == AIM_ALL && !compact ) {
@@ -1030,11 +1030,13 @@ bool advanced_inventory::show_sort_menu( advanced_inventory_pane &pane )
     return true;
 }
 
+/** return true if area is the 9 nearby tiles surrounding the player */
 bool is_adjacent_tile(aim_location area) {
     return (
         area == AIM_NORTHWEST || area == AIM_NORTH || area == AIM_NORTHEAST ||
         area == AIM_WEST || area == AIM_CENTER || area == AIM_EAST ||
-        area == AIM_SOUTHWEST || area == AIM_SOUTH || area == AIM_SOUTHEAST
+        area == AIM_SOUTHWEST || area == AIM_SOUTH || area == AIM_SOUTHEAST ||
+        area == AIM_ALL
     );
 }
 
@@ -1427,14 +1429,18 @@ void advanced_inventory::display()
                         idx = player::worn_position_to_index( sitem->idx ); 
                         loc = item_location( g->u, &g->u.i_at( idx ) );  
                     }
-                    else if ( is_adjacent_tile(spane.get_area()) ) {  
+                    else { //if (spane.get_area() == AIM_WEST) {//is_adjacent_tile(spane.get_area()) ) {  
                         advanced_inv_listitem *selected_item = spane.get_cur_item_ptr();
-                        const advanced_inv_area &area = spane.get_area();
-                        tripoint item_location_point = area.pos;
+                        aim_location item_area = selected_item->area; // Get the area from the item
+                        const advanced_inv_area &area = squares[item_area]; // Use the area to get the corresponding advanced_inv_area
+                        tripoint item_location_point = area.pos; // Extract the tripoint
                         item *actual_item = selected_item->items.back();
-                        loc = item_location(map_cursor(item_location_point), actual_item);  
+                        //fprintf(stderr, "Item location point: %s\n", item_location_point.to_string().c_str());
+                        loc = item_location(map_cursor(item_location_point), actual_item);
+
                     }
-                
+                //fprintf(stderr, "AIM:  Position before wear: %s\n", loc.position().to_string().c_str());
+
                 // Setup a "return to AIM" activity. If examining the item creates a new activity
                 // (e.g. reading, reloading, activating), the new activity will be put on top of
                 // "return to AIM". Once the new activity is finished, "return to AIM" comes back

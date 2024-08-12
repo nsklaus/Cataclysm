@@ -3662,6 +3662,9 @@ player::wear( item_location &locThisItem, bool interactive )
 
 item &to_wear =*locThisItem;
 
+//fprintf(stderr, "player : Item position: %s\n", locThisItem.position().to_string().c_str());
+const auto &items_at_pos = g->m.i_at(locThisItem.position());
+
     if( is_worn( to_wear ) ) {
         if( interactive ) {
             add_msg_player_or_npc( m_info,
@@ -3689,8 +3692,10 @@ item &to_wear =*locThisItem;
         inv.remove_item(&to_wear);
         inv.restack(*this);
     } else if (locThisItem.where() == item_location::type::map) {
-        // Remove from the map directly
-        g->m.i_rem(locThisItem.position(), &to_wear);
+        // item is not in inventory, remove from the map directly
+        if (g->m.has_items(locThisItem.position())) {
+            g->m.i_rem(locThisItem.position(), &to_wear);
+        }
     }
 
     auto result = wear_item(to_wear_copy, interactive);
@@ -5540,7 +5545,7 @@ int player::print_info( const catacurses::window &w, int vStart, int, int column
 {
     // TODO: extend player description
     int initial_line = vStart;
-    const int max_width_label = getmaxx( w ) - (column+7); // there's a label
+    //const int max_width_label = getmaxx( w ) - (column+7); // there's a label
     const int max_width_full = getmaxx( w ) - 2; // full panel width, no label
     mvwprintz( w, point( column, vStart ), c_dark_gray, "Name : " );
     mvwprintz( w, point( column+7, vStart ), c_white, name );
