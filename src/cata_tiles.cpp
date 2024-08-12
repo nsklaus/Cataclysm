@@ -995,13 +995,6 @@ void cata_tiles::draw( const point &dest, const tripoint &center, int width, int
         return;
     }
 
-#if defined(__ANDROID__)
-    // Attempted bugfix for Google Play crash - prevent divide-by-zero if no tile width/height specified
-    if( tile_width == 0 || tile_height == 0 ) {
-        return;
-    }
-#endif
-
     {
         //set clipping to prevent drawing over stuff we shouldn't
         SDL_Rect clipRect = {dest.x, dest.y, width, height};
@@ -1590,6 +1583,33 @@ bool cata_tiles::find_overlay_looks_like( const bool male, const std::string &ov
     }
     return exists;
 }
+
+bool cata_tiles::draw_from_id_string( std::string id, TILE_CATEGORY category,
+                                      const std::string &subcategory, const tripoint &pos, 
+                                      int subtile, int rota, int frame_index, lit_level ll, 
+                                      bool apply_night_vision_goggles, int &height_3d ) 
+{
+    const tile_type *tt = tileset_ptr->find_tile_type( id );
+    if( tt ) {
+        // Iterate through the weighted list
+        for (const auto &weighted_obj : tt->fg) {
+            const std::vector<int> &frames = weighted_obj.obj; // access the vector
+            
+            // Ensure the frame_index is within bounds of the frames vector
+            if( frame_index < frames.size() ) {
+                int tile_index = frames[frame_index]; // Access the correct frame
+                draw_from_id_string( id, category, subcategory, pos, subtile, rota, ll, apply_night_vision_goggles, height_3d );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+
 
 bool cata_tiles::draw_from_id_string( std::string id, TILE_CATEGORY category,
                                       const std::string &subcategory, const tripoint &pos,
@@ -2847,34 +2867,41 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
         int &height_3d )
 {
     std::string ent_name;
-
-    if( ch.is_npc() ) {
-        ent_name = ch.male ? "npc_male" : "npc_female";
-    } else {
-        ent_name = ch.male ? "player_male" : "player_female";
-    }
-    // first draw the character itself(i guess this means a tileset that
-    // takes this seriously needs a naked sprite)
     int prev_height_3d = height_3d;
 
-    // depending on the toggle flip sprite left or right
+    // choose correct sprite depending of direction 
     if( ch.facing == FD_RIGHT ) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+        ent_name = "player_male_facing_right";
     } else if( ch.facing == FD_LEFT ) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+        ent_name = "player_male_facing_left";
     } else if (ch.facing == FD_UP) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+        ent_name = "player_male_facing_up";
     } else if (ch.facing == FD_DOWN) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+        ent_name = "player_male_facing_down";
     } else if (ch.facing == FD_UPLEFT) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+        ent_name = "player_male_facing_left";
     }else if (ch.facing == FD_UPRIGHT) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+        ent_name = "player_male_facing_right";
     }    else if (ch.facing == FD_DOWNLEFT) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 4, ll, false, height_3d );
+        ent_name = "player_male_facing_left";
     }else if (ch.facing == FD_DOWNRIGHT) {
-        draw_from_id_string( ent_name, C_NONE, "", p, corner, 0, ll, false, height_3d );
+        ent_name = "player_male_facing_right";
     }
+
+    // manage frame index and animation speed
+    static int frame_index = 0;  //  track the current frame in the animation 
+    static int counter = 0;      // control when the frame_index should be updated
+    const int threshold = 2;    // set how often the frame index updates
+
+    // Increment the counter and update the frame index when the threshold is reached
+    if (++counter >= threshold) {              // Updates frame_index based on the counter
+        frame_index = (frame_index + 1) % 4;   // Cycles through frames based on frame_index
+        counter = 0;                           // Resets the counter after frame update
+    }
+
+    // Use frame_index in draw_from_id_string to select the correct animation frame
+    draw_from_id_string( ent_name, C_NONE, "", p, corner, frame_index, ll, false, height_3d );
+
 
 
 

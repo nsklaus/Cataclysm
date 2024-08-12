@@ -302,16 +302,24 @@ class cata_tiles
         bool draw_from_id_string( std::string id, TILE_CATEGORY category,
                                   const std::string &subcategory, const tripoint &pos, int subtile, int rota,
                                   lit_level ll, bool apply_night_vision_goggles, int &height_3d );
+        bool draw_from_id_string( std::string id, TILE_CATEGORY category,
+                                  const std::string &subcategory, const tripoint &pos, 
+                                  int subtile, int rota, int frame_index, // New frame_index parameter
+                                  lit_level ll, bool apply_night_vision_goggles, int &height_3d );
+
         bool draw_sprite_at(
             const tile_type &tile, const weighted_int_list<std::vector<int>> &svlist,
             const point &, unsigned int loc_rand, bool rota_fg, int rota, lit_level ll,
             bool apply_night_vision_goggles );
+
         bool draw_sprite_at(
             const tile_type &tile, const weighted_int_list<std::vector<int>> &svlist,
             const point &, unsigned int loc_rand, bool rota_fg, int rota, lit_level ll,
             bool apply_night_vision_goggles, int &height_3d );
+
         bool draw_tile_at( const tile_type &tile, const point &, unsigned int loc_rand, int rota,
                            lit_level ll, bool apply_night_vision_goggles, int &height_3d );
+
 
         /* Tile Picking */
         void get_tile_values( int t, const int *tn, int &subtile, int &rotation );
