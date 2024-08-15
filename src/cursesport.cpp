@@ -1,4 +1,4 @@
-#if defined(TILES) || defined(_WIN32)
+
 #include "cursesport.h"
 
 #include <cstdint>
@@ -548,4 +548,3 @@ bool nc_color::is_blink() const
     return attribute_value & A_BLINK;
 }
 
-#endif

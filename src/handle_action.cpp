@@ -209,7 +209,7 @@ input_context game::get_player_input( std::string &action )
         int offset_x = u.posx() + u.view_offset.x - getmaxx( w_terrain ) / 2;
         int offset_y = u.posy() + u.view_offset.y - getmaxy( w_terrain ) / 2;
 
-#if defined(TILES)
+
         if( tile_iso && use_tiles ) {
             iStartX = 0;
             iStartY = 0;
@@ -218,7 +218,7 @@ input_context game::get_player_input( std::string &action )
             offset_x = 0;
             offset_y = 0;
         }
-#endif //TILES
+
 
         // TODO: Move the weather calculations out of here.
         const bool bWeatherEffect = ( weather_info.glyph != '?' );
@@ -242,23 +242,6 @@ input_context game::get_player_input( std::string &action )
                 WEATHER_FLURRIES | WEATHER_SNOW | WEATHER_SNOWSTORM = "weather_snowflake"
                 */
 
-#if defined(TILES)
-                if( !use_tiles ) {
-#endif //TILES
-                    //If not using tiles, erase previous drops from w_terrain
-                    for( auto &elem : wPrint.vdrops ) {
-                        const tripoint location( elem.first + offset_x, elem.second + offset_y, get_levz() );
-                        const lit_level lighting = visibility_cache[location.x][location.y];
-                        wmove( w_terrain, location.xy() + point( -offset_x, -offset_y ) );
-                        if( !m.apply_vision_effects( w_terrain, m.get_visibility( lighting, cache ) ) ) {
-                            m.drawsq( w_terrain, u, location, false, true,
-                                      u.pos() + u.view_offset,
-                                      lighting == LL_LOW, lighting == LL_BRIGHT );
-                        }
-                    }
-#if defined(TILES)
-                }
-#endif //TILES
                 wPrint.vdrops.clear();
 
                 for( int i = 0; i < dropCount; i++ ) {
@@ -280,28 +263,6 @@ input_context game::get_player_input( std::string &action )
             }
             // don't bother calculating SCT if we won't show it
             if( uquit != QUIT_WATCH && get_option<bool>( "ANIMATION_SCT" ) ) {
-#if defined(TILES)
-                if( !use_tiles ) {
-#endif
-                    for( auto &elem : SCT.vSCT ) {
-                        //Erase previous text from w_terrain
-                        if( elem.getStep() > 0 ) {
-                            const int width = utf8_width( elem.getText() );
-                            for( int i = 0; i < width; ++i ) {
-                                const tripoint location( elem.getPosX() + i, elem.getPosY(), get_levz() );
-                                const lit_level lighting = visibility_cache[location.x][location.y];
-                                wmove( w_terrain, location.xy() + point( -offset_x, -offset_y ) );
-                                if( !m.apply_vision_effects( w_terrain, m.get_visibility( lighting, cache ) ) ) {
-                                    m.drawsq( w_terrain, u, location, false, true,
-                                              u.pos() + u.view_offset,
-                                              lighting == LL_LOW, lighting == LL_BRIGHT );
-                                }
-                            }
-                        }
-                    }
-#if defined(TILES)
-                }
-#endif
 
                 SCT.advanceAllSteps();
 
@@ -1525,11 +1486,6 @@ bool game::handle_action()
             if( act == ACTION_NULL ) {
                 return false;
             }
-#if defined(__ANDROID__)
-            if( get_option<bool>( "ANDROID_ACTIONMENU_AUTOADD" ) && ctxt.get_category() == "DEFAULTMODE" ) {
-                add_best_key_for_action_to_quick_shortcuts( act, ctxt.get_category(), false );
-            }
-#endif
         }
 
         if( act == ACTION_KEYBINDINGS ) {
@@ -1645,8 +1601,7 @@ bool game::handle_action()
                     { ACTION_SHIFT_W, { point_west, point_north_west } },
                     { ACTION_SHIFT_NW, { point_north_west, point_north } },
                 };
-                u.view_offset += use_tiles && tile_iso ?
-                                 shift_delta.at( act ).second * soffset : shift_delta.at( act ).first * soffset;
+                u.view_offset += shift_delta.at( act ).first * soffset;
             }
             break;
 
@@ -1674,37 +1629,82 @@ bool game::handle_action()
             case ACTION_KEYBINDINGS:
                 break; // handled above
 
-            case ACTION_TIMEOUT:
+            case ACTION_TIMEOUT: {
                 if( check_safe_mode_allowed( false ) ) {
                     u.pause();
                 }
                 break;
+            }
 
-            case ACTION_PAUSE:
+            case ACTION_PAUSE: {
                 if( check_safe_mode_allowed() ) {
                     u.pause();
                 }
                 break;
+            }
 
-            case ACTION_CYCLE_MOVE:
+            case ACTION_CYCLE_MOVE: {
                 u.cycle_move_mode();
                 break;
+            }
 
-            case ACTION_RESET_MOVE:
+            case ACTION_RESET_MOVE: {
                 u.reset_move_mode();
                 break;
+            }
 
-            case ACTION_TOGGLE_RUN:
+            case ACTION_TOGGLE_RUN: {
                 u.toggle_run_mode();
                 break;
+            }
 
-            case ACTION_TOGGLE_CROUCH:
+            case ACTION_TOGGLE_CROUCH: {
                 u.toggle_crouch_mode();
                 break;
+            }
+            
+            case ACTION_TOGGLE_MAP_MEMORY: {
+                u.toggle_map_memory();
+                break;
+            }
 
-            case ACTION_OPEN_MOVEMENT:
+            case ACTION_CENTER: {
+                u.view_offset.x = driving_view_offset.x;
+                u.view_offset.y = driving_view_offset.y;
+                break;
+            }
+
+            case ACTION_SHIFT_N:
+            case ACTION_SHIFT_NE:
+            case ACTION_SHIFT_E:
+            case ACTION_SHIFT_SE:
+            case ACTION_SHIFT_S:
+            case ACTION_SHIFT_SW:
+            case ACTION_SHIFT_W:
+            case ACTION_SHIFT_NW: {
+                static const std::map<action_id, std::pair<point, point>> shift_delta = {
+                    { ACTION_SHIFT_N, { point_north, point_north_east } },
+                    { ACTION_SHIFT_NE, { point_north_east, point_east } },
+                    { ACTION_SHIFT_E, { point_east, point_south_east } },
+                    { ACTION_SHIFT_SE, { point_south_east, point_south } },
+                    { ACTION_SHIFT_S, { point_south, point_south_west } },
+                    { ACTION_SHIFT_SW, { point_south_west, point_west } },
+                    { ACTION_SHIFT_W, { point_west, point_north_west } },
+                    { ACTION_SHIFT_NW, { point_north_west, point_north } },
+                };
+                u.view_offset += shift_delta.at( act ).first * soffset;
+                break;
+            }
+
+            case ACTION_LOOK: {
+                look_around();
+                break;
+            }
+
+            case ACTION_OPEN_MOVEMENT: {
                 open_movement_mode_menu();
                 break;
+            }
 
             case ACTION_MOVE_FORTH:
             case ACTION_MOVE_FORTH_RIGHT:
@@ -1713,7 +1713,7 @@ bool game::handle_action()
             case ACTION_MOVE_BACK:
             case ACTION_MOVE_BACK_LEFT:
             case ACTION_MOVE_LEFT:
-            case ACTION_MOVE_FORTH_LEFT:
+            case ACTION_MOVE_FORTH_LEFT: {
                 if( !u.get_value( "remote_controlling" ).empty() &&
                     ( u.has_active_item( "radiocontrol" ) || u.has_active_bionic( bio_remote ) ) ) {
                     rcdrive( get_delta_from_movement_action( act, iso_rotate::yes ) );
@@ -1751,7 +1751,9 @@ bool game::handle_action()
                     }
                 }
                 break;
-            case ACTION_MOVE_DOWN:
+            }
+
+            case ACTION_MOVE_DOWN: {
                 if( u.is_mounted() ) {
                     auto mon = u.mounted_creature.get();
                     if( !mon->has_flag( MF_RIDEABLE_MECH ) ) {
@@ -1763,8 +1765,9 @@ bool game::handle_action()
                     vertical_move( -1, false );
                 }
                 break;
+            }
 
-            case ACTION_MOVE_UP:
+            case ACTION_MOVE_UP: {
                 if( u.is_mounted() ) {
                     auto mon = u.mounted_creature.get();
                     if( !mon->has_flag( MF_RIDEABLE_MECH ) ) {
@@ -1776,8 +1779,9 @@ bool game::handle_action()
                     vertical_move( 1, false );
                 }
                 break;
+            }
 
-            case ACTION_OPEN:
+            case ACTION_OPEN: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't open things while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1786,8 +1790,9 @@ bool game::handle_action()
                     open();
                 }
                 break;
+            }
 
-            case ACTION_CLOSE:
+            case ACTION_CLOSE: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't close things while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1801,8 +1806,9 @@ bool game::handle_action()
                     close();
                 }
                 break;
+            }
 
-            case ACTION_SMASH:
+            case ACTION_SMASH: {
                 if( veh_ctrl ) {
                     handbrake();
                 } else if( u.has_active_mutation( trait_SHELL2 ) ) {
@@ -1811,8 +1817,9 @@ bool game::handle_action()
                     smash();
                 }
                 break;
+            }
 
-            case ACTION_EXAMINE:
+            case ACTION_EXAMINE: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't examine your surroundings while you're in your shell." ) );
                 } else if( mouse_target ) {
@@ -1821,8 +1828,9 @@ bool game::handle_action()
                     examine();
                 }
                 break;
+            }
 
-            case ACTION_ADVANCEDINV:
+            case ACTION_ADVANCEDINV: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't move mass quantities while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1831,8 +1839,9 @@ bool game::handle_action()
                     create_advanced_inv();
                 }
                 break;
+            }
 
-            case ACTION_PICKUP:
+            case ACTION_PICKUP: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't pick anything up while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1843,16 +1852,18 @@ bool game::handle_action()
                     pickup();
                 }
                 break;
+            }
 
-            case ACTION_PICKUP_FEET:
+            case ACTION_PICKUP_FEET: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't pick anything up while you're in your shell." ) );
                 } else {
                     pickup_feet();
                 }
                 break;
+            }
 
-            case ACTION_GRAB:
+            case ACTION_GRAB: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't grab things while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1861,8 +1872,9 @@ bool game::handle_action()
                     grab();
                 }
                 break;
+            }
 
-            case ACTION_HAUL:
+            case ACTION_HAUL: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't haul things while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1871,8 +1883,9 @@ bool game::handle_action()
                     haul();
                 }
                 break;
+            }
 
-            case ACTION_BUTCHER:
+            case ACTION_BUTCHER: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't butcher while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1881,12 +1894,14 @@ bool game::handle_action()
                     butcher();
                 }
                 break;
+            }
 
-            case ACTION_CHAT:
+            case ACTION_CHAT: {
                 chat();
                 break;
+            }
 
-            case ACTION_PEEK:
+            case ACTION_PEEK: {
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't peek around corners while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -1895,107 +1910,132 @@ bool game::handle_action()
                     peek();
                 }
                 break;
+            }
 
-            case ACTION_LIST_ITEMS:
+            case ACTION_LIST_ITEMS: {
                 list_items_monsters();
                 break;
+            }
 
-            case ACTION_ZONES:
+            case ACTION_ZONES: {
                 zones_manager();
                 break;
+            }
 
-            case ACTION_LOOT:
+            case ACTION_LOOT: {
                 loot();
                 break;
+            }
 
-            case ACTION_INVENTORY:
+            case ACTION_INVENTORY: {
                 game_menus::inv::common( u );
                 break;
+            }
 
-            case ACTION_COMPARE:
+            case ACTION_COMPARE: {
                 game_menus::inv::compare( u, cata::nullopt );
                 break;
+            }
 
-            case ACTION_ORGANIZE:
+            case ACTION_ORGANIZE: {
                 game_menus::inv::swap_letters( u );
                 break;
+            }
 
-            case ACTION_USE:
+            case ACTION_USE: {
                 // Shell-users are presumed to be able to mess with their inventories, etc
                 // while in the shell.  Eating, gear-changing, and item use are OK.
                 avatar_action::use_item( u );
                 break;
+            }
 
-            case ACTION_USE_WIELDED:
+            case ACTION_USE_WIELDED: {
                 u.use_wielded();
                 break;
+            }
 
-            case ACTION_WEAR:
+            case ACTION_WEAR: {                
                 wear();
                 break;
+            }
 
-            case ACTION_TAKE_OFF:
-                takeoff();
-                break;
+            case ACTION_TAKE_OFF: {
+              takeoff();
+              break;
+            }
 
-            case ACTION_EAT:
-                if( !avatar_action::eat_here( u ) ) {
-                    avatar_action::eat( u );
-                }
-                break;
+            case ACTION_EAT: {
+              if (!avatar_action::eat_here(u)) {
+                avatar_action::eat(u);
+              }
+              break;
+            }
 
-            case ACTION_OPEN_CONSUME:
-                if( !avatar_action::eat_here( u ) ) {
+            case ACTION_OPEN_CONSUME: {
+                if( !avatar_action::eat_here( u ) )  {
                     open_consume_item_menu();
                 }
                 break;
+            }
 
-            case ACTION_READ:
-                // Shell-users are presumed to have the book just at an opening and read it that way
+            case ACTION_READ: { 
+                // Shell-users are presumed to have the book
+                // just at an opening and
+                // read it that way
                 read();
                 break;
+            }
 
-            case ACTION_WIELD:
+            case ACTION_WIELD: {   
                 wield();
                 break;
+            }
 
-            case ACTION_PICK_STYLE:
-                u.martial_arts_data.pick_style( u );
-                break;
+            case ACTION_PICK_STYLE: {
+              u.martial_arts_data.pick_style(u);
+              break;
+            }
 
-            case ACTION_RELOAD_ITEM:
-                reload_item();
-                break;
+            case ACTION_RELOAD_ITEM: {
+              reload_item();
+              break;
+            }
 
-            case ACTION_RELOAD_WEAPON:
-                reload_weapon();
-                break;
+            case ACTION_RELOAD_WEAPON:  {
+              reload_weapon();
+              break;
+            }
 
-            case ACTION_RELOAD_WIELDED:
+            case ACTION_RELOAD_WIELDED: {
                 reload_wielded();
                 break;
-
-            case ACTION_UNLOAD:
+            }
+            
+            case ACTION_UNLOAD: {
                 avatar_action::unload( u );
                 break;
+            }
 
-            case ACTION_MEND:
+            case ACTION_MEND: {               
                 avatar_action::mend( g->u, item_location() );
                 break;
+            }
 
-            case ACTION_THROW: {
+            case ACTION_THROW:  {
                 item_location loc;
                 avatar_action::plthrow( g->u, loc );
                 break;
             }
 
-            case ACTION_FIRE:
+            case ACTION_FIRE:{
                 fire();
                 break;
+            }
 
-            case ACTION_CAST_SPELL:
+            case ACTION_CAST_SPELL:{
                 cast_spell();
                 break;
+            }
 
             case ACTION_FIRE_BURST: {
                 gun_mode_id original_mode = u.weapon.gun_get_mode_id();
@@ -2006,7 +2046,7 @@ bool game::handle_action()
                 break;
             }
 
-            case ACTION_SELECT_FIRE_MODE:
+            case ACTION_SELECT_FIRE_MODE:{
                 if( u.is_armed() ) {
                     if( u.weapon.is_gun() && !u.weapon.is_gunmod() && u.weapon.gun_all_modes().size() > 1 ) {
                         u.weapon.gun_cycle_mode();
@@ -2022,38 +2062,47 @@ bool game::handle_action()
                     }
                 }
                 break;
+            }
 
-            case ACTION_DROP:
+            case ACTION_DROP:{
                 // You CAN drop things to your own tile while in the shell.
                 drop();
                 break;
+            }
 
-            case ACTION_DIR_DROP:
+            case ACTION_DIR_DROP:{
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't drop things to another tile while you're in your shell." ) );
                 } else {
                     drop_in_direction();
                 }
                 break;
-            case ACTION_BIONICS:
+            }
+
+            case ACTION_BIONICS:{
                 u.power_bionics();
                 refresh_all();
                 break;
-            case ACTION_MUTATIONS:
+            }
+
+            case ACTION_MUTATIONS:{
                 u.power_mutations();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_SORT_ARMOR:
+            case ACTION_SORT_ARMOR:{
                 u.sort_armor();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_WAIT:
+            case ACTION_WAIT:{
                 wait();
                 break;
+            }
 
-            case ACTION_CRAFT:
+            case ACTION_CRAFT:{
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't craft while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -2062,8 +2111,9 @@ bool game::handle_action()
                     u.craft();
                 }
                 break;
+            }
 
-            case ACTION_RECRAFT:
+            case ACTION_RECRAFT:{
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't craft while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -2072,8 +2122,9 @@ bool game::handle_action()
                     u.recraft();
                 }
                 break;
+            }
 
-            case ACTION_LONGCRAFT:
+            case ACTION_LONGCRAFT:{
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't craft while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -2082,8 +2133,9 @@ bool game::handle_action()
                     u.long_craft();
                 }
                 break;
+            }
 
-            case ACTION_DISASSEMBLE:
+            case ACTION_DISASSEMBLE:{
                 if( u.controlling_vehicle ) {
                     add_msg( m_info, _( "You can't disassemble items while driving." ) );
                 } else if( u.is_mounted() ) {
@@ -2093,8 +2145,9 @@ bool game::handle_action()
                     refresh_all();
                 }
                 break;
+            }
 
-            case ACTION_CONSTRUCT:
+            case ACTION_CONSTRUCT:{
                 if( u.in_vehicle ) {
                     add_msg( m_info, _( "You can't construct while in a vehicle." ) );
                 } else if( u.has_active_mutation( trait_SHELL2 ) ) {
@@ -2105,8 +2158,9 @@ bool game::handle_action()
                     construction_menu( false );
                 }
                 break;
+            }
 
-            case ACTION_SLEEP:
+            case ACTION_SLEEP:{
                 if( veh_ctrl ) {
                     add_msg( m_info, _( "Vehicle control has moved, %s" ),
                              press_x( ACTION_CONTROL_VEHICLE, _( "new binding is " ),
@@ -2115,8 +2169,9 @@ bool game::handle_action()
                     sleep();
                 }
                 break;
+            }
 
-            case ACTION_CONTROL_VEHICLE:
+            case ACTION_CONTROL_VEHICLE:{
                 if( u.has_active_mutation( trait_SHELL2 ) ) {
                     add_msg( m_info, _( "You can't operate a vehicle while you're in your shell." ) );
                 } else if( u.is_mounted() ) {
@@ -2127,12 +2182,15 @@ bool game::handle_action()
                     control_vehicle();
                 }
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_TRAVEL_MODE:
+            case ACTION_TOGGLE_AUTO_TRAVEL_MODE:{
                 auto_travel_mode = !auto_travel_mode;
                 add_msg( m_info, auto_travel_mode ? _( "Auto travel mode ON!" ) : _( "Auto travel mode OFF!" ) );
                 break;
+            }
 
+            /*
             case ACTION_TOGGLE_SAFEMODE:
                 if( safe_mode == SAFE_MODE_OFF ) {
                     set_safe_mode( SAFE_MODE_ON );
@@ -2187,8 +2245,9 @@ bool game::handle_action()
                     get_safemode().show();
                 }
                 break;
+            */
 
-            case ACTION_SUICIDE:
+            case ACTION_SUICIDE:{
                 if( query_yn( _( "Commit suicide?" ) ) ) {
                     if( query_yn( _( "REALLY commit suicide?" ) ) ) {
                         u.moves = 0;
@@ -2198,8 +2257,9 @@ bool game::handle_action()
                 }
                 refresh_all();
                 break;
+            }
 
-            case ACTION_SAVE:
+            case ACTION_SAVE:{
                 if( query_yn( _( "Save and quit?" ) ) ) {
                     if( save() ) {
                         u.moves = 0;
@@ -2208,25 +2268,29 @@ bool game::handle_action()
                 }
                 refresh_all();
                 break;
+            }
 
-            case ACTION_QUICKSAVE:
+            case ACTION_QUICKSAVE:{
                 quicksave();
                 return false;
+            }
 
-            case ACTION_QUICKLOAD:
+            case ACTION_QUICKLOAD:{
                 quickload();
-                return false;
+                return false;}
 
-            case ACTION_PL_INFO:
+            case ACTION_PL_INFO:{
                 u.disp_info();
                 break;
+            }
 
-            case ACTION_MAP:
+            case ACTION_MAP:{
                 werase( w_terrain );
                 ui::omap::display();
                 break;
+            }
 
-            case ACTION_SKY:
+            case ACTION_SKY:{
                 if( m.is_outside( u.pos() ) ) {
                     werase( w_terrain );
                     ui::omap::display_visible_weather();
@@ -2234,79 +2298,96 @@ bool game::handle_action()
                     add_msg( m_info, _( "You can't see the sky from here." ) );
                 }
                 break;
+            }
 
-            case ACTION_MISSIONS:
+            case ACTION_MISSIONS:{
                 list_missions();
                 break;
+            }
 
-			case ACTION_ITEMS_BROWSER:
+			case ACTION_ITEMS_BROWSER:{
 				items_browser();
 				break;
+            }
 
-            case ACTION_SCORES:
+            case ACTION_SCORES:{
                 show_scores_ui( stats(), get_kill_tracker() );
                 break;
+            }
 
-            case ACTION_FACTIONS:
+            case ACTION_FACTIONS:{
                 faction_manager_ptr->display();
                 break;
+            }
 
-            case ACTION_MORALE:
+            case ACTION_MORALE:{
                 u.disp_morale();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_MESSAGES:
+            case ACTION_MESSAGES:{
                 Messages::display_messages();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_HELP:
+            case ACTION_HELP:{
                 get_help().display_help();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_OPTIONS:
+            case ACTION_OPTIONS:{
                 get_options().show( true );
                 g->init_ui( true );
                 break;
+            }
 
-            case ACTION_AUTOPICKUP:
+            case ACTION_AUTOPICKUP:{
                 get_auto_pickup().show();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_AUTONOTES:
+            case ACTION_AUTONOTES:{
                 get_auto_notes_settings().show_gui();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_SAFEMODE:
+            case ACTION_SAFEMODE:{
                 get_safemode().show();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_COLOR:
+            case ACTION_COLOR:{
                 all_colors.show_gui();
                 refresh_all();
                 break;
+            }
 
-            case ACTION_WORLD_MODS:
+            case ACTION_WORLD_MODS:{
                 world_generator->show_active_world_mods( world_generator->active_world->active_mod_order );
                 refresh_all();
                 break;
+            }
 
-            case ACTION_DEBUG:
+            case ACTION_DEBUG:{
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 debug_menu::debug();
                 break;
+            }
 
-            case ACTION_TOGGLE_FULLSCREEN:
+            case ACTION_TOGGLE_FULLSCREEN:{
                 toggle_fullscreen();
                 break;
+            }
 
+            /*
             case ACTION_TOGGLE_PIXEL_MINIMAP:
                 toggle_pixel_minimap();
                 break;
@@ -2314,12 +2395,14 @@ bool game::handle_action()
             case ACTION_TOGGLE_PANEL_ADM:
                 toggle_panel_adm();
                 break;
+            */
 
-            case ACTION_RELOAD_TILESET:
+            case ACTION_RELOAD_TILESET: {
                 reload_tileset();
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_FEATURES:
+            case ACTION_TOGGLE_AUTO_FEATURES: {
                 get_options().get_option( "AUTO_FEATURES" ).setNext();
                 get_options().save();
                 //~ Auto Features are now ON/OFF
@@ -2327,8 +2410,9 @@ bool game::handle_action()
                          get_options().get_option( "AUTO_FEATURES" ).getMenuText(),
                          get_option<bool>( "AUTO_FEATURES" ) ? _( "ON" ) : _( "OFF" ) );
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_PULP_BUTCHER:
+            case ACTION_TOGGLE_AUTO_PULP_BUTCHER: {
                 get_options().get_option( "AUTO_PULP_BUTCHER" ).setNext();
                 get_options().save();
                 //~ Auto Pulp/Pulp Adjacent/Butcher is now set to x
@@ -2336,8 +2420,9 @@ bool game::handle_action()
                          get_options().get_option( "AUTO_PULP_BUTCHER" ).getMenuText(),
                          get_options().get_option( "AUTO_PULP_BUTCHER" ).getValueName() );
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_MINING:
+            case ACTION_TOGGLE_AUTO_MINING: {
                 get_options().get_option( "AUTO_MINING" ).setNext();
                 get_options().save();
                 //~ Auto Mining is now ON/OFF
@@ -2345,8 +2430,9 @@ bool game::handle_action()
                          get_options().get_option( "AUTO_MINING" ).getMenuText(),
                          get_option<bool>( "AUTO_MINING" ) ? _( "ON" ) : _( "OFF" ) );
                 break;
+            }
 
-            case ACTION_TOGGLE_THIEF_MODE:
+            case ACTION_TOGGLE_THIEF_MODE: {
                 if( g->u.get_value( "THIEF_MODE" ) == "THIEF_ASK" ) {
                     u.set_value( "THIEF_MODE", "THIEF_HONEST" );
                     u.set_value( "THIEF_MODE_KEEP", "YES" );
@@ -2367,8 +2453,9 @@ bool game::handle_action()
                     add_msg( _( "THIEF_MODE CONTAINED BAD VALUE [ %s ]!" ), g->u.get_value( "THIEF_MODE" ) );
                 }
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_FORAGING:
+            case ACTION_TOGGLE_AUTO_FORAGING: {
                 get_options().get_option( "AUTO_FORAGING" ).setNext();
                 get_options().save();
                 //~ Auto Foraging is now set to x
@@ -2376,8 +2463,9 @@ bool game::handle_action()
                          get_options().get_option( "AUTO_FORAGING" ).getMenuText(),
                          get_options().get_option( "AUTO_FORAGING" ).getValueName() );
                 break;
+            }
 
-            case ACTION_TOGGLE_AUTO_PICKUP:
+            case ACTION_TOGGLE_AUTO_PICKUP: {
                 get_options().get_option( "AUTO_PICKUP" ).setNext();
                 get_options().save();
                 //~ Auto pickup is now set to x
@@ -2385,55 +2473,65 @@ bool game::handle_action()
                          get_options().get_option( "AUTO_PICKUP" ).getMenuText(),
                          get_options().get_option( "AUTO_PICKUP" ).getValueName() );
                 break;
+            }
 
-            case ACTION_DISPLAY_SCENT:
+            case ACTION_DISPLAY_SCENT: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_scent();
                 break;
+            }
 
-            case ACTION_DISPLAY_SCENT_TYPE:
+            case ACTION_DISPLAY_SCENT_TYPE: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_scent();
                 break;
+            }
 
-            case ACTION_DISPLAY_TEMPERATURE:
+            case ACTION_DISPLAY_TEMPERATURE: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_temperature();
                 break;
-            case ACTION_DISPLAY_VEHICLE_AI:
+            }
+
+            case ACTION_DISPLAY_VEHICLE_AI: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_vehicle_ai();
                 break;
-            case ACTION_DISPLAY_VISIBILITY:
+            }
+
+            case ACTION_DISPLAY_VISIBILITY: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_visibility();
                 break;
+            }
 
-            case ACTION_DISPLAY_LIGHTING:
+            case ACTION_DISPLAY_LIGHTING: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_lighting();
                 break;
+            }
 
-            case ACTION_DISPLAY_RADIATION:
+            case ACTION_DISPLAY_RADIATION: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
                 display_radiation();
                 break;
-
-            case ACTION_TOGGLE_DEBUG_MODE:
+            }
+            
+            case ACTION_TOGGLE_DEBUG_MODE: {
                 if( MAP_SHARING::isCompetitive() && !MAP_SHARING::isDebugger() ) {
                     break;    //don't do anything when sharing and not debugger
                 }
@@ -2444,22 +2542,26 @@ bool game::handle_action()
                     add_msg( m_info, _( "Debug mode OFF!" ) );
                 }
                 break;
+            }
 
-            case ACTION_ZOOM_IN:
+            case ACTION_ZOOM_IN: {
                 zoom_in();
                 break;
+            }
 
-            case ACTION_ZOOM_OUT:
+            case ACTION_ZOOM_OUT: {
                 zoom_out();
                 break;
+            }
 
-            case ACTION_ITEMACTION:
+            case ACTION_ITEMACTION: {
                 item_action_menu();
                 break;
+            }
 
-            case ACTION_AUTOATTACK:
-                avatar_action::autoattack( u, m );
-                break;
+            // case ACTION_AUTOATTACK:{
+            //     avatar_action::autoattack( u, m );
+            //     break;}
 
             default:
                 break;

@@ -19,7 +19,7 @@ engine changes
 ==================
 
 - flashlight are now directional. emmiting in the direction player was last moving to. 
-
+- character animation (this will take a while to complete everywhere, but player is done)
 
 
 ==================
@@ -32,13 +32,15 @@ engine changes
 - new player overlay indicate when you're being seen by monsters. so you walk 
   around, and you'll be warned if hostiles took notice of you.
 - no more "safe mode"
-
+- interact with nearby objects without requirement to wield or put them in inventory first.
 
 
 ==================
 planned changes
 ==================
 
+- popup message UI, displaying only current action and results when relevant. 
+  like a ponctual popup feedback on actions. 
 - no more "auto-combat"
 - when looking at a monster an additionnal arrow shown near screen borders displaying the 
   player direction, relative to the monster currently being "listed" but only if it's 

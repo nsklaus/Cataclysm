@@ -2224,7 +2224,7 @@ std::pair<tripoint, tripoint> game::mouse_edge_scrolling( input_context ctxt, co
     ( void ) ctxt;
     ( void ) speed;
     ( void ) iso;
-#if (defined TILES || defined _WIN32 || defined WINDOWS)
+
     auto now = std::chrono::steady_clock::now();
     if( now < last_mouse_edge_scroll + std::chrono::milliseconds( rate ) ) {
         return ret;
@@ -2261,7 +2261,6 @@ std::pair<tripoint, tripoint> game::mouse_edge_scrolling( input_context ctxt, co
     } else if( event.type == CATA_INPUT_TIMEOUT ) {
         ret.first = ret.second;
     }
-#endif
     return ret;
 }
 
@@ -2320,8 +2319,8 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "loot" );
     ctxt.register_action( "examine" );
     ctxt.register_action( "advinv" );
-    ctxt.register_action( "pickup" );
-    ctxt.register_action( "pickup_feet" );
+    // ctxt.register_action( "pickup" );
+    // ctxt.register_action( "pickup_feet" );
     ctxt.register_action( "grab" );
     ctxt.register_action( "haul" );
     ctxt.register_action( "butcher" );
@@ -2365,11 +2364,11 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "sleep" );
     ctxt.register_action( "control_vehicle" );
     ctxt.register_action( "auto_travel_mode" );
-    ctxt.register_action( "safemode" );
-    ctxt.register_action( "autosafe" );
-    ctxt.register_action( "autoattack" );
-    ctxt.register_action( "ignore_enemy" );
-    ctxt.register_action( "whitelist_enemy" );
+    // ctxt.register_action( "safemode" );
+    // ctxt.register_action( "autosafe" );
+    // ctxt.register_action( "autoattack" );
+    // ctxt.register_action( "ignore_enemy" );
+    // ctxt.register_action( "whitelist_enemy" );
     ctxt.register_action( "save" );
     ctxt.register_action( "quicksave" );
 #if !defined(RELEASE)
@@ -2390,7 +2389,7 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "open_options" );
     ctxt.register_action( "open_autopickup" );
     ctxt.register_action( "open_autonotes" );
-    ctxt.register_action( "open_safemode" );
+    // ctxt.register_action( "open_safemode" );
     ctxt.register_action( "open_color" );
     ctxt.register_action( "open_world_mods" );
     ctxt.register_action( "debug" );
@@ -2403,11 +2402,9 @@ input_context get_default_mode_input_context()
     ctxt.register_action( "debug_mode" );
     ctxt.register_action( "zoom_out" );
     ctxt.register_action( "zoom_in" );
-#if !defined(__ANDROID__)
     ctxt.register_action( "toggle_fullscreen" );
-#endif
-    ctxt.register_action( "toggle_pixel_minimap" );
-    //ctxt.register_action( "toggle_panel_adm" );
+    // ctxt.register_action( "toggle_pixel_minimap" );
+    // ctxt.register_action( "toggle_panel_adm" );
     ctxt.register_action( "reload_tileset" );
     ctxt.register_action( "toggle_auto_features" );
     ctxt.register_action( "toggle_auto_pulp_butcher" );

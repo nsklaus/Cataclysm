@@ -2855,17 +2855,19 @@ bool cata_tiles::draw_zombie_revival_indicators( const tripoint &pos, const lit_
         item_override.find( pos ) == item_override.end() && g->m.could_see_items( pos, g->u ) ) {
         for( auto &i : g->m.i_at( pos ) ) {
             if( i.can_revive() ) {
-                return draw_from_id_string( ZOMBIE_REVIVAL_INDICATOR, C_NONE, empty_string, pos, 0, 0, LL_LIT,
-                                            false );
+                return draw_from_id_string( ZOMBIE_REVIVAL_INDICATOR, C_NONE, empty_string, 
+                                            pos, 0, 0, LL_LIT, false );
             }
         }
     }
     return false;
 }
 
-void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint &p, lit_level ll,
-        int &height_3d )
+void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint &p, 
+                                            lit_level ll, int &height_3d )
 {
+    static tripoint last_position = p; // Tracks the last position
+    static int last_facing = ch.facing; // Tracks the last facing direction
     std::string ent_name;
     int prev_height_3d = height_3d;
 
@@ -2889,21 +2891,24 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
     }
 
     // manage frame index and animation speed
-    static int frame_index = 0;  //  track the current frame in the animation 
+    static int frame_index = 0;  // track the current frame in the animation 
     static int counter = 0;      // control when the frame_index should be updated
-    const int threshold = 2;    // set how often the frame index updates
+    const int threshold = 2;     // set how often the frame index updates
+    int frames = 4;              // total number of frames per animation
 
     // Increment the counter and update the frame index when the threshold is reached
-    if (++counter >= threshold) {              // Updates frame_index based on the counter
-        frame_index = (frame_index + 1) % 4;   // Cycles through frames based on frame_index
-        counter = 0;                           // Resets the counter after frame update
+    if (last_position != p || last_facing != ch.facing) {
+        if (++counter >= threshold) {                   // Updates frame_index based on the counter
+            frame_index = (frame_index + 1) % frames;   // Cycles through frames based on frame_index
+            counter = 0;                                // Resets the counter after frame update
+        }
     }
+    // Update last position and direction for the next frame
+    last_position = p;
+    last_facing = ch.facing;
 
     // Use frame_index in draw_from_id_string to select the correct animation frame
     draw_from_id_string( ent_name, C_NONE, "", p, corner, frame_index, ll, false, height_3d );
-
-
-
 
     // next up, draw all the overlays
     std::vector<std::string> overlays = ch.get_overlay_ids();
@@ -2911,23 +2916,32 @@ void cata_tiles::draw_entity_with_overlays( const Character &ch, const tripoint 
         std::string draw_id = overlay;
         if( find_overlay_looks_like( ch.male, overlay, draw_id ) ) {
             int overlay_height_3d = prev_height_3d;
+
+            // for it will only display in-game notification exclamation mark
+            // if player is been detected by hostiles
             if( ch.facing == FD_RIGHT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 0, ll, false, overlay_height_3d );
             } else if( ch.facing == FD_LEFT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
-            } else if( ch.facing == FD_UP ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 4, ll, false, overlay_height_3d );
+            } 
+            
+            /*
+            // useless if we use animated sprite 
+
+            else if( ch.facing == FD_UP ) {
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 4, ll, false, overlay_height_3d );
             } else if( ch.facing == FD_DOWN ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 4, ll, false, overlay_height_3d );
             }else if( ch.facing == FD_UPLEFT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 4, ll, false, overlay_height_3d );
             }else if( ch.facing == FD_UPRIGHT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 0, ll, false, overlay_height_3d );
             }else if( ch.facing == FD_DOWNLEFT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 4, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 4, ll, false, overlay_height_3d );
             }else if( ch.facing == FD_DOWNRIGHT ) {
-                draw_from_id_string( draw_id, C_NONE, "", p, corner, /*rota:*/ 0, ll, false, overlay_height_3d );
+                draw_from_id_string( draw_id, C_NONE, "", p, corner, 0, ll, false, overlay_height_3d );
             }
+            */
 
             // the tallest height-having overlay is the one that counts
             height_3d = std::max( height_3d, overlay_height_3d );
@@ -3002,7 +3016,7 @@ void cata_tiles::init_draw_cursor( const tripoint &p )
     cursors.emplace_back( p );
 }
 
-// no tiles, corpses or stack highlight
+// no highlight for tiles, corpses or stack 
 void cata_tiles::init_draw_highlight( const tripoint &p )
 {
     do_draw_highlight = false;

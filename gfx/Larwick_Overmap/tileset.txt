@@ -1,9 +1,8 @@
-#RETRO ASCII TILESET
 #Name of the tileset
-NAME: ASCIITiles
+NAME: Larwick Overmap
 #Viewing (Option) name of the tileset
-VIEW: ASCIITiles
+VIEW: Larwick Overmap
 #JSON Path - Default of gfx/tile_config.json
 JSON: tile_config.json
-#Tileset Path - Default of gfx/tinytile.png
-TILESET: ASCIITiles.png
+#Tileset Path - Default of gfx/overmap.png
+TILESET: overmap.png
